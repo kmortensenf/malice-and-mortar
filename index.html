@@ -189,22 +189,27 @@ footer{font-size:.85rem;color:var(--ash);font-style:italic;text-align:center}
   .acts{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--night);border-top:1px solid var(--mortar);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
   .last{margin-top:0}
 }
+.field input[type=text]{font:inherit;font-weight:500;color:var(--bone);background:#0c0812;border:1px solid var(--mortar);border-radius:4px;padding:6px 8px;width:100%}
+.tg.nm{align-self:flex-start;font-weight:500}
+.btn.relic{flex:1 1 200px;font-weight:500;color:var(--ash);border-color:var(--torch)}
+.btn.relic b{display:block;font-family:var(--display);font-size:1.3rem;font-weight:500;color:var(--torch);margin-bottom:4px}
+.row .meta .tg{padding:2px 8px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div><h1>Malice &amp; Mortar<small data-t>From damp hole to castle of unreasonable size.</small></h1>
-      <div class="toggles"><button class="tg" id="tgSnd" type="button" aria-pressed="true">Sound: on</button><button class="tg" id="tgSet" type="button" data-t>Settings</button></div></div>
+    <div><h1>Malice &amp; Mortar<small>From damp hole to castle of unreasonable size.</small></h1>
+      <div class="toggles"><button class="tg" id="tgSnd" type="button" aria-pressed="true">Sound: on</button><button class="tg" id="tgSet" type="button">Settings</button></div></div>
     <div class="purse">
-      <div class="lbl" data-t>Malice hoarded</div>
+      <div class="lbl">Malice hoarded</div>
       <div class="big" id="malice">0</div>
-      <div class="rate" id="rateBox"><span id="mps">0</span> <span data-t>per second</span></div>
+      <div class="rate" id="rateBox"><span id="mps">0</span> <span>per second</span></div>
       <div class="buff" id="buff"></div>
     </div>
   </header>
-  <div class="goal"><span class="k" data-t>Next wickedness</span><span id="goalTxt"></span><span class="pct" id="goalPct"></span><div class="bar" id="goalBar"><i id="goalFill"></i></div></div>
-  <div class="tip" id="tip" hidden><b><span data-t>Getting started</span> <span id="tipN"></span></b><p id="tipTxt"></p><button class="tg" id="tipSkip" type="button" data-t>Skip tips</button></div>
+  <div class="goal"><span class="k">Next wickedness</span><span id="goalTxt"></span><span class="pct" id="goalPct"></span><div class="bar" id="goalBar"><i id="goalFill"></i></div></div>
+  <div class="tip" id="tip" hidden><b><span>Getting started</span> <span id="tipN"></span></b><p id="tipTxt"></p><button class="tg" id="tipSkip" type="button">Skip tips</button></div>
 
   <div class="stage" id="stage">
     <canvas id="scene" width="930" height="360" aria-label="Your lair at night, and the realm around it"></canvas>
@@ -216,24 +221,26 @@ footer{font-size:.85rem;color:var(--ash);font-style:italic;text-align:center}
   <main>
     <div class="col">
       <div class="acts">
-        <button class="deed" id="deed" type="button"><span data-t>Commit a Misdeed</span><small id="deedVal">+1 malice</small></button>
-        <button class="deed laugh" id="laugh" type="button" disabled><span data-t>Evil Laugh</span><small id="laughVal"></small></button>
+        <button class="deed" id="deed" type="button"><span>Commit a Misdeed</span><small id="deedVal">+1 malice</small></button>
+        <button class="deed laugh" id="laugh" type="button" disabled><span>Evil Laugh</span><small id="laughVal"></small></button>
       </div>
-      <p class="last" id="last" data-t>Go on. Nobody's watching. Probably.</p>
+      <p class="last" id="last">Go on. Nobody's watching. Probably.</p>
 
-      <div class="blight"><b data-t>Mrs. Blight</b><p id="blight"></p></div>
+      <div class="blight"><b>Mrs. Blight</b><p id="blight"></p></div>
 
       <div class="pair">
         <section class="grow">
-          <h2 data-t>Yourself</h2>
+          <h2>Yourself</h2>
           <div class="now" id="rankName">Imp</div>
+          <button class="tg nm" id="meBtn" type="button">Name yourself</button>
           <div class="pips" id="rankPips"></div>
           <div class="quip" id="rankQuip"></div>
           <button class="btn" id="rankBtn" type="button"></button>
         </section>
         <section class="grow">
-          <h2 data-t>Your home</h2>
+          <h2>Your home</h2>
           <div class="now" id="lairName">Damp Hole</div>
+          <button class="tg nm" id="homeBtn" type="button">Name your home</button>
           <div class="pips" id="lairPips"></div>
           <div class="quip" id="lairQuip"></div>
           <button class="btn" id="lairBtn" type="button"></button>
@@ -243,15 +250,15 @@ footer{font-size:.85rem;color:var(--ash);font-style:italic;text-align:center}
 
     <div class="col">
       <div class="ledger">
-        <h2 class="lhead" data-t>Minions</h2>
+        <h2 class="lhead">Minions</h2>
         <div class="panel" id="panel-minions">
-          <div class="qty"><span data-t>Hire</span>
+          <div class="qty"><span>Hire</span>
             <button type="button" data-q="1" aria-pressed="true">1</button>
             <button type="button" data-q="10" aria-pressed="false">10</button>
-            <button type="button" data-q="max" aria-pressed="false" data-t>Max</button>
+            <button type="button" data-q="max" aria-pressed="false">Max</button>
           </div>
           <div id="minionList" class="panel"></div>
-          <details class="break" id="break"><summary data-t>Where your malice comes from</summary><dl id="breakList"></dl></details>
+          <details class="break" id="break"><summary>Where your malice comes from</summary><dl id="breakList"></dl></details>
         </div>
       </div>
     </div>
@@ -259,77 +266,96 @@ footer{font-size:.85rem;color:var(--ash);font-style:italic;text-align:center}
     <div class="col" id="tabCol">
       <div class="ledger" id="tabLedger" hidden>
         <div class="tabs" role="tablist">
-          <button role="tab" id="tab-schemes" aria-selected="true" type="button" hidden><span data-t>Schemes</span><span class="dot" id="dot-schemes" hidden></span></button>
-          <button role="tab" id="tab-decor" aria-selected="false" type="button" hidden><span data-t>D&eacute;cor</span><span class="dot" id="dot-decor" hidden></span></button>
-          <button role="tab" id="tab-conquest" aria-selected="false" type="button" hidden><span data-t>Conquest</span><span class="dot" id="dot-conquest" hidden></span></button>
-          <button role="tab" id="tab-legacy" aria-selected="false" type="button" hidden><span data-t>Legacy</span><span class="dot" id="dot-legacy" hidden></span></button>
+          <button role="tab" id="tab-schemes" aria-selected="true" type="button" hidden><span>Schemes</span><span class="dot" id="dot-schemes" hidden></span></button>
+          <button role="tab" id="tab-decor" aria-selected="false" type="button" hidden><span>D&eacute;cor</span><span class="dot" id="dot-decor" hidden></span></button>
+          <button role="tab" id="tab-conquest" aria-selected="false" type="button" hidden><span>Conquest</span><span class="dot" id="dot-conquest" hidden></span></button>
+          <button role="tab" id="tab-dungeon" aria-selected="false" type="button" hidden><span>Dungeon</span></button>
+          <button role="tab" id="tab-legacy" aria-selected="false" type="button" hidden><span>Legacy</span><span class="dot" id="dot-legacy" hidden></span></button>
         </div>
         <div class="panel" id="panel-schemes">
-          <button class="btn" id="buyAll" type="button" data-t>Hatch every scheme you can afford</button>
+          <button class="btn" id="buyAll" type="button">Hatch every scheme you can afford</button>
           <div id="schemeList" class="panel"></div>
           <p class="empty" id="schemeCount"></p>
         </div>
         <div class="panel" id="panel-decor" hidden>
-          <p data-t>Home improvements. Each one adds 25% to all malice and makes the place look worse, which is to say better.</p>
+          <p>Home improvements. Each one adds 25% to all malice and makes the place look worse, which is to say better.</p>
           <div id="decorList" class="panel"></div>
           <p class="empty" id="decorCount"></p>
         </div>
         <div class="panel" id="panel-conquest" hidden>
-          <p data-t>The neighbours. Each realm you conquer multiplies all malice by 1.5 for good. Sieges take time; every misdeed you commit hurries one along.</p>
+          <p>The neighbours. Each realm you conquer multiplies all malice by 1.5 for good. Sieges take time; every misdeed you commit hurries one along.</p>
           <div id="realmList" class="panel"></div>
+        </div>
+        <div class="panel" id="panel-dungeon" hidden>
+          <p>Heroes you boot are locked up here while a cell is free. Put them to work, or ransom them back for a lump of malice.</p>
+          <p class="empty" id="cellInfo"></p>
+          <div id="cellList" class="panel"></div>
         </div>
         <div class="panel legacy" id="panel-legacy" hidden>
           <dl>
-            <dt data-t>Infamy</dt><dd id="stInf">0</dd>
-            <dt data-t>Crowns</dt><dd id="stWins">0</dd>
-            <dt data-t>Malice ever hoarded</dt><dd id="stTotal">0</dd>
-            <dt data-t>Misdeeds personally committed</dt><dd id="stClicks">0</dd>
-            <dt data-t>Heroes booted</dt><dd id="stHeroes">0</dd>
-            <dt data-t>Time played</dt><dd id="stTime">0</dd>
+            <dt>Infamy</dt><dd id="stInf">0</dd>
+            <dt>Crowns</dt><dd id="stWins">0</dd>
+            <dt>Malice ever hoarded</dt><dd id="stTotal">0</dd>
+            <dt>Misdeeds personally committed</dt><dd id="stClicks">0</dd>
+            <dt>Heroes booted</dt><dd id="stHeroes">0</dd>
+            <dt>Time played</dt><dd id="stTime">0</dd>
           </dl>
-          <h3><span data-t>Misdeeds of note</span> <span id="achCount" class="sub"></span></h3>
+          <h3><span>Misdeeds of note</span> <span id="achCount" class="sub"></span></h3>
           <div class="ach" id="achList"></div>
-          <h3 data-t>Notoriety perks</h3>
+          <h3>Notoriety perks</h3>
           <div class="ach" id="perkList"></div>
-          <h3 data-t>Fake your own demise</h3>
-          <p data-t>Stage a dramatic defeat, let the bards sing about it, then start again from the hole with a reputation. Each point of Infamy adds 10% to all malice, forever, and more Infamy unlocks the perks above. If you already rule everything when you go, you also earn a Crown, which doubles all malice for good. You keep your Infamy, Crowns and misdeeds of note, and nothing else.</p>
+          <h3>Fake your own demise</h3>
+          <p>Stage a dramatic defeat, let the bards sing about it, then start again from the hole with a reputation. Each point of Infamy adds 10% to all malice, forever, and more Infamy unlocks the perks above. If you already rule everything when you go, you also earn a Crown, which doubles all malice for good. You keep your Infamy, Crowns and misdeeds of note, and nothing else.</p>
           <div class="bar" id="inBar"><i id="inFill"></i></div>
           <button class="btn" id="prestigeBtn" type="button"></button>
         </div>
       </div>
     </div>
   </main>
-  <footer data-t>No villagers were harmed. Several were mildly inconvenienced.</footer>
+  <footer>No villagers were harmed. Several were mildly inconvenienced.</footer>
 </div>
 
 <div class="modal" id="mSettings" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="setH">
-  <h2 id="setH" data-t>Settings</h2>
-  <div class="field"><label for="lang" data-t>Language</label><select id="lang"><option value="en">English</option><option value="da">Dansk</option></select></div>
-  <div class="field"><label for="volS" data-t>Sound effects</label><input type="range" id="volS" min="0" max="100" step="5"></div>
-  <div class="field"><label for="volM" data-t>Music</label><input type="range" id="volM" min="0" max="100" step="5"></div>
-  <label class="chk" for="calm"><input type="checkbox" id="calm"> <span data-t>Fewer flashes and no screen shake</span></label>
-  <h3 data-t>Keyboard</h3>
-  <p data-t>Space: misdeed. L: laugh. R: grow yourself. H: build home. 1 to 8: hire a minion. B: hatch all schemes.</p>
-  <h3 data-t>Your save</h3>
-  <p data-t>Progress is kept in this browser only and saves itself every few seconds. Copy the code below somewhere safe, or paste one in to load it.</p>
+  <h2 id="setH">Settings</h2>
+  <div class="field"><label for="volS">Sound effects</label><input type="range" id="volS" min="0" max="100" step="5"></div>
+  <div class="field"><label for="volM">Music</label><input type="range" id="volM" min="0" max="100" step="5"></div>
+  <label class="chk" for="calm"><input type="checkbox" id="calm"> <span>Fewer flashes and no screen shake</span></label>
+  <h3>Keyboard</h3>
+  <p>Space: misdeed. L: laugh. R: grow yourself. H: build home. 1 to 8: hire a minion. B: hatch all schemes.</p>
+  <h3>Your save</h3>
+  <p>Progress is kept in this browser only and saves itself every few seconds. Copy the code below somewhere safe, or paste one in to load it.</p>
   <textarea id="saveTxt" rows="3" spellcheck="false" aria-label="Save code"></textarea>
-  <div class="rowbtns"><button class="btn" id="saveCopy" type="button" data-t>Copy my save code</button><button class="btn" id="saveLoad" type="button" data-t>Load the pasted code</button></div>
+  <div class="rowbtns"><button class="btn" id="saveCopy" type="button">Copy my save code</button><button class="btn" id="saveLoad" type="button">Load the pasted code</button></div>
   <p id="saveMsg" class="empty"></p>
-  <div class="rowbtns"><button class="btn warn" id="resetBtn" type="button"></button><button class="btn" data-close type="button" data-t>Close</button></div>
+  <div class="rowbtns"><button class="btn warn" id="resetBtn" type="button"></button><button class="btn" data-close type="button">Close</button></div>
+</div></div>
+
+<div class="modal" id="mName" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="nameH">
+  <h2 id="nameH">What shall they call you?</h2>
+  <p>Your name goes on your nameplate and the ending. Your home's name goes on a sign by the road. Both can be changed whenever you like.</p>
+  <div class="field"><label for="inMe">Your name</label><input type="text" id="inMe" maxlength="24" autocomplete="off" placeholder="Grimbold the Unpleasant"></div>
+  <div class="field"><label for="inHome">Your home</label><input type="text" id="inHome" maxlength="24" autocomplete="off" placeholder="Castle Dreadmoor"></div>
+  <div class="rowbtns"><button class="btn go" id="nameSave" type="button">Carve it in stone</button><button class="btn" data-close type="button">Never mind</button></div>
+</div></div>
+
+<div class="modal" id="mRelic" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="relicH">
+  <h2 id="relicH"></h2>
+  <p>Your minions carried two treasures out, and there's only room on the mantelpiece for one. Choose. The other goes back, slightly licked.</p>
+  <div class="rowbtns" id="relicPick"></div>
 </div></div>
 
 <div class="modal" id="mAway" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="awayH">
-  <h2 id="awayH" data-t>While you were away</h2>
+  <h2 id="awayH">While you were away</h2>
   <p id="awayTxt"></p>
-  <div class="rowbtns"><button class="btn go" data-close type="button" data-t>Back to work</button></div>
+  <div class="rowbtns"><button class="btn go" data-close type="button">Back to work</button></div>
 </div></div>
 
 <div class="modal" id="mEnd" hidden><div class="box" role="dialog" aria-modal="true" aria-labelledby="endH">
-  <h2 id="endH" data-t>You rule practically everything</h2>
-  <p data-t>The castle is built, the neighbours are yours and the Moon has your face on it. There is nothing left to ruin. A lesser villain would retire.</p>
+  <h2 id="endH">You rule practically everything</h2>
+  <p>The castle is built, the neighbours are yours and the Moon has your face on it. There is nothing left to ruin. A lesser villain would retire.</p>
   <dl class="stats" id="endStats"></dl>
   <p id="endPitch"></p>
-  <div class="rowbtns"><button class="btn go" id="endAgain" type="button"></button><button class="btn" data-close type="button" data-t>Keep ruling</button></div>
+  <div class="rowbtns"><button class="btn go" id="endAgain" type="button"></button><button class="btn" data-close type="button">Keep ruling</button></div>
 </div></div>
 
 <script>
@@ -337,195 +363,10 @@ footer{font-size:.85rem;color:var(--ash);font-style:italic;text-align:center}
 "use strict";
 const $=id=>document.getElementById(id);
 const KEY="malice-mortar-v1";
-/* ---------- preferences and language ---------- */
-const prefs={snd:true,sv:80,mv:55,lang:(navigator.language||"en").toLowerCase().indexOf("da")===0?"da":"en",calm:false};
+/* ---------- preferences ---------- */
+const prefs={snd:true,sv:80,mv:55,calm:false};
 try{Object.assign(prefs,JSON.parse(localStorage.getItem(KEY+"-audio")||"{}"));}catch(e){}
 function savePrefs(){try{localStorage.setItem(KEY+"-audio",JSON.stringify(prefs));}catch(e){}}
-function L(en,da){return prefs.lang==="da"?da:en;}
-function tr(s){return prefs.lang==="da"&&DA[s]||s;}
-const DA={
- /* page */
- "From damp hole to castle of unreasonable size.":"Fra fugtigt hul til slot af urimelig størrelse.",
- "Settings":"Indstillinger","Malice hoarded":"Ondskab på lager","per second":"i sekundet","Next wickedness":"Næste ondskab",
- "Getting started":"Kom godt i gang","Skip tips":"Spring tips over",
- "Commit a Misdeed":"Begå en ugerning","Evil Laugh":"Ond latter","Mrs. Blight":"Fru Blight",
- "Yourself":"Dig selv","Your home":"Dit hjem","Minions":"Håndlangere","Hire":"Ansæt","Max":"Maks",
- "Where your malice comes from":"Hvor din ondskab kommer fra",
- "Schemes":"Rænker","Décor":"Indretning","Conquest":"Erobring","Legacy":"Eftermæle",
- "Hatch every scheme you can afford":"Udklæk alle rænker, du har råd til",
- "Home improvements. Each one adds 25% to all malice and makes the place look worse, which is to say better.":"Boligforbedringer. Hver af dem giver 25% mere ondskab og får stedet til at se værre ud, altså bedre.",
- "The neighbours. Each realm you conquer multiplies all malice by 1.5 for good. Sieges take time; every misdeed you commit hurries one along.":"Naboerne. Hvert rige, du erobrer, ganger al ondskab med 1,5 for altid. Belejringer tager tid, men hver ugerning skynder på dem.",
- "Infamy":"Berygtethed","Crowns":"Kroner","Malice ever hoarded":"Ondskab i alt","Misdeeds personally committed":"Egenhændige ugerninger","Heroes booted":"Helte sparket ud","Time played":"Spilletid",
- "Misdeeds of note":"Bemærkelsesværdige ugerninger","Notoriety perks":"Berygtede fordele","Fake your own demise":"Iscenesæt din egen død",
- "Stage a dramatic defeat, let the bards sing about it, then start again from the hole with a reputation. Each point of Infamy adds 10% to all malice, forever, and more Infamy unlocks the perks above. If you already rule everything when you go, you also earn a Crown, which doubles all malice for good. You keep your Infamy, Crowns and misdeeds of note, and nothing else.":"Iscenesæt et dramatisk nederlag, lad skjaldene synge om det, og start forfra i hullet med et ry. Hvert point Berygtethed giver 10% mere ondskab for altid, og mere Berygtethed låser op for fordelene ovenfor. Hersker du allerede over alt, når du går, får du også en Krone, som fordobler al ondskab for altid. Du beholder Berygtethed, Kroner og bemærkelsesværdige ugerninger, og intet andet.",
- "No villagers were harmed. Several were mildly inconvenienced.":"Ingen landsbyboere kom til skade. Flere blev mildt generet.",
- "Language":"Sprog","Sound effects":"Lydeffekter","Music":"Musik","Fewer flashes and no screen shake":"Færre lysglimt og ingen skærmrystelser",
- "Keyboard":"Tastatur","Space: misdeed. L: laugh. R: grow yourself. H: build home. 1 to 8: hire a minion. B: hatch all schemes.":"Mellemrum: ugerning. L: latter. R: udvikl dig selv. H: byg hjem. 1 til 8: ansæt håndlanger. B: udklæk alle rænker.",
- "Your save":"Dit gemte spil","Progress is kept in this browser only and saves itself every few seconds. Copy the code below somewhere safe, or paste one in to load it.":"Fremskridt gemmes kun i denne browser, automatisk med få sekunders mellemrum. Kopier koden herunder til et sikkert sted, eller indsæt en kode for at indlæse den.",
- "Copy my save code":"Kopier min gemmekode","Load the pasted code":"Indlæs den indsatte kode","Close":"Luk",
- "While you were away":"Mens du var væk","Back to work":"Tilbage til arbejdet",
- "You rule practically everything":"Du hersker over stort set alt",
- "The castle is built, the neighbours are yours and the Moon has your face on it. There is nothing left to ruin. A lesser villain would retire.":"Slottet står, naboerne er dine, og Månen har dit ansigt. Der er intet tilbage at ødelægge. En ringere skurk ville gå på pension.",
- "Keep ruling":"Hersk videre",
- /* tips */
- "Click Commit a Misdeed, or the scene itself, to earn malice.":"Klik på Begå en ugerning, eller på selve scenen, for at tjene ondskab.",
- "Malice buys minions. Hire a Gutter Imp and it earns for you, even while you are away.":"Ondskab køber håndlangere. Ansæt en Rendestensdjævel, så tjener den for dig, også mens du er væk.",
- "Spend malice on yourself. Become a Smug Imp to unlock your Evil Laugh.":"Brug ondskab på dig selv. Bliv Selvglad Smådjævel for at låse op for din Onde latter.",
- "Now your home. Every new home doubles all malice and attracts worse minions.":"Nu dit hjem. Hvert nyt hjem fordobler al ondskab og tiltrækker værre håndlangere.",
- "Try the Evil Laugh: everything earns 7 times as much for a short while.":"Prøv den Onde latter: alt tjener 7 gange så meget i et kort stykke tid.",
- "A dot on a tab means something there is affordable. Open Schemes and hatch one.":"En prik på en fane betyder, at du har råd til noget der. Åbn Rænker og udklæk en.",
- "The neighbours are unconquered. Open Conquest and lay siege to Lower Dribbling.":"Naboerne er ikke erobret endnu. Åbn Erobring og belejr Nedre Savlerup.",
- /* minions */
- "Gutter Imp":"Rendestensdjævel","Steals exactly one sock from every pair.":"Stjæler præcis én sok fra hvert par.",
- "Bog Goblin":"Mosenisse","Loosens the lids on other people's jam.":"Løsner lågene på andre folks syltetøj.",
- "Tax Collector":"Skatteopkræver","The only truly evil thing on this list.":"Det eneste virkelig onde på listen.",
- "Cackling Witch":"Skrattende Heks","Turns princes into frogs, then bills the frogs.":"Forvandler prinser til frøer og sender frøerne regningen.",
- "Ogre Bouncer":"Trolde-dørmand","Your name's not on the list. There is no list.":"Dit navn står ikke på listen. Der er ingen liste.",
- "Vampire Accountant":"Vampyr-revisor","Drains the villagers, financially.":"Tapper landsbyboerne, økonomisk.",
- "Mildly Cursed Dragon":"Mildt Forbandet Drage","Breathes fire. Also sneezes glitter. Don't ask.":"Spyr ild. Nyser også glimmer. Spørg ikke.",
- "Thing From The Basement":"Tingen Fra Kælderen","It was here before you. It pays rent in dread.":"Den var her før dig. Den betaler husleje i rædsel.",
- "Something worse":"Noget værre",
- /* ranks */
- "Imp":"Smådjævel","Small, damp, and full of ambition.":"Lille, fugtig og fuld af ambitioner.",
- "Smug Imp":"Selvglad Smådjævel","Same imp. Insufferable posture. Has learned to laugh properly.":"Samme djævel. Uudholdelig holdning. Har lært at grine ordentligt.",
- "Gremlin Foreman":"Gremlin-formand","Has a pitchfork and a clipboard. Fears nothing.":"Har en høtyv og et clipboard. Frygter intet.",
- "Hellion":"Helvedesunge","Now legally classed as a menace. Got a cape.":"Nu juridisk klassificeret som en plage. Har fået kappe.",
- "Dread Knight":"Rædselsridder","The armour squeaks, but nobody dares mention it.":"Rustningen knirker, men ingen tør nævne det.",
- "Dark Lord":"Mørkets Herre","The cape billows indoors. No one knows how.":"Kappen blafrer indendørs. Ingen ved hvordan.",
- "Overlord of Practically Everything":"Overherre over Stort Set Alt","The 'practically' is a sore subject.":"Det med 'stort set' er et ømt punkt.",
- /* lairs */
- "Damp Hole":"Fugtigt Hul","It's a hole. It's damp. It's yours.":"Det er et hul. Det er fugtigt. Det er dit.",
- "Suspicious Shed":"Mistænkeligt Skur","The neighbours have started a petition.":"Naboerne har startet en underskriftsindsamling.",
- "Crooked Tower":"Skævt Tårn","Leans menacingly. Mostly structural issues.":"Hælder truende. Mest på grund af byggesjusk.",
- "Menacing Keep":"Truende Borgtårn","Has a dungeon. Currently storing chairs.":"Har et fangehul. Bruges pt. til stole.",
- "Dark Fortress":"Mørk Fæstning","The moat is stocked with disappointed fish.":"Voldgraven er fyldt med skuffede fisk.",
- "Dread Citadel":"Rædslernes Citadel","Visible from three kingdoms. All three have complained.":"Kan ses fra tre kongeriger. Alle tre har klaget.",
- "Castle of Unreasonable Size":"Slot af Urimelig Størrelse","The planning committee has been fed to the dragon.":"Byggeudvalget er blevet fodret til dragen.",
- /* decor */
- "A Second, Ruder Sign":"Et Skilt Mere, Mere Uforskammet","The first sign wasn't getting through to people.":"Det første skilt trængte ikke rigtig igennem.",
- "Ominous Torches":"Ildevarslende Fakler","They burn green on Tuesdays. Nobody lit them.":"De brænder grønt om tirsdagen. Ingen har tændt dem.",
- "Judgemental Gargoyles":"Dømmende Gargoyler","They don't do anything. They just look at you like that.":"De gør ikke noget. De kigger bare sådan på dig.",
- "Bubbling Moat":"Boblende Voldgrav","Don't ask what's bubbling. It's shy.":"Spørg ikke, hvad der bobler. Den er genert.",
- "Enormous Banners":"Enorme Bannere","Your face, forty feet tall. The eyes follow the peasants.":"Dit ansigt, tolv meter højt. Øjnene følger bønderne.",
- "Personal Thundercloud":"Personlig Tordensky","Hovers over the lair on a monthly subscription.":"Svæver over hulen på månedsabonnement.",
- "Doom Beacon":"Dommedagsfyr","A column of green light. Purely decorative. Ruins everyone's sleep.":"En søjle af grønt lys. Rent dekorativ. Ødelægger alles nattesøvn.",
- /* realms */
- "Lower Dribbling":"Nedre Savlerup","A village famed for its jam and its trusting nature.":"En landsby kendt for sit syltetøj og sin tillidsfulde natur.","Now pays tribute in jam. And fear. Mostly jam.":"Betaler nu tribut i syltetøj. Og frygt. Mest syltetøj.",
- "The Windmill at Upper Crumb":"Møllen i Øvre Krumme","Grinds flour for wholesome bread. Disgusting.":"Maler mel til sundt brød. Ulækkert.","Now grinds flour for slightly sinister bread.":"Maler nu mel til let uhyggeligt brød.",
- "Abbey of Perpetual Tutting":"Den Evige Hovedrystens Kloster","Forty monks who disapprove of you in shifts.":"Fyrre munke, der misbilliger dig i skiftehold.","The monks now tut on your behalf.":"Munkene ryster nu på hovedet på dine vegne.",
- "Glimmerdell Unicorn Sanctuary":"Glimmerdalens Enhjørningereservat","Sickeningly lovely. There's a rainbow. It has to go.":"Kvalmende yndigt. Der er en regnbue. Den skal væk.","The rainbow is grey now. The unicorns went goth and seem happier.":"Regnbuen er grå nu. Enhjørningerne er blevet gotere og virker gladere.",
- "Castle Goodly":"Slottet Godhjerte","Home of King Roland the Thoroughly Decent.":"Hjem for Kong Roland den Gennemført Anstændige.","The king runs your gift shop now. He's annoyingly good at it.":"Kongen passer din gavebutik nu. Han er irriterende god til det.",
- "The Cloud Kingdom of Nimbus":"Skyriget Nimbus","Smug weather wizards who look down on everyone. Literally.":"Selvglade vejrtroldmænd, der ser ned på alle. Bogstaveligt talt.","It only rains on your enemies now. And on picnics.":"Det regner kun på dine fjender nu. Og på skovture.",
- "The Moon":"Månen","It has been watching you this whole time. Judging.":"Den har holdt øje med dig hele tiden. Dømmende.","It has your face on it now. The tides are confused and a bit frightened.":"Den har dit ansigt nu. Tidevandet er forvirret og lidt bange.",
- "Somewhere further off":"Et sted længere væk","One conquest at a time, sir.":"Én erobring ad gangen, herre.",
- /* schemes */
- "Pointier Stick":"Spidsere Pind","Misdeeds are worth double. Poke with confidence.":"Ugerninger er dobbelt så meget værd. Prik med selvtillid.",
- "Evil Laugh Lessons":"Timer i Ond Latter","Misdeeds worth double again. From the diaphragm, sir.":"Ugerninger fordobles igen. Fra mellemgulvet, herre.",
- "Monogrammed Cape":"Kappe med Monogram","Misdeeds worth triple. Dry clean only.":"Ugerninger er tre gange så meget værd. Kun kemisk rens.",
- "Ominous Theme Music":"Ildevarslende Kendingsmelodi","Misdeeds worth triple. A small goblin follows you with a tuba.":"Ugerninger tredobles. En lille nisse følger dig med en tuba.",
- "Signature Catchphrase":"Eget Slagord","Misdeeds worth quadruple. It's still being workshopped.":"Ugerninger firedobles. Der arbejdes stadig på det.",
- "Sock Sacks":"Sokkesække","They can now carry both socks. Chaos.":"Nu kan de bære begge sokker. Kaos.",
- "Tiny Pitchforks":"Bittesmå Høtyve","Adorable. Do not say so to their faces.":"Nuttet. Sig det ikke til dem.",
- "Sock Futures Market":"Sokkebørsen","Speculating on left socks. The right ones are worthless.":"Spekulation i venstresokker. De højre er værdiløse.",
- "The Forbidden Third Sock":"Den Forbudte Tredje Sok","Nobody knows whose it is. That's the horror.":"Ingen ved, hvis den er. Det er det uhyggelige.",
- "Bog Snorkels":"Mosesnorkler","Lurk longer, lurk deeper.":"Lur længere, lur dybere.",
- "Performance Reviews":"Medarbejdersamtaler","Motivation through fear of feedback.":"Motivation gennem frygt for feedback.",
- "Jam Sabotage Diploma":"Diplom i Syltetøjssabotage","Three years of study. Mostly lids.":"Tre års studier. Mest låg.",
- "Mandatory Fun Days":"Obligatoriske Sjove Dage","The cruellest scheme yet. There are trust falls.":"Den grusomste rænke til dato. Der er tillidsøvelser.",
- "Late Fees":"Rykkergebyrer","Wickedness with paperwork.":"Ondskab med papirarbejde.",
- "Fees On The Late Fees":"Gebyr på Rykkergebyrerne","Even you feel a bit bad. Briefly.":"Selv du får det lidt dårligt. Kortvarigt.",
- "Tax On Being Taxed":"Skat på at Blive Beskattet","It's only fair. It isn't, but it's printed on a form.":"Det er kun rimeligt. Det er det ikke, men det står på en blanket.",
- "Audit Of The Soul":"Revision af Sjælen","Please retain your receipts for all good deeds.":"Gem venligst kvitteringer for alle gode gerninger.",
- "Bulk Newt Eyes":"Salamanderøjne i Storkøb","The newts are fine. They grow back. Probably.":"Salamandrene har det fint. De vokser ud igen. Sandsynligvis.",
- "Cauldron With A Lid":"Gryde med Låg","Fewer splashes, more curses.":"Færre sprøjt, flere forbandelser.",
- "Frog Subscription Service":"Frø-abonnement","A fresh prince-frog on your doorstep every month.":"En frisk prinsefrø på dørtrinnet hver måned.",
- "Broom With Racing Stripes":"Kost med Racerstriber","Goes no faster. Feels much faster.":"Flyver ikke hurtigere. Føles meget hurtigere.",
- "Bigger Club":"Større Kølle","Self-explanatory.":"Giver sig selv.",
- "A Second Club":"En Kølle Mere","For the other hand. Ogre genius.":"Til den anden hånd. Troldegeni.",
- "Velvet Rope Made Of Chain":"Fløjlsreb af Kæde","Classy and load-bearing.":"Stilfuldt og bærende.",
- "A Clipboard He Cannot Read":"Et Clipboard Han Ikke Kan Læse","Deeply intimidating all the same.":"Dybt skræmmende alligevel.",
- "Creative Bookkeeping":"Kreativ Bogføring","The numbers are scared of him.":"Tallene er bange for ham.",
- "Offshore Coffins":"Kister i Skattely","Technically a tax haven.":"Teknisk set et skattely.",
- "Blood From A Stone":"Blod af en Sten","He's done it. The stone is suing.":"Han har gjort det. Stenen har sagsøgt ham.",
- "Eternal Fiscal Night":"Evig Regnskabsnat","The financial year never ends. Neither does he.":"Regnskabsåret slutter aldrig. Det gør han heller ikke.",
- "Throat Lozenges":"Halspastiller","Smoother fire, fewer glitter sneezes.":"Blødere ild, færre glimmernys.",
- "Hoard Insurance":"Skatteforsikring","Against heroes, acts of good, etc.":"Mod helte, gode gerninger osv.",
- "Glitter Monetisation":"Glimmer som Forretning","The sneezes are now a revenue stream.":"Nysene er nu en indtægtskilde.",
- "A Second Head":"Et Hoved Mere","It's in middle management. The first head hates it.":"Det er mellemleder. Det første hoved hader det.",
- "More Tentacles":"Flere Tentakler","Nobody counted. Nobody will.":"Ingen har talt dem. Ingen kommer til det.",
- "A Nightlight":"En Natlampe","It is much less grumpy now.":"Den er meget mindre gnaven nu.",
- "Basement Extension":"Kælderudvidelse","It needed the legroom. Tentacleroom.":"Den manglede benplads. Tentakelplads.",
- "It Learns Your Name":"Den Lærer Dit Navn","It's fine. It says it nicely. Mostly.":"Det er fint. Den siger det pænt. For det meste.",
- /* achievements */
- "First Offence":"Første Forseelse","Commit a misdeed":"Begå en ugerning",
- "Repeat Offender":"Vaneforbryder","100 misdeeds":"100 ugerninger",
- "Career Criminal":"Karriereforbryder","1,000 misdeeds":"1.000 ugerninger",
- "Truly Dastardly":"Rigtig Skændigt","Land a dastardly misdeed":"Ram en skændig ugerning",
- "From The Diaphragm":"Fra Mellemgulvet","Do a proper evil laugh":"Grin en rigtig ond latter",
- "Middle Management":"Mellemleder","Employ 10 minions":"Hav 10 håndlangere",
- "Inhuman Resources":"Umenneskelige Ressourcer","Employ 100 minions":"Hav 100 håndlangere",
- "Payroll Is A Nightmare":"Lønkørslen er et Mareridt","Employ 300 minions":"Hav 300 håndlangere",
- "On The Property Ladder":"Inde på Boligmarkedet","Move out of the hole":"Flyt ud af hullet",
- "Keep It Up":"Borgerligt Ombud","Build the Menacing Keep":"Byg Truende Borgtårn",
- "Unreasonable":"Urimelig","Build the final castle":"Byg det sidste slot",
- "Certified Menace":"Certificeret Plage","Become a Hellion":"Bliv Helvedesunge",
- "Practically Everything":"Stort Set Alt","Reach your final form":"Nå din endelige form",
- "Mind The Moat":"Pas på Voldgraven","Boot a hero":"Spark en helt ud",
- "Helmet Collection":"Hjelmsamling","Boot 10 heroes":"Spark 10 helte ud",
- "Jam Today":"Syltetøj i Dag","Conquer a realm":"Erobr et rige",
- "Long Live Me":"Længe Leve Mig","Conquer every realm":"Erobr alle riger",
- "Interior Menace":"Indvendig Uhygge","Install all the décor":"Sæt al indretning op",
- "Morally Bankrupt Millionaire":"Moralsk Fallit Millionær","Hoard 1M malice in all":"Saml 1M ondskab i alt",
- "Billions, No Regrets":"Milliarder, Ingen Fortrydelser","Hoard 1B malice in all":"Saml 1B ondskab i alt",
- "Reports Of My Death":"Rygterne om Min Død","Fake your own demise":"Iscenesæt din egen død",
- "Menace To Society":"Samfundets Fjende","Reach full menace by misbehaving quickly":"Nå fuld trussel ved at opføre dig hurtigt dårligt",
- "Head In The Clouds":"Hovedet i Skyerne","Conquer the Cloud Kingdom":"Erobr Skyriget",
- "Customer Service":"Kundeservice","Deal with 5 visitors who weren't heroes":"Tag dig af 5 gæster, der ikke var helte",
- "Encore, Encore":"Ekstranummer","Earn a Crown":"Få en Krone",
- /* perks */
- "Encore":"Ekstranummer","Evil Laugh lasts 30 seconds":"Ond latter varer 30 sekunder",
- "Practised Wickedness":"Øvet Ondskab","Dastardly misdeeds twice as often":"Skændige ugerninger dobbelt så tit",
- "Helmet Resale":"Hjelmvideresalg","Heroes drop triple loot":"Helte taber tre gange så meget",
- "Lungs Of Iron":"Jernlunger","Evil Laugh recovers in 1:30":"Ond latter er klar igen efter 1:30",
- "Siege Veterans":"Belejringsveteraner","Sieges go twice as fast":"Belejringer går dobbelt så hurtigt",
- "Hands-On Management":"Ledelse i Øjenhøjde","Misdeeds earn 5% of your malice per second":"Ugerninger giver 5% af din ondskab pr. sekund",
- /* deeds */
- "Go on. Nobody's watching. Probably.":"Kom bare. Ingen kigger. Sandsynligvis.",
- "You swapped the salt and the sugar.":"Du byttede om på salt og sukker.",
- "You kicked a signpost so it points the wrong way.":"Du sparkede til et vejskilt, så det peger forkert.",
- "You told a duck it was adopted.":"Du fortalte en and, at den var adopteret.",
- "You hid one shoe. Just the one.":"Du gemte én sko. Kun den ene.",
- "You left a rude note for the milkman.":"Du lagde en uforskammet seddel til mælkemanden.",
- "You moved a scarecrow slightly closer to a window.":"Du flyttede et fugleskræmsel lidt tættere på et vindue.",
- "You untied a guard's bootlaces.":"Du bandt en vagts snørebånd op.",
- "You booed a bard mid-ballad.":"Du buhede ad en skjald midt i en ballade.",
- "You licked a pie on a windowsill and left it there.":"Du slikkede på en tærte i en vindueskarm og lod den stå.",
- "You taught a parrot something unrepeatable.":"Du lærte en papegøje noget, der ikke kan gentages.",
- "You replaced the village bell with a slightly flatter bell.":"Du skiftede landsbyens klokke ud med en lidt mere falsk klokke.",
- "You stood menacingly near some sheep.":"Du stod truende i nærheden af nogle får.",
- "You returned a library book. Late. On purpose.":"Du afleverede en biblioteksbog. For sent. Med vilje.",
- "You whispered 'moist' at a wedding.":"Du hviskede 'fugtig' til et bryllup.",
- /* Mrs. Blight */
- "Welcome home, sir. I've aired out the hole. It didn't help.":"Velkommen hjem, herre. Jeg har luftet ud i hullet. Det hjalp ikke.",
- "A reminder that socks stolen by the imps must be logged, sir. We are evil, not disorganised.":"En påmindelse om, at stjålne sokker skal registreres, herre. Vi er onde, ikke uorganiserede.",
- "The goblins would like a day off. I laughed for you, sir, to save time.":"Nisserne vil gerne have en fridag. Jeg grinede på Deres vegne, herre, for at spare tid.",
- "The shed is lovely, sir. The spiders have formed a welcoming committee.":"Skuret er dejligt, herre. Edderkopperne har nedsat en velkomstkomité.",
- "The tax collector asked where to send the villagers' tears. I said the usual jar.":"Skatteopkræveren spurgte, hvor landsbyboernes tårer skal sendes hen. Jeg sagde det sædvanlige glas.",
- "The tower leans a touch more each morning. I've decided to call it character.":"Tårnet hælder lidt mere hver morgen. Jeg har besluttet at kalde det karakter.",
- "A witch has moved in upstairs. She's hexed the kettle. Tea now screams.":"En heks er flyttet ind ovenpå. Hun har forhekset kedlen. Teen skriger nu.",
- "The dungeon is ready, sir. We've no prisoners, so I've put the good chairs down there.":"Fangehullet er klar, herre. Vi har ingen fanger, så jeg har sat de pæne stole derned.",
- "The ogre ate the guest list again. On reflection, we've never had guests.":"Trolden har spist gæstelisten igen. Ved nærmere eftertanke har vi aldrig haft gæster.",
- "The moat fish look disappointed, sir. I've told them to take it up with you.":"Fiskene i voldgraven ser skuffede ud, herre. Jeg har bedt dem tage det op med Dem.",
- "Your accountant doesn't show up in the mirrors, or in the audit. Convenient.":"Deres revisor kan ikke ses i spejlene, og heller ikke i revisionen. Praktisk.",
- "The dragon sneezed on the east wing. It's very sparkly now. I'm so sorry.":"Dragen nøs på østfløjen. Den glimter meget nu. Det beklager jeg.",
- "Three kingdoms have written to complain about the view. I've framed the letters.":"Tre kongeriger har skrevet og klaget over udsigten. Jeg har indrammet brevene.",
- "The castle is so large I got lost fetching your slippers. I've been gone a week, sir.":"Slottet er så stort, at jeg for vild, da jeg hentede Deres tøfler. Jeg har været væk en uge, herre.",
- "Something in the basement says hello. I didn't catch its name. It has too many.":"Noget i kælderen hilser. Jeg fik ikke fat i navnet. Det har for mange.",
- "Do remember to cackle today, sir. It's good for the lungs.":"Husk at skratte i dag, herre. Det er godt for lungerne.",
- "I've polished your malice. It was looking a bit benign.":"Jeg har pudset Deres ondskab. Den så lidt godartet ud.",
- "The neighbours are looking rather unconquered, sir. Just an observation.":"Naboerne ser temmelig uerobrede ud, herre. Blot en observation."
-};
-
 
 /* ---------- content ---------- */
 const MINIONS=[
@@ -574,7 +415,7 @@ const REALMS=[
  {name:"The Cloud Kingdom of Nimbus",what:"Smug weather wizards who look down on everyone. Literally.",done:"It only rains on your enemies now. And on picnics.",cost:2.2e17,time:600,tier:6},
  {name:"The Moon",what:"It has been watching you this whole time. Judging.",done:"It has your face on it now. The tides are confused and a bit frightened.",cost:5e17,time:900,tier:6}
 ];
-const RPOS=[[-100,262],[-8,270],[30,186],[227,262],[-225,128],[-110,50],[150,70]];
+const RPOS=[[800,262],[990,266],[1150,186],[1310,262],[1500,128],[1560,50],[0,70]];
 const UP=[];
 [["Pointier Stick","Misdeeds are worth double. Poke with confidence.",100,2],
  ["Evil Laugh Lessons","Misdeeds worth double again. From the diaphragm, sir.",6e5,2],
@@ -617,7 +458,10 @@ const ACH=[
  ["a22","Menace To Society","Reach full menace by misbehaving quickly",s=>s.topCombo>=50],
  ["a23","Head In The Clouds","Conquer the Cloud Kingdom",s=>s.realms>=6],
  ["a24","Customer Service","Deal with 5 visitors who weren't heroes",s=>s.others>=5],
- ["a25","Encore, Encore","Earn a Crown",s=>s.wins>=1]
+ ["a25","Encore, Encore","Earn a Crown",s=>s.wins>=1],
+ ["a26","Captive Audience","Keep 3 heroes in the dungeon",s=>s.cells.length>=3],
+ ["a27","Curator Of Stolen Goods","Claim a relic from every realm",s=>Object.keys(s.relics).length>=7],
+ ["a28","A Name To Fear","Name yourself and your home",s=>!!s.me&&!!s.home]
 ];
 const DEEDS=["You swapped the salt and the sugar.","You kicked a signpost so it points the wrong way.","You told a duck it was adopted.","You hid one shoe. Just the one.","You left a rude note for the milkman.","You moved a scarecrow slightly closer to a window.","You untied a guard's bootlaces.","You booed a bard mid-ballad.","You licked a pie on a windowsill and left it there.","You taught a parrot something unrepeatable.","You replaced the village bell with a slightly flatter bell.","You stood menacingly near some sheep.","You returned a library book. Late. On purpose.","You whispered 'moist' at a wedding."];
 const BLIGHT=[
@@ -641,14 +485,34 @@ const BLIGHT=[
  [0,"The neighbours are looking rather unconquered, sir. Just an observation."]
 ];
 const HEROES=["Sir Reginald the Punctual","Dame Prudence of Tidy Hill","Brave Sir Nigel (self-titled)","Chad the Chosen","Lady Winifred, Twice Blessed","Sir Gavin of the Sensible Shoes","Prince Florian the Moisturised"];
-const LAUGH_X=7;
 const PERKS=[[1,"Encore","Evil Laugh lasts 30 seconds"],[3,"Practised Wickedness","Dastardly misdeeds twice as often"],[8,"Helmet Resale","Heroes drop triple loot"],[20,"Lungs Of Iron","Evil Laugh recovers in 1:30"],[50,"Siege Veterans","Sieges go twice as fast"],[120,"Hands-On Management","Misdeeds earn 5% of your malice per second"]];
 function perk(i){return S.infamy>=PERKS[i][0];}
 function laughLen(){return perk(0)?30:20;}
-function laughCd(){return perk(3)?90:150;}
+function laughCd(){return (perk(3)?90:150)*(rel(5,1)?0.6:1);}
+
+/* relics: one of two from every realm you conquer */
+const RELICS=[
+ [["The Jam Reserve","Gutter Imps and Bog Goblins make three times as much."],["A Slightly Flat Bell","Your Evil Laugh is worth ×9 instead of ×7."]],
+ [["Sinister Sourdough Starter","All malice +25%. It is alive and it resents you."],["The Millstone","Misdeeds are worth three times as much."]],
+ [["Bottled Tutting","Sieges go 30% faster. Uncork near the enemy."],["The Abbot's Ledger","Tax Collectors and Vampire Accountants make three times as much."]],
+ [["Goth Unicorn Horn","Dastardly misdeeds twice as often, and worth ×20."],["The Greyscale Rainbow","Every piece of décor adds 35% instead of 25%."]],
+ [["King Roland's Crown","All malice +50%. It's a bit small for your horns."],["The Royal Seal","Minions cost 20% less. Signed, the King (under duress)."]],
+ [["Bottled Thunderstorm","Your Evil Laugh recovers 40% sooner."],["The Weather Wizard's Almanac","Visitors turn up twice as often and carry twice as much."]],
+ [["A Piece Of The Moon","All malice doubled. The Moon would like it back."],["Lunar Tide Tables","Witches, Dragons and Things make three times as much."]]
+];
+function rel(i,k){return S.relics[i]===k;}
+function relicMult(){return (rel(1,1)?1.25:1)*(rel(4,1)?1.5:1)*(rel(6,1)?2:1);}
+function pendingRelic(){for(let i=0;i<S.realms&&i<RELICS.length;i++)if(!S.relics[i])return i;return -1;}
+/* the dungeon: booted heroes, put to work */
+const JOBS=[["Turning the mill","+6% all malice"],["Polishing helmets","+25% from misdeeds"],["Beating the siege drums","sieges 10% faster"]];
+function job(j){let n=0;S.cells.forEach(c=>{if(c.j===j)n++;});return n;}
+function cellCap(){return S.lair<3?0:[2,3,4,6][S.lair-3];}
+function ransom(){return Math.max(1000,rawMps()*baseMult()*300);}
+function laughX(){return rel(0,2)?9:7;}
+function sgs(){return (perk(4)?2:1)*(rel(2,1)?1.3:1)*(1+0.1*job(2));}
 
 /* ---------- state ---------- */
-function fresh(){return {malice:0,run:0,total:0,clicks:0,crits:0,laughs:0,topCombo:0,heroes:0,minions:MINIONS.map(()=>0),ups:{},decor:{},ach:{},lair:0,rank:0,infamy:0,realms:0,siege:0,laughEnd:0,laughReady:0,buffEnd:0,wins:0,endSeen:0,tut:0,hintLegacy:0,others:0,played:0,seen:{},last:Date.now()};}
+function fresh(){return {malice:0,run:0,total:0,clicks:0,crits:0,laughs:0,topCombo:0,heroes:0,minions:MINIONS.map(()=>0),ups:{},decor:{},ach:{},lair:0,rank:0,infamy:0,realms:0,siege:0,laughEnd:0,laughReady:0,buffEnd:0,wins:0,endSeen:0,tut:0,hintLegacy:0,others:0,played:0,relics:{},cells:[],me:"",home:"",seen:{},last:Date.now()};}
 let S=fresh();
 let qty=1, minMult=[], clickMult=1, floats=[], parts=[], pulse=0, rankPop=0, lairRise=1, flash=0, boltT=0;
 let combo=0, comboT=0, heroT=null, heroDue=0, blightUntil=0, blightNext=0, cache={}, armed={};
@@ -664,24 +528,29 @@ function clock(s){s=Math.ceil(s);return Math.floor(s/60)+":"+String(s%60).padSta
 function recalc(){
   minMult=MINIONS.map(()=>1);clickMult=1;
   UP.forEach(u=>{if(S.ups[u.id]){if(u.kind==="click")clickMult*=u.mult;else minMult[u.m]*=u.mult;}});
+  if(rel(0,1)){minMult[0]*=3;minMult[1]*=3;}
+  if(rel(2,2)){minMult[2]*=3;minMult[5]*=3;}
+  if(rel(6,2)){minMult[3]*=3;minMult[6]*=3;minMult[7]*=3;}
+  if(rel(1,2))clickMult*=3;
+  clickMult*=1+0.25*job(1);
 }
 function laughing(){return Date.now()<S.laughEnd;}
-function baseMult(){return Math.pow(2,S.lair)*(1+0.25*S.rank)*(1+0.1*S.infamy)*Math.pow(1.25,Object.keys(S.decor).length)*Math.pow(1.5,S.realms)*(1+0.02*Object.keys(S.ach).length)*Math.pow(2,S.wins);}
-function globalMult(){return baseMult()*(laughing()?LAUGH_X:1)*(Date.now()<S.buffEnd?3:1);}
+function baseMult(){return Math.pow(2,S.lair)*(1+0.25*S.rank)*(1+0.1*S.infamy)*Math.pow(rel(3,2)?1.35:1.25,Object.keys(S.decor).length)*Math.pow(1.5,S.realms)*relicMult()*(1+0.06*job(0))*(1+0.02*Object.keys(S.ach).length)*Math.pow(2,S.wins);}
+function globalMult(){return baseMult()*(laughing()?laughX():1)*(Date.now()<S.buffEnd?3:1);}
 function rawMps(){let t=0;for(let i=0;i<MINIONS.length;i++)t+=S.minions[i]*MINIONS[i].out*minMult[i];return t;}
 function mps(){return rawMps()*globalMult();}
-function clickVal(){return ((clickMult*Math.pow(3,S.rank)*(1+0.1*S.infamy)*(laughing()?LAUGH_X:1))+mps()*(perk(5)?0.05:0.02))*(1+combo*0.04);}
+function clickVal(){return ((clickMult*Math.pow(3,S.rank)*(1+0.1*S.infamy)*(laughing()?laughX():1))+mps()*(perk(5)?0.05:0.02))*(1+combo*0.04);}
 function gain(x){S.malice+=x;S.run+=x;S.total+=x;}
 const R=1.15;
-function costN(i,n){return MINIONS[i].cost*Math.pow(R,S.minions[i])*(Math.pow(R,n)-1)/(R-1);}
-function maxN(i){const b=MINIONS[i].cost*Math.pow(R,S.minions[i]);return Math.max(0,Math.floor(Math.log(S.malice*(R-1)/b+1)/Math.log(R)+1e-9));}
+function costN(i,n){return MINIONS[i].cost*(rel(4,2)?0.8:1)*Math.pow(R,S.minions[i])*(Math.pow(R,n)-1)/(R-1);}
+function maxN(i){const b=MINIONS[i].cost*(rel(4,2)?0.8:1)*Math.pow(R,S.minions[i]);return Math.max(0,Math.floor(Math.log(S.malice*(R-1)/b+1)/Math.log(R)+1e-9));}
 function buyCount(i){return qty==="max"?Math.max(1,maxN(i)):qty;}
 function pendingInfamy(){return Math.floor(Math.cbrt(S.run/1e12)+1e-9);}
 
 function say(txt,hold){$("blight").textContent=txt;blightUntil=Date.now()+(hold||9000);blightNext=blightUntil+6000;}
 function chatter(){
   const pool=BLIGHT.filter(b=>b[0]===S.lair||(b[0]===0&&Math.random()<.4));
-  $("blight").textContent=tr(pool[Math.floor(Math.random()*pool.length)][1]);
+  $("blight").textContent=(pool[Math.floor(Math.random()*pool.length)][1]);
   blightNext=Date.now()+14000;
 }
 function toast(head,txt){
@@ -702,7 +571,7 @@ function youTop(){return gy(PX)+4-64*(1.25+S.rank*0.15);}
 let AC=null,mGain=null,sGain=null,noiseBuf=null,musT=0,musStep=0;
 function setVol(){
   if(AC){mGain.gain.value=prefs.snd?prefs.mv/100:0;sGain.gain.value=prefs.snd?prefs.sv/100:0;}
-  const a=$("tgSnd");a.setAttribute("aria-pressed",!!prefs.snd);a.textContent=L("Sound: ","Lyd: ")+(prefs.snd?L("on","til"):L("off","fra"));
+  const a=$("tgSnd");a.setAttribute("aria-pressed",!!prefs.snd);a.textContent="Sound: "+(prefs.snd?"on":"off");
 }
 function audioOn(){
   if(AC){if(AC.state==="suspended"&&!document.hidden)AC.resume();return;}
@@ -773,14 +642,14 @@ function music(){
 /* ---------- actions ---------- */
 function misdeed(){
   combo=Math.min(50,combo+1);comboT=Date.now();if(combo>S.topCombo)S.topCombo=combo;
-  let v=clickVal();const crit=Math.random()<(perk(1)?0.12:0.06);snd(crit?"crit":"click",combo);
-  if(crit){v*=10;S.crits++;}
+  let v=clickVal();const crit=Math.random()<(perk(1)?0.12:0.06)*(rel(3,1)?2:1);snd(crit?"crit":"click",combo);
+  if(crit){v*=rel(3,1)?20:10;S.crits++;}
   gain(v);S.clicks++;pulse=1;
   if(S.siege>0)S.siege=Math.max(0.01,S.siege-0.25);
-  floats.push({x:PX+(Math.random()*60-30),y:youTop()-6,txt:(crit?L("Dastardly! +","Skændigt! +"):"+")+fmt(v),life:1,big:crit});
+  floats.push({x:PX+(Math.random()*60-30),y:youTop()-6,txt:(crit?"Dastardly! +":"+")+fmt(v),life:1,big:crit});
   if(crit)burst(PX,youTop()+20,14,["#f2a53b","#ffd27a"],70,30);
   if(floats.length>24)floats.shift();
-  if(S.clicks%4===1)$("last").textContent=tr(DEEDS[Math.floor(Math.random()*DEEDS.length)]);
+  if(S.clicks%4===1)$("last").textContent=(DEEDS[Math.floor(Math.random()*DEEDS.length)]);
   paint();
 }
 function laugh(){
@@ -789,7 +658,7 @@ function laugh(){
   S.laughEnd=now+laughLen()*1000;S.laughReady=now+laughCd()*1000;S.laughs++;snd("laugh");
   flash=1;boltT=performance.now();shake();
   floats.push({x:PX+25,y:youTop()-14,txt:"MWA HA HA HA!",life:1.6,big:true});
-  say(L("Splendid laugh, sir. A window cracked in the next county.","Fremragende latter, herre. En rude revnede i nabokommunen."));paint();
+  say("Splendid laugh, sir. A window cracked in the next county.");paint();
 }
 function hire(i){
   if(MINIONS[i].tier>S.lair)return;
@@ -797,75 +666,75 @@ function hire(i){
   if(S.malice<c)return;
   S.malice-=c;S.minions[i]+=n;snd("hire");
   const o=rows[i].own;o.classList.remove("bump");void o.offsetWidth;o.classList.add("bump");
-  burst(-200+Math.random()*760,304,6,["#a9c45a","#efe6d2"],40,30);
+  burst(200+Math.random()*Math.max(260,frontPos()-150),304,6,["#a9c45a","#efe6d2"],40,30);
   paint();
 }
 function buyUp(id){
   const u=UP.find(x=>x.id===id);
   if(!u||S.ups[id]||S.malice<u.cost)return;
-  S.malice-=u.cost;S.ups[id]=1;recalc();snd("buy");toast(L("Scheme hatched","Rænke udklækket"),tr(u.name));paint();
+  S.malice-=u.cost;S.ups[id]=1;recalc();snd("buy");toast("Scheme hatched",u.name);paint();
 }
 function buyDecor(id){
   const d=DECOR.find(x=>x.id===id);
   if(!d||S.decor[id]||d.tier>S.lair||S.malice<d.cost)return;
-  S.malice-=d.cost;S.decor[id]=1;flash=.5;snd("buy");
+  S.malice-=d.cost;S.decor[id]=1;flash=.5;snd("buy");focusCam(CX,3500);
   burst(440,250,30,["#f2a53b","#a9c45a","#efe6d2"],110,40);
-  toast(L("Installed","Sat op"),tr(d.name));say(L("Installed, sir: "+d.name+". The property value has plummeted.","Sat op, herre: "+tr(d.name)+". Ejendomsværdien er styrtdykket."));paint();
+  toast("Installed",d.name);say(("Installed, sir: "+d.name+". The property value has plummeted."));paint();
 }
 function rankUp(){
   const n=RANKS[S.rank+1];if(!n||S.malice<n.cost)return;
   S.malice-=n.cost;S.rank++;rankPop=1;flash=.6;snd("rank");
   burst(PX,gy(PX)-40,50,["#f2a53b","#c0394b","#ffd27a"],140,50);
-  toast(L("You have become","Du er blevet"),tr(n.name));
-  say(S.rank===1?L("A Smug Imp, sir. You may now laugh evilly. Do warm up first.","En Selvglad Smådjævel, herre. De må nu grine ondt. Varm venligst op først."):L("You're a "+n.name+" now, sir. I've let out your trousers.","De er "+tr(n.name)+" nu, herre. Jeg har lagt Deres bukser ud."));paint();
+  toast("You have become",n.name);
+  say(S.rank===1?"A Smug Imp, sir. You may now laugh evilly. Do warm up first.":("You're a "+n.name+" now, sir. I've let out your trousers."));paint();
 }
 function lairUp(){
   const n=LAIRS[S.lair+1];if(!n||S.malice<n.cost)return;
-  S.malice-=n.cost;S.lair++;lairRise=0;flash=.8;shake();snd("build");
+  S.malice-=n.cost;S.lair++;lairRise=0;flash=.8;shake();snd("build");focusCam(CX,4500);
   for(let x=300;x<580;x+=10)burst(x,gy(x),4,["#463a57","#a99fb5","#221a2c"],60,50);
-  toast(L("Built","Bygget"),tr(n.name));
-  say(S.lair===6?L("It's finished, sir. The Castle of Unreasonable Size. You can see it from the moon. The moon has complained.","Det er færdigt, herre. Slot af Urimelig Størrelse. Det kan ses fra Månen. Månen har klaget."):L("The "+n.name+" is ready, sir. Mind the wet mortar. And the wet minions.",tr(n.name)+" står klar, herre. Pas på den våde mørtel. Og de våde håndlangere."),12000);
+  toast("Built",n.name);
+  say(S.lair===6?"It's finished, sir. The Castle of Unreasonable Size. You can see it from the moon. The moon has complained.":("The "+n.name+" is ready, sir. Mind the wet mortar. And the wet minions."),12000);
   paint();
 }
 function siege(){
   const r=REALMS[S.realms];
   if(!r||S.siege>0||r.tier>S.lair||S.malice<r.cost)return;
   S.malice-=r.cost;S.siege=r.time;snd("siege");
-  say(L("The minions have marched on "+r.name+", sir. I packed them sandwiches. Misdeeds will hurry things along.","Håndlangerne er marcheret mod "+tr(r.name)+", herre. Jeg har smurt madpakker til dem. Ugerninger skynder på tingene."),12000);paint();
+  say(("The minions have marched on "+r.name+", sir. I packed them sandwiches. Misdeeds will hurry things along."),12000);paint();
 }
 function conquered(quiet){
-  const r=REALMS[S.realms],p=RPOS[S.realms];S.siege=0;S.realms++;
+  const r=REALMS[S.realms],p=rpos(S.realms);S.siege=0;S.realms++;
   if(quiet)return;
-  snd("conquer");flash=1;shake();burst(p[0],p[1],60,["#c0394b","#f2a53b","#a9c45a"],130,40);
-  toast(L("Conquered","Erobret"),tr(r.name));say(L(r.name+" is yours, sir. ",tr(r.name)+" er Deres, herre. ")+tr(r.done),14000);
+  snd("conquer");flash=1;shake();focusCam(p[0],3500);burst(p[0],p[1],60,["#c0394b","#f2a53b","#a9c45a"],130,40);
+  toast("Conquered",r.name);say((r.name+" is yours, sir. ")+r.done,14000);
 }
 function twoStep(btn,key,label,fn){
   if(armed[key]){armed[key]=0;fn();return;}
   armed[key]=1;btn.dataset.armed="1";btn.textContent=label;
-  setTimeout(()=>{armed[key]=0;delete btn.dataset.armed;if(key==="r")btn.textContent=L("Erase everything, Infamy included","Slet alt, også Berygtethed");paint();},4000);
+  setTimeout(()=>{armed[key]=0;delete btn.dataset.armed;if(key==="r")btn.textContent="Erase everything, Infamy included";paint();},4000);
 }
 function doPrestige(){
   const p=pendingInfamy();if(p<1)return;
   const crown=complete()?1:0;
-  const keep={infamy:S.infamy+p,wins:S.wins+crown,total:S.total,clicks:S.clicks,crits:S.crits,laughs:S.laughs,topCombo:S.topCombo,heroes:S.heroes,others:S.others,played:S.played,ach:S.ach,seen:S.seen,tut:1,hintLegacy:1};
+  const keep={infamy:S.infamy+p,wins:S.wins+crown,total:S.total,clicks:S.clicks,crits:S.crits,laughs:S.laughs,topCombo:S.topCombo,heroes:S.heroes,others:S.others,played:S.played,ach:S.ach,seen:S.seen,me:S.me,home:S.home,tut:1,hintLegacy:1};
   S=Object.assign(fresh(),keep);recalc();cache={};combo=0;delete $("prestigeBtn").dataset.armed;flash=1;
   if(vis)endVisitor();
-  say(L("A magnificent death scene, sir. The bards wept. Back in the hole we go, with "+fmt(S.infamy)+" Infamy.","En storslået dødsscene, herre. Skjaldene græd. Tilbage i hullet med os, med "+fmt(S.infamy)+" Berygtethed."),12000);
-  if(crown)toast(L("Crown earned","Krone optjent"),L("×2 all malice, for good","×2 al ondskab, for altid"));
+  say(("A magnificent death scene, sir. The bards wept. Back in the hole we go, with "+fmt(S.infamy)+" Infamy."),12000);
+  if(crown)toast("Crown earned","×2 all malice, for good");
   save();paint();
 }
 function prestige(){
   if(pendingInfamy()<1)return;
-  twoStep($("prestigeBtn"),"p",L("Truly? Back to the hole? Click again to confirm.","Virkelig? Tilbage til hullet? Klik igen for at bekræfte."),doPrestige);
+  twoStep($("prestigeBtn"),"p","Truly? Back to the hole? Click again to confirm.",doPrestige);
 }
 function reset(){
-  twoStep($("resetBtn"),"r",L("This erases everything. Click again to confirm.","Dette sletter alt. Klik igen for at bekræfte."),()=>{
+  twoStep($("resetBtn"),"r","This erases everything. Click again to confirm.",()=>{
     S=fresh();recalc();cache={};combo=0;if(vis)endVisitor();delete $("resetBtn").dataset.armed;blightUntil=0;applyLang();closeModals();
-    say(L("All gone, sir. I shall pretend we've never met.","Alt er væk, herre. Jeg lader, som om vi aldrig har mødt hinanden."));save();paint();
+    say("All gone, sir. I shall pretend we've never met.");save();paint();
   });
 }
 function checkAch(){
-  ACH.forEach(a=>{if(!S.ach[a[0]]&&a[3](S)){S.ach[a[0]]=1;snd("ach");toast(L("Misdeed of note","Bemærkelsesværdig ugerning"),tr(a[1])+L(" (+2% malice)"," (+2% ondskab)"));cache.ach="";}});
+  ACH.forEach(a=>{if(!S.ach[a[0]]&&a[3](S)){S.ach[a[0]]=1;snd("ach");toast("Misdeed of note",a[1]+" (+2% malice)");cache.ach="";}});
 }
 
 /* ---------- visitors: heroes and other passers-by ---------- */
@@ -874,10 +743,10 @@ const SVG_TOURIST='<svg width="34" height="44" viewBox="0 0 34 44" aria-hidden="
 const SVG_WAGON='<svg width="52" height="40" viewBox="0 0 52 40" aria-hidden="true"><rect x="4" y="10" width="38" height="18" rx="2" fill="#7a5a2a"/><rect x="4" y="10" width="38" height="5" fill="#f2c53b"/><path d="M17 17l3 4 3-6 3 6 3-4v7H17z" fill="#f2c53b"/><rect x="42" y="18" width="8" height="3" fill="#5a4028"/><circle cx="13" cy="31" r="7" fill="#2a1d14"/><circle cx="13" cy="31" r="2.5" fill="#8a6a3a"/><circle cx="33" cy="31" r="7" fill="#2a1d14"/><circle cx="33" cy="31" r="2.5" fill="#8a6a3a"/><rect x="22" y="1" width="1.5" height="9" fill="#efe6d2"/><path d="M23.5 1l9 3-9 3z" fill="#6fa8dc"/></svg>';
 const SVG_CAT='<svg width="40" height="34" viewBox="0 0 40 34" aria-hidden="true"><path d="M5 30c-3-10 2-17 10-17h10c5 0 8 4 8 9v8h-4v-6h-3v6h-4v-6h-6v6h-4v-5z" fill="#0b0810"/><path d="M27 15l-2-9 6 4 5-5 1 10c0 5-3 7-6 7s-5-3-4-7z" fill="#0b0810"/><circle cx="30" cy="14" r="1.5" fill="#a9c45a"/><circle cx="35" cy="14" r="1.5" fill="#a9c45a"/><path d="M6 24c-6-2-5-12 0-14" stroke="#0b0810" stroke-width="3" fill="none" stroke-linecap="round"/></svg>';
 const VIS=[
- {k:"hero",w:5,dur:14,tier:1,en:"Hero!",da:"Helt!",svg:SVG_HERO},
- {k:"tourist",w:3,dur:16,tier:1,en:"Lost tourist",da:"Faret vild",svg:SVG_TOURIST},
- {k:"wagon",w:2,dur:8,tier:2,en:"Tax wagon",da:"Skattevogn",svg:SVG_WAGON},
- {k:"cat",w:2,dur:11,tier:2,en:"Black cat",da:"Sort kat",svg:SVG_CAT}
+ {k:"hero",w:5,dur:14,tier:1,en:"Hero!",svg:SVG_HERO},
+ {k:"tourist",w:3,dur:16,tier:1,en:"Lost tourist",svg:SVG_TOURIST},
+ {k:"wagon",w:2,dur:8,tier:2,en:"Tax wagon",svg:SVG_WAGON},
+ {k:"cat",w:2,dur:11,tier:2,en:"Black cat",svg:SVG_CAT}
 ];
 let vis=null,visDue=0;
 function spawnVisitor(){
@@ -886,16 +755,16 @@ function spawnVisitor(){
   for(const p of pool){if(n<p.w){v=p;break;}n-=p.w;}
   const name=HEROES[Math.floor(Math.random()*HEROES.length)];
   const b=document.createElement("button");
-  b.className="visitor";b.type="button";b.setAttribute("aria-label",L(v.en,v.da));
-  b.innerHTML="<span>"+L(v.en,v.da)+"</span>"+v.svg;
+  b.className="visitor";b.type="button";b.setAttribute("aria-label",v.en);
+  b.innerHTML="<span>"+v.en+"</span>"+v.svg;
   b.addEventListener("click",()=>meetVisitor());
   $("stage").appendChild(b);snd("hero");
-  vis={el:b,v:v,x:WX0-20,speed:(WX1-WX0+40)/v.dur,name:name};
+  vis={el:b,v:v,x:camX-30,speed:(viewW+60)/v.dur,name:name};
   placeVisitor();
-  if(v.k==="hero")say(L("A hero approaches, sir: "+name+". Do boot them off the lawn.","En helt nærmer sig, herre: "+name+". Spark dem venligst af plænen."),14000);
-  else if(v.k==="tourist")say(L("A lost tourist, sir. They're asking the way to Glimmerdell. Do be unhelpful.","En turist, der er faret vild, herre. De spørger om vej til Glimmerdalen. Vær endelig uhjælpsom."),14000);
-  else if(v.k==="wagon")say(L("The royal tax wagon is passing, sir. It would be rude not to rob it.","Den kongelige skattevogn kører forbi, herre. Det ville være uhøfligt ikke at røve den."),9000);
-  else say(L("A black cat, sir. Do give it a scratch; it's bad luck for everyone else.","En sort kat, herre. Klø den endelig; det giver alle andre uheld."),11000);
+  if(v.k==="hero")say(("A hero approaches, sir: "+name+". Do boot them off the lawn."),14000);
+  else if(v.k==="tourist")say("A lost tourist, sir. They're asking the way to Glimmerdell. Do be unhelpful.",14000);
+  else if(v.k==="wagon")say("The royal tax wagon is passing, sir. It would be rude not to rob it.",9000);
+  else say("A black cat, sir. Do give it a scratch; it's bad luck for everyone else.",11000);
 }
 function placeVisitor(){
   if(!vis)return;
@@ -905,39 +774,41 @@ function meetVisitor(){
   if(!vis)return;const k=vis.v.k,name=vis.name;
   burst(vis.x,gy(vis.x)-14,40,["#efe6d2","#f2a53b","#d9dde6"],160,60);
   if(k==="cat"){
-    S.buffEnd=Date.now()+30000;S.others++;snd("buy");toast(L("Black cat luck","Sort kat-held"),L("×3 malice for 30 seconds","×3 ondskab i 30 sekunder"));
-    say(L("The cat crossed everyone's path but yours, sir. Triple malice while their luck stays bad.","Katten krydsede alles vej undtagen Deres, herre. Tredobbelt ondskab, så længe de andre har uheld."));
+    S.buffEnd=Date.now()+30000;S.others++;snd("buy");toast("Black cat luck","×3 malice for 30 seconds");
+    say("The cat crossed everyone's path but yours, sir. Triple malice while their luck stays bad.");
   }else{
     const sec=k==="wagon"?90:k==="tourist"?25:45;
-    let loot=Math.max(rawMps()*baseMult()*sec,clickVal()*sec*.45);
+    let loot=Math.max(rawMps()*baseMult()*sec,clickVal()*sec*.45)*(rel(5,2)?2:1);
     if(k==="hero"){loot*=(perk(2)?3:1);S.heroes++;}else S.others++;
-    gain(loot);snd("boot");toast(k==="hero"?L("Booted","Sparket ud"):k==="wagon"?L("Robbed","Røvet"):L("Misdirected","Vildledt"),"+"+fmt(loot)+" "+L("malice","ondskab"));
-    if(k==="hero")say(L("You booted "+name+" into the moat. They dropped "+fmt(loot)+" malice and a helmet. I've put the helmet with the others.","De sparkede "+name+" i voldgraven. De tabte "+fmt(loot)+" ondskab og en hjelm. Jeg har lagt hjelmen til de andre."));
-    else if(k==="wagon")say(L("Technically, sir, you taxed the tax wagon. "+fmt(loot)+" malice. The irony is delicious.","Teknisk set, herre, beskattede De skattevognen. "+fmt(loot)+" ondskab. Ironien er udsøgt."));
-    else say(L("You sold the tourist a map to somewhere dreadful for "+fmt(loot)+" malice. They thanked you. Wonderful.","De solgte turisten et kort til et rædsomt sted for "+fmt(loot)+" ondskab. De sagde tak. Vidunderligt."));
+    gain(loot);snd("boot");toast(k==="hero"?"Booted":k==="wagon"?"Robbed":"Misdirected","+"+fmt(loot)+" "+"malice");
+    if(k==="hero"&&S.cells.length<cellCap()){S.cells.push({n:name,j:0});recalc();
+      say("You booted "+name+" straight into cell "+S.cells.length+", sir, and kept "+fmt(loot)+" malice in loose change. They can start work at once.");}
+    else if(k==="hero")say(("You booted "+name+" into the moat. They dropped "+fmt(loot)+" malice and a helmet. I've put the helmet with the others."));
+    else if(k==="wagon")say(("Technically, sir, you taxed the tax wagon. "+fmt(loot)+" malice. The irony is delicious."));
+    else say(("You sold the tourist a map to somewhere dreadful for "+fmt(loot)+" malice. They thanked you. Wonderful."));
   }
   endVisitor();paint();
 }
 function endVisitor(escaped){
   if(!vis)return;
   if(escaped){snd("away");
-    if(vis.v.k==="hero")say(L(vis.name+" got away, sir. They're writing a rude ballad about you as we speak.",vis.name+" slap væk, herre. De skriver en uforskammet ballade om Dem i dette øjeblik."));}
-  vis.el.remove();vis=null;visDue=Date.now()+55000+Math.random()*70000;
+    if(vis.v.k==="hero")say((vis.name+" got away, sir. They're writing a rude ballad about you as we speak."));}
+  vis.el.remove();vis=null;visDue=Date.now()+(55000+Math.random()*70000)*(rel(5,2)?0.5:1);
 }
 
 /* ---------- UI ---------- */
-const rows=[],TABS=["schemes","decor","conquest","legacy"],TABNAME={schemes:"Schemes",decor:"Décor",conquest:"Conquest",legacy:"Legacy"};
+const rows=[],TABS=["schemes","decor","conquest","dungeon","legacy"],TABNAME={schemes:"Schemes",decor:"Décor",conquest:"Conquest",dungeon:"Dungeon",legacy:"Legacy"};
 let curTab="schemes",glowEl=null,booted=false;
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
-function dur(s){s=Math.ceil(s);if(s<60)return s+"s";if(s<3600)return Math.floor(s/60)+"m "+(s%60)+"s";return Math.floor(s/3600)+L("h ","t ")+Math.floor(s%3600/60)+"m";}
-function eta(cost){const need=cost-S.malice;if(need<=0)return "";const r=mps();if(r<=0)return "";const s=need/r;return s>259200?"":" · "+L("in ","om ")+dur(s);}
+function dur(s){s=Math.ceil(s);if(s<60)return s+"s";if(s<3600)return Math.floor(s/60)+"m "+(s%60)+"s";return Math.floor(s/3600)+"h "+Math.floor(s%3600/60)+"m";}
+function eta(cost){const need=cost-S.malice;if(need<=0)return "";const r=mps();if(r<=0)return "";const s=need/r;return s>259200?"":" · "+"in "+dur(s);}
 function selectTab(t){curTab=t;TABS.forEach(o=>{$("tab-"+o).setAttribute("aria-selected",o===t);$("panel-"+o).hidden=o!==t;});}
 function complete(){return S.realms>=REALMS.length&&S.lair>=LAIRS.length-1&&S.rank>=RANKS.length-1;}
 function unlockTabs(){
-  const want={schemes:Object.keys(S.ups).length>0||UP.some(upAvail),decor:S.total>=40||Object.keys(S.decor).length>0,conquest:S.lair>=1||S.realms>0,legacy:S.run>=1e10||S.infamy>0||S.wins>0||Object.keys(S.ach).length>=4};
+  const want={schemes:Object.keys(S.ups).length>0||UP.some(upAvail),decor:S.total>=40||Object.keys(S.decor).length>0,conquest:S.lair>=1||S.realms>0,dungeon:S.lair>=3,legacy:S.run>=1e10||S.infamy>0||S.wins>0||Object.keys(S.ach).length>=4};
   let any=false;
   TABS.forEach(t=>{
-    if(want[t]&&!S.seen[t]){S.seen[t]=1;if(booted){toast(L("New","Nyt"),tr(TABNAME[t]));snd("ach");}}
+    if(want[t]&&!S.seen[t]){S.seen[t]=1;if(booted){toast("New",TABNAME[t]);snd("ach");}}
     $("tab-"+t).hidden=!S.seen[t];any=any||!!S.seen[t];});
   $("tabLedger").hidden=!any;
   if(any&&!S.seen[curTab])selectTab(TABS.find(t=>S.seen[t]));
@@ -956,20 +827,36 @@ function tips(){
   const box=$("tip");
   if(!S.tut){const i=TIPS.findIndex(t=>!t[0](S));
     if(i<0)S.tut=1;
-    else{box.hidden=false;setTxt($("tipTxt"),tr(TIPS[i][2]));setTxt($("tipN"),(i+1)+" / "+TIPS.length);glowOn(TIPS[i][1]==="m0"?rows[0].b:$(TIPS[i][1]));return;}}
+    else{box.hidden=false;setTxt($("tipTxt"),TIPS[i][2]);setTxt($("tipN"),(i+1)+" / "+TIPS.length);glowOn(TIPS[i][1]==="m0"?rows[0].b:$(TIPS[i][1]));return;}}
   box.hidden=true;glowOn(null);
 }
 function applyLang(){
-  document.documentElement.lang=prefs.lang;
-  document.querySelectorAll("[data-t]").forEach(el=>{if(!el.dataset.en)el.dataset.en=el.textContent.trim();el.textContent=tr(el.dataset.en);});
-  $("panHint").textContent=L("Drag to look around","Træk for at se dig omkring");
-  $("resetBtn").textContent=L("Erase everything, Infamy included","Slet alt, også Berygtethed");
-  $("scene").setAttribute("aria-label",L("Your lair at night, and the realm around it. Click to commit a misdeed.","Din hule om natten og riget omkring den. Klik for at begå en ugerning."));
-  $("lang").value=prefs.lang;cache={};setVol();
-  if(!$("blight").textContent||!blightUntil)$("blight").textContent=tr(BLIGHT[0][1]);
+  $("resetBtn").textContent="Erase everything, Infamy included";cache={};setVol();
+  if(!$("blight").textContent||!blightUntil)$("blight").textContent=BLIGHT[0][1];
 }
 function openModal(id){$(id).hidden=false;const f=$(id).querySelector("button,select,input");if(f)f.focus();}
-function closeModals(){document.querySelectorAll(".modal").forEach(m=>{m.hidden=true;});}
+function closeModals(){document.querySelectorAll(".modal").forEach(m=>{if(m.id!=="mRelic")m.hidden=true;});}
+function showRelic(i){
+  $("relicH").textContent="The spoils of "+REALMS[i].name;
+  $("relicPick").innerHTML=RELICS[i].map((x,k)=>'<button type="button" class="btn relic" data-k="'+(k+1)+'"><b>'+esc(x[0])+'</b>'+esc(x[1])+'</button>').join("");
+  $("relicPick").dataset.i=i;openModal("mRelic");
+}
+function pickRelic(k){
+  const i=+$("relicPick").dataset.i;if(S.relics[i]||!(k===1||k===2))return;
+  S.relics[i]=k;recalc();cache={};$("mRelic").hidden=true;snd("buy");
+  toast("Relic claimed",RELICS[i][k-1][0]);say("A fine choice, sir. I've put it on the mantelpiece, next to the other things that aren't ours.");save();paint();
+}
+function openNames(){$("inMe").value=S.me;$("inHome").value=S.home;openModal("mName");}
+function saveNames(){
+  S.me=$("inMe").value.replace(/\s+/g," ").trim().slice(0,24);S.home=$("inHome").value.replace(/\s+/g," ").trim().slice(0,24);
+  closeModals();if(S.me||S.home)say((S.me?S.me+". ":"")+"It has a ring to it, sir. I've ordered new stationery.");save();paint();
+}
+function cellAct(i,act){
+  const c=S.cells[i];if(!c)return;
+  if(act==="job"){c.j=(c.j+1)%JOBS.length;snd("hire");}
+  else{const v=ransom();gain(v);S.cells.splice(i,1);snd("boot");toast("Ransomed","+"+fmt(v)+" malice");say(c.n+" has been ransomed back, sir. They left a one-star review of the dungeon.");}
+  recalc();paint();
+}
 function modalOpen(){return !!document.querySelector(".modal:not([hidden])");}
 function exportSave(){S.last=Date.now();return btoa(unescape(encodeURIComponent(JSON.stringify(S))));}
 function importSave(txt){
@@ -980,17 +867,18 @@ function importSave(txt){
 function buyAll(){
   let n=0;
   UP.filter(upAvail).sort((a,b)=>a.cost-b.cost).forEach(u=>{if(S.malice>=u.cost){S.malice-=u.cost;S.ups[u.id]=1;n++;}});
-  if(!n)return;recalc();snd("buy");toast(L("Schemes hatched","Rænker udklækket"),String(n));paint();
+  if(!n)return;recalc();snd("buy");toast("Schemes hatched",String(n));paint();
 }
 function showAway(secs,earned,won){
-  $("awayTxt").textContent=L("You were gone for "+dur(secs)+". The minions made "+fmt(earned)+" malice unsupervised, which Mrs. Blight finds suspicious.","Du var væk i "+dur(secs)+". Håndlangerne lavede "+fmt(earned)+" ondskab uden opsyn, hvilket Fru Blight finder mistænkeligt.")
-    +(won.length?" "+L("They also finished conquering: ","De blev også færdige med at erobre: ")+won.map(tr).join(", ")+".":"");
+  $("awayTxt").textContent=("You were gone for "+dur(secs)+". The minions made "+fmt(earned)+" malice unsupervised, which Mrs. Blight finds suspicious.")
+    +(won.length?" "+"They also finished conquering: "+won.map(tr).join(", ")+".":"");
   openModal("mAway");
 }
 function showEnd(){
-  $("endStats").innerHTML=[[L("Time played","Spilletid"),dur(S.played)],[L("Malice ever hoarded","Ondskab i alt"),fmt(S.total)],[L("Misdeeds personally committed","Egenhændige ugerninger"),fmt(S.clicks)],[L("Minions employed","Håndlangere ansat"),fmt(sum(S.minions))],[L("Heroes booted","Helte sparket ud"),fmt(S.heroes)]].map(r=>"<dt>"+esc(r[0])+"</dt><dd>"+esc(r[1])+"</dd>").join("");
-  $("endPitch").textContent=L("Or fake your own demise and do it all again. You would return with +"+fmt(pendingInfamy())+" Infamy and a Crown, which doubles all malice for good and hangs in the sky for everyone to see.","Eller iscenesæt din egen død og gør det hele igen. Du vender tilbage med +"+fmt(pendingInfamy())+" Berygtethed og en Krone, som fordobler al ondskab for altid og hænger på himlen, så alle kan se den.");
-  $("endAgain").textContent=L("Fake my demise and start again","Iscenesæt min død og start forfra");
+  $("endStats").innerHTML=[["Time played",dur(S.played)],["Malice ever hoarded",fmt(S.total)],["Misdeeds personally committed",fmt(S.clicks)],["Minions employed",fmt(sum(S.minions))],["Heroes booted",fmt(S.heroes)]].map(r=>"<dt>"+esc(r[0])+"</dt><dd>"+esc(r[1])+"</dd>").join("");
+  $("endPitch").textContent=("Or fake your own demise and do it all again. You would return with +"+fmt(pendingInfamy())+" Infamy and a Crown, which doubles all malice for good and hangs in the sky for everyone to see.");
+  $("endAgain").textContent="Fake my demise and start again";
+  $("endH").textContent=(S.me?S.me+" rules":"You rule")+" practically everything";
   snd("conquer");openModal("mEnd");
 }
 function build(){
@@ -1014,15 +902,19 @@ function build(){
   $("volS").addEventListener("change",()=>snd("crit"));
   $("volM").addEventListener("input",e=>{prefs.mv=+e.target.value;setVol();savePrefs();});
   $("calm").addEventListener("change",e=>{prefs.calm=e.target.checked;savePrefs();});
-  $("lang").addEventListener("change",e=>{prefs.lang=e.target.value;savePrefs();applyLang();paint();});
+  $("meBtn").addEventListener("click",openNames);$("homeBtn").addEventListener("click",openNames);
+  $("nameSave").addEventListener("click",saveNames);
+  $("inMe").addEventListener("keydown",e=>{if(e.key==="Enter")saveNames();});$("inHome").addEventListener("keydown",e=>{if(e.key==="Enter")saveNames();});
+  $("relicPick").addEventListener("click",e=>{const b=e.target.closest("button[data-k]");if(b)pickRelic(+b.dataset.k);});
+  $("cellList").addEventListener("click",e=>{const b=e.target.closest("button[data-cell]");if(b)cellAct(+b.dataset.cell,b.dataset.act);});
   $("saveCopy").addEventListener("click",()=>{
     const ta=$("saveTxt");ta.value=exportSave();ta.focus();ta.select();
-    const ok=()=>{$("saveMsg").textContent=L("Copied. Keep it somewhere safe.","Kopieret. Gem den et sikkert sted.");},no=()=>{$("saveMsg").textContent=L("The code is selected. Press Ctrl+C to copy it.","Koden er markeret. Tryk Ctrl+C for at kopiere den.");};
+    const ok=()=>{$("saveMsg").textContent="Copied. Keep it somewhere safe.";},no=()=>{$("saveMsg").textContent="The code is selected. Press Ctrl+C to copy it.";};
     try{navigator.clipboard.writeText(ta.value).then(ok,no);}catch(e){no();}
   });
   $("saveLoad").addEventListener("click",()=>{
     const ok=importSave($("saveTxt").value);
-    $("saveMsg").textContent=ok?L("Loaded. Welcome back, sir.","Indlæst. Velkommen tilbage, herre."):L("That code could not be read. Paste the whole code and try again.","Koden kunne ikke læses. Indsæt hele koden og prøv igen.");
+    $("saveMsg").textContent=ok?"Loaded. Welcome back, sir.":"That code could not be read. Paste the whole code and try again.";
     if(ok)applyLang();
   });
   document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",closeModals));
@@ -1055,50 +947,51 @@ function build(){
 }
 function setTxt(el,t){if(el.textContent!==t)el.textContent=t;}
 function upAvail(u){return !S.ups[u.id]&&(u.kind==="click"?S.total>=u.cost/2:S.minions[u.m]>=u.need);}
-function upDesc(u){return u.kind==="click"?tr(u.desc):tr(u.base)+" "+tr(MINIONS[u.m].name)+": "+(u.mult===3?L("output tripled.","tredobbelt udbytte."):L("output doubled.","dobbelt udbytte."));}
+function upDesc(u){return u.kind==="click"?u.desc:u.base+" "+MINIONS[u.m].name+": "+(u.mult===3?"output tripled.":"output doubled.");}
 function shop(elId,items,descOf){
   const el=$(elId),key=items.map(u=>u.id).join();
   if(cache[elId]!==key){cache[elId]=key;
-    el.innerHTML=items.map(u=>'<button type="button" class="row" data-id="'+u.id+'"><span class="nm">'+esc(tr(u.name))+'</span><span class="ds">'+esc(descOf(u))+'</span><span class="meta"><span class="cost">'+fmt(u.cost)+' '+L("malice","ondskab")+'</span><span class="eta"></span></span></button>').join("");}
+    el.innerHTML=items.map(u=>'<button type="button" class="row" data-id="'+u.id+'"><span class="nm">'+esc(u.name)+'</span><span class="ds">'+esc(descOf(u))+'</span><span class="meta"><span class="cost">'+fmt(u.cost)+' '+"malice"+'</span><span class="eta"></span></span></button>').join("");}
   let can=false;
   el.querySelectorAll("button").forEach((b,i)=>{const ok=S.malice>=items[i].cost;b.disabled=!ok;if(ok)can=true;setTxt(b.querySelector(".eta"),eta(items[i].cost).replace(/^ · /,""));});
   return can;
 }
 function pips(id,n){const k=$(id).children;for(let i=0;i<k.length;i++)k[i].classList.toggle("on",i<n);}
 function paint(){
-  const rate=mps(),lol=laughing(),now=Date.now(),buff=now<S.buffEnd,mal=L("malice","ondskab");
+  const rate=mps(),lol=laughing(),now=Date.now(),buff=now<S.buffEnd,mal="malice";
   setTxt($("malice"),fmt(S.malice));setTxt($("mps"),fmt(rate));
   $("rateBox").classList.toggle("hot",lol||buff);$("stage").classList.toggle("laughing",lol);
-  setTxt($("buff"),buff?L("Black cat luck: ×3 for ","Sort kat-held: ×3 i ")+Math.ceil((S.buffEnd-now)/1000)+"s":"");
-  setTxt($("deedVal"),"+"+fmt(clickVal())+" "+mal+(combo>4?" · "+L("menace","trussel")+" ×"+(1+combo*0.04).toFixed(1):""));
+  setTxt($("buff"),buff?"Black cat luck: ×3 for "+Math.ceil((S.buffEnd-now)/1000)+"s":"");
+  setTxt($("deedVal"),"+"+fmt(clickVal())+" "+mal+(combo>4?" · "+"menace"+" ×"+(1+combo*0.04).toFixed(1):""));
   const lb2=$("laugh");
   lb2.classList.toggle("on",lol);
-  if(S.rank<1){lb2.disabled=true;setTxt($("laughVal"),L("Imps can only giggle","Smådjævle kan kun fnise"));}
-  else if(lol){lb2.disabled=true;setTxt($("laughVal"),"×"+LAUGH_X+L(" everything! "," på alt! ")+Math.ceil((S.laughEnd-now)/1000)+"s");}
-  else if(now<S.laughReady){lb2.disabled=true;setTxt($("laughVal"),L("Catching breath ","Får vejret ")+clock((S.laughReady-now)/1000));}
-  else{lb2.disabled=false;setTxt($("laughVal"),"×"+LAUGH_X+L(" everything for "," på alt i ")+laughLen()+"s");}
-  setTxt($("plateYou"),tr(RANKS[S.rank].name));setTxt($("plateLair"),tr(LAIRS[S.lair].name));
-  setTxt($("rankName"),tr(RANKS[S.rank].name));setTxt($("rankQuip"),tr(RANKS[S.rank].quip));
-  setTxt($("lairName"),tr(LAIRS[S.lair].name));setTxt($("lairQuip"),tr(LAIRS[S.lair].quip));
+  if(S.rank<1){lb2.disabled=true;setTxt($("laughVal"),"Imps can only giggle");}
+  else if(lol){lb2.disabled=true;setTxt($("laughVal"),"×"+laughX()+" everything! "+Math.ceil((S.laughEnd-now)/1000)+"s");}
+  else if(now<S.laughReady){lb2.disabled=true;setTxt($("laughVal"),"Catching breath "+clock((S.laughReady-now)/1000));}
+  else{lb2.disabled=false;setTxt($("laughVal"),"×"+laughX()+" everything for "+laughLen()+"s");}
+  setTxt($("plateYou"),(S.me?S.me+", ":"")+RANKS[S.rank].name);setTxt($("plateLair"),(S.home?S.home+" · ":"")+LAIRS[S.lair].name);
+  setTxt($("meBtn"),S.me||"Name yourself");setTxt($("homeBtn"),S.home||"Name your home");
+  setTxt($("rankName"),RANKS[S.rank].name);setTxt($("rankQuip"),RANKS[S.rank].quip);
+  setTxt($("lairName"),LAIRS[S.lair].name);setTxt($("lairQuip"),LAIRS[S.lair].quip);
   pips("rankPips",S.rank);pips("lairPips",S.lair);
   const nr=RANKS[S.rank+1],rb=$("rankBtn");
-  if(nr){const h=esc(L("Become: ","Bliv: ")+tr(nr.name))+' <span class="c">'+fmt(nr.cost)+'</span><span class="eta">'+esc(eta(nr.cost))+'</span>';if(cache.rb!==h){cache.rb=h;rb.innerHTML=h;}rb.disabled=S.malice<nr.cost;}
-  else{setTxt(rb,L("There is nothing left to become.","Der er intet tilbage at blive."));rb.disabled=true;}
+  if(nr){const h=esc("Become: "+nr.name)+' <span class="c">'+fmt(nr.cost)+'</span><span class="eta">'+esc(eta(nr.cost))+'</span>';if(cache.rb!==h){cache.rb=h;rb.innerHTML=h;}rb.disabled=S.malice<nr.cost;}
+  else{setTxt(rb,"There is nothing left to become.");rb.disabled=true;}
   rb.classList.toggle("go",!rb.disabled);
   const nl=LAIRS[S.lair+1],lb=$("lairBtn");
-  if(nl){const h=esc(L("Build: ","Byg: ")+tr(nl.name))+' <span class="c">'+fmt(nl.cost)+'</span><span class="eta">'+esc(eta(nl.cost))+'</span>';if(cache.lb!==h){cache.lb=h;lb.innerHTML=h;}lb.disabled=S.malice<nl.cost;}
-  else{setTxt(lb,L("Any bigger and it would be a country.","Meget større, og det ville være et land."));lb.disabled=true;}
+  if(nl){const h=esc("Build: "+nl.name)+' <span class="c">'+fmt(nl.cost)+'</span><span class="eta">'+esc(eta(nl.cost))+'</span>';if(cache.lb!==h){cache.lb=h;lb.innerHTML=h;}lb.disabled=S.malice<nl.cost;}
+  else{setTxt(lb,"Any bigger and it would be a country.");lb.disabled=true;}
   lb.classList.toggle("go",!lb.disabled);
 
   /* goal bar */
   const goals=[],rl=REALMS[S.realms];
-  if(nr)goals.push([L("Become: ","Bliv: ")+tr(nr.name),nr.cost]);
-  if(nl)goals.push([L("Build: ","Byg: ")+tr(nl.name),nl.cost]);
-  if(rl&&rl.tier<=S.lair&&!S.siege)goals.push([L("Lay siege to: ","Belejr: ")+tr(rl.name),rl.cost]);
+  if(nr)goals.push(["Become: "+nr.name,nr.cost]);
+  if(nl)goals.push(["Build: "+nl.name,nl.cost]);
+  if(rl&&rl.tier<=S.lair&&!S.siege)goals.push(["Lay siege to: "+rl.name,rl.cost]);
   goals.sort((a,b)=>a[1]-b[1]);
-  if(S.siege>0){const f=1-S.siege/rl.time;setTxt($("goalTxt"),L("Besieging ","Belejrer ")+tr(rl.name)+" ("+clock(S.siege/(perk(4)?2:1))+")");setTxt($("goalPct"),Math.floor(f*100)+"%");$("goalFill").style.width=(f*100)+"%";$("goalBar").classList.remove("ready");}
-  else if(goals.length){const g=goals[0],f=Math.min(1,S.malice/g[1]);setTxt($("goalTxt"),g[0]+eta(g[1]));setTxt($("goalPct"),f>=1?L("Ready!","Klar!"):Math.floor(f*100)+"%");$("goalFill").style.width=(f*100)+"%";$("goalBar").classList.toggle("ready",f>=1);}
-  else{setTxt($("goalTxt"),L("None left. You rule practically everything.","Ingen tilbage. Du hersker over stort set alt."));setTxt($("goalPct"),"");$("goalFill").style.width="100%";$("goalBar").classList.add("ready");}
+  if(S.siege>0){const f=1-S.siege/rl.time;setTxt($("goalTxt"),"Besieging "+rl.name+" ("+clock(S.siege/sgs())+")");setTxt($("goalPct"),Math.floor(f*100)+"%");$("goalFill").style.width=(f*100)+"%";$("goalBar").classList.remove("ready");}
+  else if(goals.length){const g=goals[0],f=Math.min(1,S.malice/g[1]);setTxt($("goalTxt"),g[0]+eta(g[1]));setTxt($("goalPct"),f>=1?"Ready!":Math.floor(f*100)+"%");$("goalFill").style.width=(f*100)+"%";$("goalBar").classList.toggle("ready",f>=1);}
+  else{setTxt($("goalTxt"),"None left. You rule practically everything.");setTxt($("goalPct"),"");$("goalFill").style.width="100%";$("goalBar").classList.add("ready");}
 
   /* minions */
   const g=globalMult(),raw=rawMps();
@@ -1106,18 +999,18 @@ function paint(){
     const r=rows[i],locked=m.tier>S.lair;
     r.b.hidden=m.tier>S.lair+1;
     r.b.classList.toggle("locked",locked);
-    if(locked){setTxt(r.nm,tr("Something worse"));setTxt(r.ds,L("Won't move in until you build: ","Flytter først ind, når du bygger: ")+tr(LAIRS[m.tier].name)+".");setTxt(r.cost,"");setTxt(r.each,"");setTxt(r.own,"?");r.own.classList.remove("has");r.b.disabled=true;return;}
+    if(locked){setTxt(r.nm,"Something worse");setTxt(r.ds,"Won't move in until you build: "+LAIRS[m.tier].name+".");setTxt(r.cost,"");setTxt(r.each,"");setTxt(r.own,"?");r.own.classList.remove("has");r.b.disabled=true;return;}
     const n=buyCount(i),c=costN(i,n),share=raw>0?S.minions[i]*m.out*minMult[i]/raw:0;
-    setTxt(r.nm,tr(m.name));setTxt(r.ds,tr(m.desc));
-    setTxt(r.cost,(n>1?L("Hire ","Ansæt ")+n+": ":L("Hire: ","Ansæt: "))+fmt(c)+" "+mal+eta(c));
-    setTxt(r.each,L("each makes ","hver laver ")+fmt(m.out*minMult[i]*g)+"/s"+(share>=0.005?" · "+Math.round(share*100)+"% "+L("of income","af indtægten"):""));
+    setTxt(r.nm,m.name);setTxt(r.ds,m.desc);
+    setTxt(r.cost,(n>1?"Hire "+n+": ":"Hire: ")+fmt(c)+" "+mal+eta(c));
+    setTxt(r.each,"each makes "+fmt(m.out*minMult[i]*g)+"/s"+(share>=0.005?" · "+Math.round(share*100)+"% "+"of income":""));
     setTxt(r.own,String(S.minions[i]));r.own.classList.toggle("has",S.minions[i]>0);
     r.b.disabled=S.malice<c;
   });
   if($("break").open){
-    const B=[[L("Home","Hjem"),Math.pow(2,S.lair)],[L("Yourself","Dig selv"),1+0.25*S.rank],[L("Décor","Indretning"),Math.pow(1.25,Object.keys(S.decor).length)],[L("Conquered realms","Erobrede riger"),Math.pow(1.5,S.realms)],[L("Infamy","Berygtethed"),1+0.1*S.infamy],[L("Misdeeds of note","Bemærkelsesværdige ugerninger"),1+0.02*Object.keys(S.ach).length],[L("Crowns","Kroner"),Math.pow(2,S.wins)]];
-    if(lol)B.push([L("Evil Laugh","Ond latter"),LAUGH_X]);if(buff)B.push([L("Black cat luck","Sort kat-held"),3]);
-    const h='<dt>'+esc(L("Minions, before bonuses","Håndlangere, før bonusser"))+'</dt><dd>'+fmt(raw)+'/s</dd>'+B.filter(b=>b[1]>1.0001).map(b=>'<dt>'+esc(b[0])+'</dt><dd>×'+(b[1]>=100?fmt(b[1]):b[1].toFixed(2))+'</dd>').join("")+'<dt>'+esc(L("Total","I alt"))+'</dt><dd class="tot">'+fmt(rate)+'/s</dd>';
+    const B=[["Home",Math.pow(2,S.lair)],["Yourself",1+0.25*S.rank],["Décor",Math.pow(rel(3,2)?1.35:1.25,Object.keys(S.decor).length)],["Conquered realms",Math.pow(1.5,S.realms)],["Infamy",1+0.1*S.infamy],["Misdeeds of note",1+0.02*Object.keys(S.ach).length],["Crowns",Math.pow(2,S.wins)],["Relics",relicMult()],["Prisoners at the mill",1+0.06*job(0)]];
+    if(lol)B.push(["Evil Laugh",laughX()]);if(buff)B.push(["Black cat luck",3]);
+    const h='<dt>'+esc("Minions, before bonuses")+'</dt><dd>'+fmt(raw)+'/s</dd>'+B.filter(b=>b[1]>1.0001).map(b=>'<dt>'+esc(b[0])+'</dt><dd>×'+(b[1]>=100?fmt(b[1]):b[1].toFixed(2))+'</dd>').join("")+'<dt>'+esc("Total")+'</dt><dd class="tot">'+fmt(rate)+'/s</dd>';
     if(cache.brk!==h){cache.brk=h;$("breakList").innerHTML=h;}
   }
 
@@ -1126,44 +1019,51 @@ function paint(){
   const canS=shop("schemeList",avail,upDesc);
   $("dot-schemes").hidden=!canS;$("buyAll").hidden=avail.filter(u=>S.malice>=u.cost).length<2;
   const done=Object.keys(S.ups).length;
-  setTxt($("schemeCount"),avail.length?L(done+" of "+UP.length+" schemes hatched.",done+" af "+UP.length+" rænker udklækket."):(done===UP.length?L("Every scheme hatched. You monster.","Alle rænker udklækket. Dit uhyre."):L("No schemes ready. Hire more minions and one will occur to you. "+done+" of "+UP.length+" hatched.","Ingen rænker klar. Ansæt flere håndlangere, så får du en idé. "+done+" af "+UP.length+" udklækket.")));
+  setTxt($("schemeCount"),avail.length?(done+" of "+UP.length+" schemes hatched."):(done===UP.length?"Every scheme hatched. You monster.":("No schemes ready. Hire more minions and one will occur to you. "+done+" of "+UP.length+" hatched.")));
 
   /* decor */
   const dAvail=DECOR.filter(d=>!S.decor[d.id]&&d.tier<=S.lair);
-  $("dot-decor").hidden=!shop("decorList",dAvail,d=>tr(d.desc));
+  $("dot-decor").hidden=!shop("decorList",dAvail,d=>d.desc);
   const dDone=DECOR.filter(d=>S.decor[d.id]),dNext=DECOR.find(d=>!S.decor[d.id]&&d.tier>S.lair);
-  setTxt($("decorCount"),(dDone.length?L("Installed: ","Sat op: ")+dDone.map(d=>tr(d.name)).join(", ")+". ":"")+(dAvail.length?"":dNext?L("More ideas will come when you build: ","Flere idéer kommer, når du bygger: ")+tr(LAIRS[dNext.tier].name)+".":L("Nothing left to install. It's perfect. It's horrible.","Intet tilbage at sætte op. Det er perfekt. Det er rædsomt.")));
+  setTxt($("decorCount"),(dDone.length?"Installed: "+dDone.map(d=>d.name).join(", ")+". ":"")+(dAvail.length?"":dNext?"More ideas will come when you build: "+LAIRS[dNext.tier].name+".":"Nothing left to install. It's perfect. It's horrible."));
 
   /* conquest */
-  const ck=[S.realms,S.siege>0?1:0,S.lair].join();
+  const ck=[S.realms,S.siege>0?1:0,S.lair,Object.keys(S.relics).length].join();
   if(cache.realm!==ck){cache.realm=ck;
     $("realmList").innerHTML=REALMS.map((r,i)=>{
-      if(i<S.realms)return '<div class="row done"><span class="nm">'+esc(tr(r.name))+'</span><span class="stamp">'+L("Yours","Dit")+'</span><span class="ds">'+esc(tr(r.done))+'</span></div>';
-      if(i>S.realms)return i===S.realms+1?'<div class="row locked"><span class="nm">'+esc(tr("Somewhere further off"))+'</span><span class="ds">'+esc(tr("One conquest at a time, sir."))+'</span></div>':'';
-      if(S.siege>0)return '<div class="row"><span class="nm">'+esc(L("Besieging ","Belejrer ")+tr(r.name))+'</span><span class="ds">'+esc(L("The minions are on it. Every misdeed shaves time off.","Håndlangerne er i gang. Hver ugerning forkorter tiden."))+'</span><span class="meta"><span class="cost" id="siegeLeft"></span></span><div class="bar"><i id="siegeFill"></i></div></div>';
-      if(r.tier>S.lair)return '<div class="row locked"><span class="nm">'+esc(tr(r.name))+'</span><span class="ds">'+esc(tr(r.what)+" "+L("They won't take you seriously until you build: ","De tager dig ikke alvorligt, før du bygger: ")+tr(LAIRS[r.tier].name)+".")+'</span></div>';
-      return '<button type="button" class="row" data-siege="1"><span class="nm">'+esc(L("Lay siege to: ","Belejr: ")+tr(r.name))+'</span><span class="ds">'+esc(tr(r.what))+'</span><span class="meta"><span class="cost">'+fmt(r.cost)+' '+mal+'</span><span>'+L("takes ","tager ")+clock(r.time/(perk(4)?2:1))+'</span><span class="eta" id="siegeEta"></span></span></button>';
+      if(i<S.realms)return '<div class="row done"><span class="nm">'+esc(r.name)+'</span><span class="stamp">'+"Yours"+'</span><span class="ds">'+esc(r.done)+'</span>'+(S.relics[i]?'<span class="meta"><span class="cost">'+esc(RELICS[i][S.relics[i]-1][0])+'</span><span>'+esc(RELICS[i][S.relics[i]-1][1])+'</span></span>':'')+'</div>';
+      if(i>S.realms)return i===S.realms+1?'<div class="row locked"><span class="nm">'+esc("Somewhere further off")+'</span><span class="ds">'+esc("One conquest at a time, sir.")+'</span></div>':'';
+      if(S.siege>0)return '<div class="row"><span class="nm">'+esc("Besieging "+r.name)+'</span><span class="ds">'+esc("The minions are on it. Every misdeed shaves time off.")+'</span><span class="meta"><span class="cost" id="siegeLeft"></span></span><div class="bar"><i id="siegeFill"></i></div></div>';
+      if(r.tier>S.lair)return '<div class="row locked"><span class="nm">'+esc(r.name)+'</span><span class="ds">'+esc(r.what+" "+"They won't take you seriously until you build: "+LAIRS[r.tier].name+".")+'</span></div>';
+      return '<button type="button" class="row" data-siege="1"><span class="nm">'+esc("Lay siege to: "+r.name)+'</span><span class="ds">'+esc(r.what)+'</span><span class="meta"><span class="cost">'+fmt(r.cost)+' '+mal+'</span><span>'+"takes "+clock(r.time/sgs())+'</span><span class="eta" id="siegeEta"></span></span></button>';
     }).join("");}
   const sb=$("realmList").querySelector("button[data-siege]");
   if(sb){sb.disabled=S.malice<rl.cost;setTxt($("siegeEta"),eta(rl.cost).replace(/^ · /,""));}
   $("dot-conquest").hidden=!(sb&&!sb.disabled);
-  if(S.siege>0&&$("siegeFill")){$("siegeFill").style.width=((1-S.siege/rl.time)*100)+"%";setTxt($("siegeLeft"),clock(S.siege/(perk(4)?2:1))+L(" left"," tilbage"));}
+  if(S.siege>0&&$("siegeFill")){$("siegeFill").style.width=((1-S.siege/rl.time)*100)+"%";setTxt($("siegeLeft"),clock(S.siege/sgs())+" left");}
+
+  /* dungeon */
+  const cap=cellCap(),dk=JSON.stringify(S.cells)+cap;
+  if(cache.cells!==dk){cache.cells=dk;
+    setTxt($("cellInfo"),cap?S.cells.length+" of "+cap+" cells occupied. A bigger home has more cells.":"");
+    $("cellList").innerHTML=S.cells.map((c,i)=>'<div class="row"><span class="nm">'+esc(c.n)+'</span><span class="ds">'+esc(JOBS[c.j][0])+': '+esc(JOBS[c.j][1])+'</span><span class="meta"><button type="button" class="tg" data-cell="'+i+'" data-act="job">Change job</button><button type="button" class="tg" data-cell="'+i+'" data-act="free">Ransom them back</button><span class="cost ransom"></span></span></div>').join("")||'<p class="empty">The cells are empty. Boot a hero while a cell is free and they move in.</p>';}
+  const rv="for "+fmt(ransom())+" malice";$("cellList").querySelectorAll(".ransom").forEach(e=>setTxt(e,rv));
 
   /* legacy */
   setTxt($("stInf"),fmt(S.infamy)+" (+"+fmt(S.infamy*10)+"%)");setTxt($("stWins"),S.wins?S.wins+" (×"+fmt(Math.pow(2,S.wins))+")":"0");setTxt($("stTotal"),fmt(S.total));
   setTxt($("stClicks"),fmt(S.clicks));setTxt($("stHeroes"),fmt(S.heroes));setTxt($("stTime"),dur(S.played));
   const ak=Object.keys(S.ach).length;
   if(cache.ach!==String(ak)){cache.ach=String(ak);
-    $("achList").innerHTML=ACH.map(a=>S.ach[a[0]]?'<div class="got"><b>'+esc(tr(a[1]))+'</b>'+esc(tr(a[2]))+'</div>':'<div><b>???</b>'+esc(tr(a[2]))+'</div>').join("");
-    setTxt($("achCount"),L(ak+" of "+ACH.length+", +"+(ak*2)+"% malice",ak+" af "+ACH.length+", +"+(ak*2)+"% ondskab"));}
+    $("achList").innerHTML=ACH.map(a=>S.ach[a[0]]?'<div class="got"><b>'+esc(a[1])+'</b>'+esc(a[2])+'</div>':'<div><b>???</b>'+esc(a[2])+'</div>').join("");
+    setTxt($("achCount"),(ak+" of "+ACH.length+", +"+(ak*2)+"% malice"));}
   const pk=PERKS.filter((p,i)=>perk(i)).length;
-  if(cache.perk!==pk){cache.perk=pk;$("perkList").innerHTML=PERKS.map((p,i)=>'<div'+(perk(i)?' class="got"':'')+'><b>'+esc(tr(p[1]))+'</b>'+esc(tr(p[2]))+(perk(i)?'':' ('+L("at ","ved ")+p[0]+' '+L("Infamy","Berygtethed")+')')+'</div>').join("");}
+  if(cache.perk!==pk){cache.perk=pk;$("perkList").innerHTML=PERKS.map((p,i)=>'<div'+(perk(i)?' class="got"':'')+'><b>'+esc(p[1])+'</b>'+esc(p[2])+(perk(i)?'':' ('+"at "+p[0]+' '+"Infamy"+')')+'</div>').join("");}
   const p=pendingInfamy(),pb=$("prestigeBtn"),nextAt=Math.pow(p+1,3)*1e12;
   $("inFill").style.width=Math.min(100,S.run/nextAt*100)+"%";
   $("dot-legacy").hidden=!(p>=1&&(S.infamy===0||complete()));
   if(!pb.dataset.armed){
     pb.disabled=p<1;
-    setTxt(pb,p<1?L("Not notorious enough yet. Hoard "+fmt(1e12)+" malice in one life ("+fmt(S.run)+" so far).","Ikke berygtet nok endnu. Saml "+fmt(1e12)+" ondskab i ét liv ("+fmt(S.run)+" indtil nu)."):L("Fake your demise for +"+fmt(p)+" Infamy","Iscenesæt din død for +"+fmt(p)+" Berygtethed")+(complete()?L(" and a Crown"," og en Krone"):"")+L(". Next point at ",". Næste point ved ")+fmt(nextAt)+".");
+    setTxt(pb,p<1?("Not notorious enough yet. Hoard "+fmt(1e12)+" malice in one life ("+fmt(S.run)+" so far)."):("Fake your demise for +"+fmt(p)+" Infamy")+(complete()?" and a Crown":"")+". Next point at "+fmt(nextAt)+".");
   }
   unlockTabs();tips();
 }
@@ -1174,7 +1074,7 @@ const still=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").ma
 function gy(x){return 300-42*Math.exp(-Math.pow((x-440)/170,2));}
 function rnd(i){const x=Math.sin(i*127.1)*43758.5453;return x-Math.floor(x);}
 function mix(a,b,f){const o=[];for(let i=0;i<3;i++)o.push(Math.round(a[i]+(b[i]-a[i])*f));return "rgb("+o.join()+")";}
-const SIL="#0b0810",CX=440,PX=125;
+const SIL="#0b0810",CX=440;let PX=606;
 const TOWERS=[
  [],
  [{x:-22,w:46,h:30,roof:"shed"}],
@@ -1216,16 +1116,17 @@ function tower(o,t,i){
 function at(x,y,s,fn){ctx.save();ctx.translate(x,y);ctx.scale(s,s);fn();ctx.restore();}
 function tri(x){x=((x%2)+2)%2;return x<1?x:2-x;}
 function mh(x){return 254-58*tri(x/118+.35)-22*tri(x/41+.1);}
-function vy(x){const u=(x+200)/200;return 300-128*u*(1-u);}
-function sy(x){const u=(x-165)/125;return 300-80*u*(1-u);}
-function corruptX(){return 330-(S.lair*70+S.realms*45);}
+function vy(x){const u=(x-700)/200;return 300-128*u*(1-u);}
+function sy(x){const u=(x-1248)/125;return 300-80*u*(1-u);}
+/* everything left of this line has gone bad */
+function corruptX(){return S.realms>=5?99999:Math.max(620+S.lair*8,frontPos()-20);}
 const DARK="#1a1020",GRN="#a9c45a",RED="#c0394b";
 function realmsFar(t,mcol){
   const n=S.realms;
-  T(mcol,-330,300,-225,140,-120,300);T(mcol,-55,300,30,196,120,300);
-  /* Castle Goodly on the far peak */
+  T(mcol,1395,300,1500,140,1605,300);T(mcol,1065,300,1150,196,1240,300);
+  /* Castle Goodly, at the end of the road */
   let c=n>4;
-  at(-225,144,1.5,()=>{
+  at(1500,144,1.5,()=>{
     const st=c?DARK:"#c9bfd0",rf=c?"#0f0915":"#7f8fc0";
     ctx.fillStyle=st;ctx.fillRect(-16,-16,32,16);ctx.fillRect(-22,-26,9,26);ctx.fillRect(13,-26,9,26);ctx.fillRect(-5,-34,10,34);
     for(let x=-16;x<14;x+=6)ctx.fillRect(x,-19,3,3);
@@ -1236,7 +1137,7 @@ function realmsFar(t,mcol){
   });
   /* Abbey of Perpetual Tutting */
   c=n>2;
-  at(30,200,1.5,()=>{
+  at(1150,200,1.5,()=>{
     const st=c?DARK:"#9a8c93",rf=c?"#0f0915":"#6a4a52";
     ctx.fillStyle=st;ctx.fillRect(-6,-11,20,11);ctx.fillRect(-14,-24,9,24);
     T(rf,-8,-11,4,-19,16,-11);T(rf,-16,-24,-9.5,-37,-3,-24);
@@ -1249,8 +1150,8 @@ function realmsMid(t){
   const n=S.realms;
   /* Glimmerdell: meadow and unicorns */
   let c=n>3;
-  ctx.fillStyle=c?"#1c1227":"#22382a";ctx.beginPath();ctx.moveTo(165,300);ctx.quadraticCurveTo(227,260,290,300);ctx.fill();
-  [[200,1],[236,-1],[262,1]].forEach((u,i)=>{ctx.save();ctx.translate(u[0],sy(u[0])+1);ctx.scale(1.25*u[1],1.25);
+  ctx.fillStyle=c?"#1c1227":"#22382a";ctx.beginPath();ctx.moveTo(1248,300);ctx.quadraticCurveTo(1310,260,1373,300);ctx.fill();
+  [[1283,1],[1319,-1],[1345,1]].forEach((u,i)=>{ctx.save();ctx.translate(u[0],sy(u[0])+1);ctx.scale(1.25*u[1],1.25);
     const b=c?"#17101f":"#f1ebf5",m=c?"#6a2a8a":"#f29ac8",bob=Math.sin(t/700+i*2);
     ctx.fillStyle=b;ctx.fillRect(-5,-5,1.6,5);ctx.fillRect(-2,-5,1.6,5);ctx.fillRect(2,-5,1.6,5);ctx.fillRect(4.5,-5,1.6,5);
     E(0,-7,7,3.6,b);T(b,4,-9,8,-15+bob,10,-9);E(9.5,-15+bob,3.2,2.2,b);
@@ -1259,8 +1160,8 @@ function realmsMid(t){
     ctx.fillStyle=c?GRN:"#3a2a3a";ctx.fillRect(10,-15.5+bob,1,1);ctx.restore();});
   /* Lower Dribbling */
   c=n>0;
-  ctx.fillStyle=c?"#1c1227":"#213526";ctx.beginPath();ctx.moveTo(-200,300);ctx.quadraticCurveTo(-100,236,0,300);ctx.fill();
-  [-168,-146,-124,-100,-78,-56,-34].forEach((x,i)=>at(x,vy(x)+1,1.45,()=>{const h=8+rnd(i+3)*5;
+  ctx.fillStyle=c?"#1c1227":"#213526";ctx.beginPath();ctx.moveTo(700,300);ctx.quadraticCurveTo(800,236,900,300);ctx.fill();
+  [732,754,776,800,822,844,866].forEach((x,i)=>at(x,vy(x)+1,1.45,()=>{const h=8+rnd(i+3)*5;
     ctx.fillStyle=c?"#1f1528":"#7a6660";ctx.fillRect(-6,-h,12,h);
     T(c?"#0f0915":"#9a5240",-8,-h,0,-h-7,8,-h);
     ctx.fillStyle=c?"#0f0915":"#5a4038";ctx.fillRect(3,-h-7,2.2,5);
@@ -1269,19 +1170,22 @@ function realmsMid(t){
     if(i%2===0){const p=(t/60+i*40)%30;ctx.fillStyle="rgba(200,190,210,"+(.3*(1-p/30)).toFixed(2)+")";ctx.beginPath();ctx.arc(4+Math.sin(p/5)*2,-h-9-p*.7,1.6+p/12,0,7);ctx.fill();}
     if(c&&i%2===1){ctx.fillStyle=DARK;ctx.fillRect(-.5,-h-17,1,11);T(RED,.5,-h-17,8,-h-14+Math.sin(t/280+i),.5,-h-11);}
   }));
-  /* the windmill at Upper Crumb */
+  /* the windmill at Upper Crumb, on its own knoll */
   c=n>1;
-  at(-8,294,1.7,()=>{T(c?DARK:"#8a7a74",-5,0,-3,-20,3,-20,5,0);T(c?"#0f0915":"#6a4a42",-4,-20,0,-25,4,-20);
+  ctx.fillStyle=c?"#1c1227":"#213526";ctx.beginPath();ctx.moveTo(935,300);ctx.quadraticCurveTo(990,274,1045,300);ctx.fill();
+  at(990,289,1.7,()=>{T(c?DARK:"#8a7a74",-5,0,-3,-20,3,-20,5,0);T(c?"#0f0915":"#6a4a42",-4,-20,0,-25,4,-20);
     ctx.fillStyle=c?GRN:"#ffd98a";ctx.fillRect(-1,-13,2,3);ctx.fillStyle=c?"#07040a":"#3a2a22";ctx.fillRect(-1.5,-4,3,4);
     ctx.strokeStyle=c?"#4a1a28":"#e3d8c4";ctx.lineWidth=c?1.2:2.4;const ro=(c?-1.8:1)*t/900;
     for(let k=0;k<4;k++){const a=ro+k*Math.PI/2;ctx.beginPath();ctx.moveTo(0,-20);ctx.lineTo(Math.cos(a)*15,-20+Math.sin(a)*15);ctx.stroke();}});
+  /* a marker over whatever is next */
+  if(n<REALMS.length&&REALMS[n].tier<=S.lair&&!S.siege){const p=rpos(n),y=p[1]-64+Math.sin(t/260)*3;T("#f2a53b",p[0]-6,y,p[0]+6,y,p[0],y+8);}
   /* siege fires and marching minions */
-  if(S.siege>0&&RPOS[n]){const p=RPOS[n];glow(p[0],p[1],50,"255,120,40",.35+.15*Math.sin(t/90));
+  if(S.siege>0&&n<REALMS.length){const p=rpos(n);glow(p[0],p[1],50,"255,120,40",.35+.15*Math.sin(t/90));
     for(let k=0;k<7;k++)flame(p[0]-30+k*10+rnd(k)*4,p[1]+8+rnd(k+9)*6,5,t,k);
-    for(let k=0;k<10;k++){const f=((t/5000)+k/10)%1,x=CX-60+(p[0]-CX+60)*f,y0=gy(380)+4,y=y0+(p[1]+10-y0)*f-Math.abs(Math.sin(t/200+k))*3;E(x,y,2.8,3.3,"#0b0810");eyes(x,y-1,1.3,"#f2a53b");}}
+    for(let k=0;k<10;k++){const f=((t/5000)+k/10)%1,x0=Math.max(CX+70,PX-140),x=x0+(p[0]-x0)*f,y0=gy(x0)+10,y=y0+(p[1]+10-y0)*f-Math.abs(Math.sin(t/200+k))*3;E(x,y,2.8,3.3,"#0b0810");eyes(x,y-1,1.3,"#f2a53b");}}
 }
 function nimbus(t){
-  const c=S.realms>5,x=-110+Math.sin(t/4000)*6,cl=c?"#1d1426":"#ece7f4";
+  const c=S.realms>5,x=1560+Math.sin(t/4000)*6,cl=c?"#1d1426":"#ece7f4";
   if(!c)glow(x,58,70,"236,231,244",.18);
   at(x,58,1,()=>{
     const st=c?"#120c18":"#f6eef8",rf=c?"#0b0810":"#f2a8c8";
@@ -1295,14 +1199,14 @@ function nimbus(t){
 }
 function rainbow(){
   const c=S.realms>3,cols=c?["#6a6276","#5c5568","#4f495b","#433d4e","#383242"]:["#e86a6a","#f0b05a","#e9e27a","#7fcf8a","#7aa8e8"];
-  ctx.lineWidth=3;ctx.globalAlpha=c?.6:.6;
-  cols.forEach((k,i)=>{ctx.strokeStyle=k;ctx.beginPath();ctx.arc(227,272,58-i*3,Math.PI,0);ctx.stroke();});
+  ctx.lineWidth=3;ctx.globalAlpha=.6;
+  cols.forEach((k,i)=>{ctx.strokeStyle=k;ctx.beginPath();ctx.arc(1310,272,58-i*3,Math.PI,0);ctx.stroke();});
   ctx.globalAlpha=1;
 }
 function trees(t){
   const cx=corruptX();
-  for(let i=0;i<24;i++){const x=-288+i*26+rnd(i+200)*14;if(x>325)continue;const h=20+rnd(i+230)*16,sw=Math.sin(t/1300+i)*.8;
-    if(x>cx){ctx.strokeStyle="#0e0913";ctx.lineWidth=2;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x,304);ctx.lineTo(x,304-h);ctx.moveTo(x,304-h*.55);ctx.lineTo(x-7,304-h*.9);ctx.moveTo(x,304-h*.7);ctx.lineTo(x+6,304-h*1.05);ctx.moveTo(x,304-h);ctx.lineTo(x-3,304-h*1.2);ctx.stroke();}
+  for(let i=0;i<42;i++){const x=632+i*26+rnd(i+200)*14;if(x>1685)continue;const h=20+rnd(i+230)*16,sw=Math.sin(t/1300+i)*.8;
+    if(x<cx){ctx.strokeStyle="#0e0913";ctx.lineWidth=2;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x,304);ctx.lineTo(x,304-h);ctx.moveTo(x,304-h*.55);ctx.lineTo(x-7,304-h*.9);ctx.moveTo(x,304-h*.7);ctx.lineTo(x+6,304-h*1.05);ctx.moveTo(x,304-h);ctx.lineTo(x-3,304-h*1.2);ctx.stroke();}
     else{ctx.fillStyle="#241a1c";ctx.fillRect(x-1.2,304-h*.6,2.4,h*.6);E(x+sw,304-h*.75,h*.33,h*.38,"#1d3a2a");E(x-3+sw,304-h*.6,h*.24,h*.26,"#254a34");}
   }
 }
@@ -1322,13 +1226,24 @@ function scaffold(t){
 }
 function hoard(t){
   if(S.malice<10)return;
-  const r=4+Math.log10(S.malice+1)*4,x=14,y=gy(x)+28;
+  const r=Math.min(46,4+Math.log10(S.malice+1)*2.6),x=236,y=gy(x)+34;
   glow(x,y-r*.5,r*2.4,"169,196,90",.22);
   const g=ctx.createLinearGradient(0,y-r*1.2,0,y);g.addColorStop(0,"#c4dc74");g.addColorStop(1,"#5c7426");
   ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(x-r*1.6,y);ctx.quadraticCurveTo(x-r*.5,y-r*1.5,x,y-r*1.15);ctx.quadraticCurveTo(x+r*.6,y-r*1.4,x+r*1.6,y);ctx.fill();
   const n=Math.min(14,Math.floor(r/3));
   for(let i=0;i<n;i++){const a=.5+.5*Math.sin(t/300+i*2.4),u=rnd(i+300)*2-1,px=x+u*r*1.1,py=y-rnd(i+320)*r*(1-Math.abs(u))*.9-2;
     ctx.fillStyle="rgba(244,255,200,"+a.toFixed(2)+")";ctx.fillRect(px-1,py-1,2,2);}
+}
+/* the road east, the sign with your home's name, and the dungeon grates */
+function road(t){
+  ctx.strokeStyle="rgba(86,72,104,.6)";ctx.lineWidth=6;ctx.lineCap="round";ctx.setLineDash([14,11]);ctx.beginPath();ctx.moveTo(CX+18,gy(CX+18)+14);
+  for(let x=CX+40;x<=1600;x+=20)ctx.lineTo(x,gy(x)+22);
+  ctx.stroke();ctx.setLineDash([]);
+  if(S.home){const x=664,y=gy(x)+6;ctx.fillStyle="#3a2a1c";ctx.fillRect(x-1.5,y-22,3,24);ctx.font="bold 6.5px sans-serif";
+    const w=Math.max(30,ctx.measureText(S.home).width+10);ctx.fillRect(x-w/2,y-35,w,13);ctx.fillStyle="#efe6d2";ctx.textAlign="center";ctx.fillText(S.home,x,y-26);ctx.textAlign="left";}
+  S.cells.forEach((c,i)=>{const x=590+i*17,y=gy(x)+40;ctx.fillStyle="#050308";ctx.fillRect(x-6,y-6,12,11);
+    if((t+i*700)%5200>260)eyes(x+Math.sin(t/900+i)*1.5,y-2,2,"#d9dde6");
+    ctx.strokeStyle="#574a6a";ctx.lineWidth=1.3;for(let b=-4;b<=4;b+=4){ctx.beginPath();ctx.moveTo(x+b,y-6);ctx.lineTo(x+b,y+5);ctx.stroke();}ctx.strokeRect(x-6,y-6,12,11);});
 }
 
 function decorBack(t){
@@ -1345,7 +1260,7 @@ function decorFront(t){
     ctx.strokeStyle="#150d08";ctx.lineWidth=1;for(let y=268;y<296;y+=6){ctx.beginPath();ctx.moveTo(CX-9,y);ctx.lineTo(CX+9,y);ctx.stroke();}
   }
   if(D.sign){const x=388,y=gy(388)+2;ctx.fillStyle="#3a2a1c";ctx.fillRect(x+10,y-18,3,20);ctx.save();ctx.translate(x+11,y-22);ctx.rotate(-.12);ctx.fillRect(-15,-6,30,12);
-    ctx.fillStyle="#efe6d2";ctx.font="bold 5.5px sans-serif";ctx.textAlign="center";ctx.fillText(L("NO HEROES","INGEN HELTE"),0,-.5);ctx.fillText(L("(SERIOUSLY)","(SERIØST)"),0,4.6);ctx.restore();ctx.textAlign="left";}
+    ctx.fillStyle="#efe6d2";ctx.font="bold 5.5px sans-serif";ctx.textAlign="center";ctx.fillText("NO HEROES",0,-.5);ctx.fillText("(SERIOUSLY)",0,4.6);ctx.restore();ctx.textAlign="left";}
   if(D.torch)[352,402,478,528].forEach((x,i)=>{const y=gy(x)+6;glow(x,y-18,26,"255,150,50",.3+.1*Math.sin(t/110+i));
     ctx.fillStyle="#2a1d14";ctx.fillRect(x-1.5,y-16,3,18);flame(x,y-16,5,t,i);});
   if(D.garg&&S.lair>=2)[-30,30].forEach((d,i)=>{const x=CX+d,y=gy(x)+2;
@@ -1356,7 +1271,7 @@ function decorFront(t){
 }
 function storm(t){
   const n=S.lair;
-  for(let i=0;i<n*2;i++){const x=((t/90*(.5+rnd(i+60))+rnd(i+70)*1400)%1500)-560,y=22+rnd(i+80)*56,a=.35+.08*n;
+  for(let i=0;i<n*3;i++){const x=((t/90*(.5+rnd(i+60))+rnd(i+70)*2000)%2100)-150,y=22+rnd(i+80)*56,a=.35+.08*n;
     for(let k=0;k<4;k++)E(x+k*17,y+Math.sin(k*2.1+i)*5,20,9,"rgba(14,8,20,"+a.toFixed(2)+")");}
   const lol=laughing();
   if(S.decor.cloud||lol){
@@ -1365,7 +1280,7 @@ function storm(t){
       E(CX,top+6,50,8,"#191022");}
     const period=lol?2600:6000;
     if(!still&&t-boltT>period&&Math.random()<.2){boltT=t;flash=Math.max(flash,.3);snd("thunder");}
-    if(t-boltT<160){let x=CX+(rnd(Math.floor(boltT))-.5)*80,y=top+8;const end=lol?gy(x):lairTop()+6;
+    if(t-boltT<160){let x=(lol?PX:CX)+(rnd(Math.floor(boltT))-.5)*(lol?240:80),y=lol?14:top+8;const end=lol?gy(x):lairTop()+6;
       ctx.strokeStyle="#f6f2c0";ctx.lineWidth=2.2;ctx.shadowColor="#fff7b0";ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(x,y);
       let j=0;while(y<end){y+=14;x+=(rnd(boltT+j++)-.5)*22;ctx.lineTo(x,Math.min(y,end));}
       ctx.stroke();ctx.shadowBlur=0;}
@@ -1374,7 +1289,7 @@ function storm(t){
 
 /* minions, each kind with its own silhouette */
 function walkers(t){
-  const M=S.minions;let i,n;
+  const M=S.minions,F=Math.max(260,frontPos()-150);let i,n;
   /* thing in the basement: tentacles out of the hillside */
   n=Math.min(5,M[7]);
   if(n){ctx.strokeStyle="#3b1a52";ctx.lineCap="round";
@@ -1390,38 +1305,38 @@ function walkers(t){
     ctx.fillStyle="#efe6d2";ctx.fillRect(x-3+sw*.5,y-26.5,1.5,2.5);ctx.fillRect(x+1.5+sw*.5,y-26.5,1.5,2.5);}
   /* tax collectors */
   n=Math.min(6,M[2]);
-  for(i=0;i<n;i++){const x=-240+rnd(i+31)*840+Math.sin(t/2600+i*2)*30,y=gy(x)+8+rnd(i+33)*10;
+  for(i=0;i<n;i++){const x=200+rnd(i+31)*F+Math.sin(t/2600+i*2)*30,y=gy(x)+8+rnd(i+33)*10;
     ctx.fillStyle="#17121f";ctx.fillRect(x-2.5,y-14,5,14);E(x,y-17,3,3,"#17121f");ctx.fillRect(x-3,y-26,6,7);ctx.fillRect(x-5,y-20,10,1.6);
     ctx.fillStyle="#efe6d2";ctx.fillRect(x+3,y-12,3,6);ctx.fillStyle="#f2a53b";ctx.fillRect(x+.5,y-18,1.6,1.6);
     if(!still&&Math.random()<.012)parts.push({x:x+4,y:y-14,vx:(Math.random()-.5)*10,vy:-34,life:1,d:.8,col:"#f2c53b",sz:2.6,g:70});}
   /* vampire accountants */
   n=Math.min(5,M[5]);
-  for(i=0;i<n;i++){const x=-200+rnd(i+51)*780+Math.sin(t/3200+i*3)*36,y=gy(x)+10+rnd(i+53)*8;
+  for(i=0;i<n;i++){const x=200+rnd(i+51)*F+Math.sin(t/3200+i*3)*36,y=gy(x)+10+rnd(i+53)*8;
     T("#12090f",x,y-24,x-9,y,x+9,y);T("#5a1424",x,y-20,x-3,y,x+3,y);
     T("#12090f",x-6,y-26,x-2,y-19,x-7,y-18);T("#12090f",x+6,y-26,x+2,y-19,x+7,y-18);
     E(x,y-24,3.2,3.6,"#cfc6d6");eyes(x,y-25,1.5,"#c0394b");ctx.fillStyle="#efe6d2";ctx.fillRect(x+4,y-14,4.5,5.5);ctx.fillStyle="#12090f";ctx.fillRect(x+5,y-12.5,2.5,.8);ctx.fillRect(x+5,y-10.8,2.5,.8);}
   /* goblins */
   n=Math.min(10,M[1]);
-  for(i=0;i<n;i++){const x=-250+rnd(i+71)*860+Math.sin(t/1700+i*2.4)*24,y=gy(x)+6+rnd(i+73)*14-Math.abs(Math.sin(t/340+i))*2;
+  for(i=0;i<n;i++){const x=200+rnd(i+71)*F+Math.sin(t/1700+i*2.4)*24,y=gy(x)+6+rnd(i+73)*14-Math.abs(Math.sin(t/340+i))*2;
     E(x,y-6,5.5,6,"#202c16");T("#202c16",x-4,y-9,x-13,y-11,x-4,y-6);T("#202c16",x+4,y-9,x+13,y-11,x+4,y-6);eyes(x,y-8.5,2,"#a9c45a");
     if(i%2===1){ctx.fillStyle="#c0394b";ctx.fillRect(x+5,y-9,4.5,5.5);ctx.fillStyle="#efe6d2";ctx.fillRect(x+4.5,y-10.5,5.5,1.8);}}
   /* imps */
   n=Math.min(14,M[0]);
-  for(i=0;i<n;i++){const x=-260+rnd(i+7)*880+Math.sin(t/1500+i)*18,y=gy(x)+4+rnd(i+9)*16-Math.abs(Math.sin(t/260+i*1.7))*5,sz=3.5+rnd(i+40)*1.5;
+  for(i=0;i<n;i++){const x=200+rnd(i+7)*F+Math.sin(t/1500+i)*18,y=gy(x)+4+rnd(i+9)*16-Math.abs(Math.sin(t/260+i*1.7))*5,sz=3.5+rnd(i+40)*1.5;
     E(x,y-sz,sz,sz*1.15,"#1d1426");T("#1d1426",x-sz,y-sz*1.6,x-sz*1.7,y-sz*2.5,x-sz*.3,y-sz*2);T("#1d1426",x+sz,y-sz*1.6,x+sz*1.7,y-sz*2.5,x+sz*.3,y-sz*2);
     eyes(x,y-sz*1.4,sz*.4,"#f2a53b");
     if(i%2===0){ctx.fillStyle="#efe6d2";ctx.fillRect(x-1,y-sz*3.5,2.2,4);ctx.fillRect(x-1,y-sz*3.5+3,4.5,2);}}
 }
 function fliers(t){
   const M=S.minions;let i,n=Math.min(3,M[3]);
-  for(i=0;i<n;i++){const a=t/2600+i*2.1,x=180+Math.cos(a)*(400-i*70),y=96+i*22+Math.sin(a*2)*16,d=-Math.sin(a)<0?-1:1;
+  for(i=0;i<n;i++){const a=t/2600+i*2.1,x=CX+(frontPos()-CX)/2+Math.cos(a)*((frontPos()-CX)/2+150-i*40),y=96+i*22+Math.sin(a*2)*16,d=-Math.sin(a)<0?-1:1;
     ctx.save();ctx.translate(x,y);ctx.scale(d,1);
     ctx.strokeStyle="#3a2a1c";ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(-14,2);ctx.lineTo(12,0);ctx.stroke();T("#5a4424",-14,2,-22,-2,-22,6);
     T(SIL,-3,1,2,-11,6,1);E(2,-11,3,3,SIL);T(SIL,-3,-12,2,-22,7,-12);ctx.fillStyle=SIL;ctx.fillRect(-5,-13,14,1.6);
     ctx.fillStyle="#a9c45a";ctx.fillRect(3,-11.5,1.5,1.5);ctx.restore();
     if(!still&&Math.random()<.3)parts.push({x:x-d*20,y:y+2,vx:-d*10,vy:6,life:1,d:1.4,col:"#a9c45a",sz:1.4,g:10});}
   n=M[6]>=25?2:M[6]>0?1:0;
-  for(i=0;i<n;i++){const sc=i?.7:1,x=((t/16+i*600)%1500)-480,y=(i?64:118)+Math.sin(t/700+i)*16,fl=Math.sin(t/150+i);
+  for(i=0;i<n;i++){const sc=i?.7:1,x=((t/16+i*700)%2100)-60,y=(i?64:118)+Math.sin(t/700+i)*16,fl=Math.sin(t/150+i);
     ctx.save();ctx.translate(x,y);ctx.scale(sc,sc);
     T("#0d0a12",-22,0,-52,-6+fl*3,-24,5);
     T("#1a0f1c",-10,-3,4,-34*fl-4,16,-3);T("#120a14",-4,-2,-22,-26*fl-4,6,-2);
@@ -1436,7 +1351,7 @@ function fliers(t){
 }
 
 function you(t){
-  const r=S.rank,s=(1.25+r*0.15)*(1+.35*rankPop*Math.sin(rankPop*Math.PI)),bob=Math.sin(t/420)*1.2,lol=laughing();
+  const r=S.rank,s=(1.25+r*0.15)*(1+.35*rankPop*Math.sin(rankPop*Math.PI)),bob=walking?-Math.abs(Math.sin(t/110))*5:Math.sin(t/420)*1.2,lol=laughing();
   ctx.save();ctx.translate(PX,gy(PX)+4);ctx.scale(s*(1+.1*pulse),s*(1-.15*pulse));ctx.translate(0,bob*(1-pulse)+(lol?Math.sin(t/60)*1.5:0));
   if(r>=6||lol)glow(0,-30,60,"242,165,59",lol?.5:.35);
   if(r>=3){const w=Math.sin(t/500)*2;T(r>=5?"#7d1530":"#3d1a5c",-10,-34,-23-w,0,23+w,0,10,-34);}
@@ -1463,9 +1378,14 @@ function you(t){
   ctx.restore();
 }
 
-const WX0=-290,WX1=640;
-let K=1,camX=WX0,viewW=WX1-WX0,camSet=false,drag=null;
+const WX0=170,WX1=1690,RX=[800,990,1150,1310,1500];
+let K=1,camX=WX0,viewW=930,drag=null,holdUntil=0,focusX=0,focusUntil=0,camInit=false,hinted=false,walking=false;
 function clampCam(x){return Math.max(WX0,Math.min(WX1-viewW,x));}
+/* where you stand: at home to begin with, then in front of whatever is next */
+function frontPos(){return S.lair<1?606:S.realms>=5?1590:RX[S.realms]-82;}
+function rpos(n){return n===6?[camX+viewW*.72,70]:RPOS[n];}
+function focusCam(x,ms){focusX=x;focusUntil=performance.now()+ms;holdUntil=0;}
+function camTarget(){return clampCam(performance.now()<focusUntil?focusX-viewW*.5:PX-viewW*.42);}
 function draw(t){
   const vx0=camX,vx1=camX+viewW;
   ctx.setTransform(K,0,0,K,-camX*K,0);
@@ -1473,9 +1393,10 @@ function draw(t){
   const sky=ctx.createLinearGradient(0,0,0,300);
   sky.addColorStop(0,mix([22,26,60],[18,6,12],ev));sky.addColorStop(.6,mix([62,44,96],[78,14,36],ev));sky.addColorStop(1,mix([214,140,112],[200,60,24],ev));
   ctx.fillStyle=sky;ctx.fillRect(vx0,0,viewW,360);
-  for(let i=0;i<120;i++){ctx.fillStyle="rgba(239,230,210,"+(.3+.5*Math.abs(Math.sin(t/900+i*2.3))).toFixed(2)+")";ctx.fillRect(-640+rnd(i)*1640,rnd(i+99)*200,1.5,1.5);}
-  for(let i=0;i<Math.min(12,S.wins);i++){const x=250+i*24,y=24+(i%2)*10;T("#f2c53b",x-6,y+5,x-6,y-3,x-3,y+1,x,y-5,x+3,y+1,x+6,y-3,x+6,y+5);}
-  const MX=150,MY=70,mr=32+ev*10,mc=S.realms>=7?"#b6e06a":mix([244,238,208],[196,232,120],ev);
+  for(let i=0;i<220;i++){ctx.fillStyle="rgba(239,230,210,"+(.3+.5*Math.abs(Math.sin(t/900+i*2.3))).toFixed(2)+")";ctx.fillRect(-300+rnd(i)*2500,rnd(i+99)*200,1.5,1.5);}
+  for(let i=0;i<Math.min(12,S.wins);i++){const x=vx0+viewW*.22+i*24,y=24+(i%2)*10;T("#f2c53b",x-6,y+5,x-6,y-3,x-3,y+1,x,y-5,x+3,y+1,x+6,y-3,x+6,y+5);}
+  /* the moon hangs in the same place however far you walk */
+  const MX=vx0+viewW*.72,MY=70,mr=32+ev*10,mc=S.realms>=7?"#b6e06a":mix([244,238,208],[196,232,120],ev);
   glow(MX,MY,mr*3,ev>.5?"196,232,120":"244,238,208",.32);
   E(MX,MY,mr,mr,mc);
   ctx.fillStyle="rgba(90,110,70,.3)";[[-12,-10,7],[12,12,5],[8,-14,3.5]].forEach(c=>{ctx.beginPath();ctx.arc(MX+c[0],MY+c[1],c[2],0,7);ctx.fill();});
@@ -1487,8 +1408,8 @@ function draw(t){
   ctx.lineTo(vx1+6,300);ctx.fill();
   realmsFar(t,mcol);nimbus(t);
   if(S.lair>=4)glow(CX,250,110+S.lair*22,"255,120,40",.42);
-  if(S.lair>=2)for(let i=0;i<S.lair+2;i++){
-    const bx=(t/22*(1+i*.17)+i*190)%1400-520,by=44+i*15+Math.sin(t/330+i)*9,f=Math.sin(t/90+i)*4;
+  if(S.lair>=2)for(let i=0;i<S.lair+3;i++){
+    const bx=(t/22*(1+i*.17)+i*260)%2200-150,by=44+i*13+Math.sin(t/330+i)*9,f=Math.sin(t/90+i)*4;
     ctx.strokeStyle="#0b0810";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx-7,by-f);ctx.lineTo(bx,by+1);ctx.lineTo(bx+7,by-f);ctx.stroke();
   }
   decorBack(t);
@@ -1501,19 +1422,21 @@ function draw(t){
   scaffold(t);
   storm(t);
   fliers(t);
-  const cxr=corruptX(),gg=ctx.createLinearGradient(cxr-170,0,cxr+40,0);
-  gg.addColorStop(0,"#18281c");gg.addColorStop(1,"#120c18");
+  /* ground: dark where you have been, green where you have not */
+  const cxr=corruptX(),gg=ctx.createLinearGradient(cxr-30,0,cxr+180,0);
+  gg.addColorStop(0,"#120c18");gg.addColorStop(1,"#18281c");
   ctx.fillStyle=gg;ctx.beginPath();ctx.moveTo(vx0-8,360);
   for(let x=Math.floor(vx0/8)*8-8;x<=vx1+8;x+=8)ctx.lineTo(x,gy(x));
   ctx.lineTo(vx1+8,360);ctx.fill();
-  const gl=ctx.createLinearGradient(cxr-170,0,cxr+40,0);gl.addColorStop(0,"rgba(120,190,110,.4)");gl.addColorStop(1,"rgba(169,196,90,.22)");
+  const gl=ctx.createLinearGradient(cxr-30,0,cxr+180,0);gl.addColorStop(0,"rgba(169,196,90,.22)");gl.addColorStop(1,"rgba(120,190,110,.4)");
   ctx.strokeStyle=gl;ctx.lineWidth=1.5;ctx.beginPath();
   for(let x=Math.floor(vx0/8)*8-8,f=1;x<=vx1+8;x+=8,f=0)f?ctx.moveTo(x,gy(x)):ctx.lineTo(x,gy(x));
   ctx.stroke();
+  road(t);
   if(S.lair===0){
     E(CX,268,26,8,"#050308");
     ctx.fillStyle="#3a2a1c";ctx.fillRect(CX+38,246,3,22);ctx.fillRect(CX+28,242,24,12);
-    ctx.fillStyle="#efe6d2";ctx.font="bold 6px sans-serif";ctx.fillText(L("GO AWAY","  SKRID"),CX+29.5,250.5);
+    ctx.fillStyle="#efe6d2";ctx.font="bold 6px sans-serif";ctx.fillText("GO AWAY",CX+29.5,250.5);
   }else if(S.lair===1){ctx.fillStyle="rgba(255,190,90,.9)";ctx.fillRect(CX-16,242,8,8);ctx.fillStyle="#050308";ctx.fillRect(CX+2,244,10,18);}
   else if(lairRise>=1){const gw=S.lair>=4?13:7;ctx.fillStyle="rgba(255,150,60,.85)";ctx.beginPath();ctx.moveTo(CX-gw,264);ctx.lineTo(CX-gw,250);ctx.arc(CX,250,gw,Math.PI,0);ctx.lineTo(CX+gw,264);ctx.fill();
     if(S.lair>=4){ctx.strokeStyle=SIL;ctx.lineWidth=1.5;for(let x=-9;x<=9;x+=6){ctx.beginPath();ctx.moveTo(CX+x,238);ctx.lineTo(CX+x,264);ctx.stroke();}}}
@@ -1533,28 +1456,32 @@ function fit(){
   const w=cv.clientWidth||640,h=cv.clientHeight||240,d=Math.min(2,window.devicePixelRatio||1);
   cv.width=Math.round(w*d);cv.height=Math.round(h*d);K=cv.height/360;viewW=cv.width/K;
   const pan=viewW<WX1-WX0-1;
-  if(!pan)camX=WX0-(viewW-(WX1-WX0))/2;else camX=clampCam(camSet?camX:270-viewW/2);
-  $("panHint").hidden=!pan||camSet;cv.style.cursor=pan?"grab":"pointer";
+  if(!pan)camX=WX0-(viewW-(WX1-WX0))/2;else camX=camInit?clampCam(camX):camTarget();
+  camInit=true;$("panHint").hidden=!pan||hinted;cv.style.cursor=pan?"grab":"pointer";
 }
 function panning(){
   cv.addEventListener("pointerdown",e=>{drag={x:e.clientX,cam:camX,moved:false};});
   cv.addEventListener("pointermove",e=>{
     if(!drag)return;const dx=e.clientX-drag.x;
     if(Math.abs(dx)>6)drag.moved=true;
-    if(drag.moved&&viewW<WX1-WX0-1){camX=clampCam(drag.cam-dx*viewW/(cv.clientWidth||1));camSet=true;$("panHint").hidden=true;}
+    if(drag.moved&&viewW<WX1-WX0-1){camX=clampCam(drag.cam-dx*viewW/(cv.clientWidth||1));hinted=true;$("panHint").hidden=true;}
   });
-  cv.addEventListener("pointerup",()=>{if(drag&&!drag.moved)misdeed();drag=null;});
-  cv.addEventListener("pointercancel",()=>{drag=null;});
-  cv.addEventListener("pointerleave",()=>{drag=null;});
+  const done=()=>{if(drag&&drag.moved){holdUntil=performance.now()+7000;focusUntil=0;}drag=null;};
+  cv.addEventListener("pointerup",()=>{if(drag&&!drag.moved)misdeed();done();});
+  cv.addEventListener("pointercancel",done);
+  cv.addEventListener("pointerleave",done);
 }
 let lastF=0;
 function frame(t){
   const dt=Math.min(.1,Math.max(0,(t-lastF)/1000));lastF=t;
   pulse=Math.max(0,pulse-dt*5);rankPop=Math.max(0,rankPop-dt*1.6);flash=Math.max(0,flash-dt*2.5);
   if(lairRise<1){lairRise=Math.min(1,lairRise+dt/1.3);if(!still&&Math.random()<.6)burst(CX-120+Math.random()*240,gy(CX)+6,2,["#463a57","#a99fb5"],40,40);}
+  const tx=frontPos();walking=Math.abs(PX-tx)>1;
+  if(walking)PX+=Math.sign(tx-PX)*Math.min(Math.abs(tx-PX),(still?4000:120)*dt);
+  if(viewW<WX1-WX0-1&&!drag&&performance.now()>holdUntil){const ct=camTarget();camX+=(ct-camX)*Math.min(1,dt*(still?50:2.2));}
   floats.forEach(f=>{f.y-=dt*40;f.life-=dt*1.1;});floats=floats.filter(f=>f.life>0);
   parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=p.g*dt;p.life-=dt/p.d;});parts=parts.filter(p=>p.life>0);
-  if(vis){vis.x+=vis.speed*dt;if(vis.x>WX1+20)endVisitor(true);else placeVisitor();}
+  if(vis){vis.x+=vis.speed*dt;if(vis.x>camX+viewW+40)endVisitor(true);else placeVisitor();}
   draw(still?0:t);
   if(!still)requestAnimationFrame(frame);
 }
@@ -1568,6 +1495,8 @@ function load(data){
   const f=fresh();
   Object.keys(f).forEach(k=>{
     if(k==="minions"){if(Array.isArray(d.minions))f.minions=f.minions.map((_,i)=>Math.max(0,Math.floor(+d.minions[i]||0)));}
+    else if(k==="cells"){if(Array.isArray(d.cells))f.cells=d.cells.filter(c=>c&&typeof c.n==="string").slice(0,6).map(c=>({n:c.n.slice(0,40),j:c.j===1||c.j===2?c.j:0}));}
+    else if(typeof f[k]==="string"){if(typeof d[k]==="string")f[k]=d[k].slice(0,24);}
     else if(typeof f[k]==="object"){if(d[k]&&typeof d[k]==="object"&&!Array.isArray(d[k]))f[k]=d[k];}
     else if(typeof d[k]==="number"&&isFinite(d[k]))f[k]=d[k];});
   f.lair=Math.min(LAIRS.length-1,Math.max(0,Math.floor(f.lair)));f.rank=Math.min(RANKS.length-1,Math.max(0,Math.floor(f.rank)));
@@ -1579,15 +1508,17 @@ function load(data){
 let lastTick=Date.now(),lastSave=Date.now(),lastSec=0;
 function tick(){
   const now=Date.now(),dt=Math.min(3600,(now-lastTick)/1000);lastTick=now;
-  if(dt>0){gain(mps()*dt);S.played+=dt;if(S.siege>0){S.siege-=dt*(perk(4)?2:1);if(S.siege<=0)conquered();}}
+  if(dt>0){gain(mps()*dt);S.played+=dt;if(S.siege>0){S.siege-=dt*sgs();if(S.siege<=0)conquered();}}
   if(combo>0&&now-comboT>1500)combo=Math.max(0,combo-2);
   music();
   if(!vis&&S.lair>=1&&now>visDue&&!modalOpen())spawnVisitor();
   if(now>blightNext&&now>blightUntil)chatter();
   if(now-lastSec>1000){lastSec=now;checkAch();
-    document.title=fmt(S.malice)+" "+L("malice","ondskab")+" · Malice & Mortar";
-    if(!S.hintLegacy&&S.run>=1e10&&S.infamy===0){S.hintLegacy=1;say(L("They say a villain who dies dramatically comes back stronger, sir. There is a Legacy tab now. No rush.","Man siger, at en skurk, der dør dramatisk, vender stærkere tilbage, herre. Der er kommet en fane, der hedder Eftermæle. Det haster ikke."),16000);}
-    if(!S.endSeen&&complete()){S.endSeen=1;showEnd();}
+    document.title=fmt(S.malice)+" "+"malice"+" · Malice & Mortar";
+    if(!S.hintLegacy&&S.run>=1e10&&S.infamy===0){S.hintLegacy=1;say("They say a villain who dies dramatically comes back stronger, sir. There is a Legacy tab now. No rush.",16000);}
+    const pr=pendingRelic();
+    if(pr>=0&&!modalOpen())showRelic(pr);
+    else if(!S.endSeen&&complete()&&pr<0&&!modalOpen()){S.endSeen=1;showEnd();}
   }
   if(now-lastSave>8000){lastSave=now;save();}
   paint();
@@ -1596,10 +1527,11 @@ function tick(){
 function start(data){
   load(data);recalc();build();applyLang();
   const away=Math.min(8*3600,Math.max(0,(Date.now()-S.last)/1000)),earned=rawMps()*baseMult()*away,won=[];
-  if(S.siege>0){S.siege-=away*(perk(4)?2:1);if(S.siege<=0){won.push(REALMS[S.realms].name);conquered(true);}}
+  if(S.siege>0){S.siege-=away*sgs();if(S.siege<=0){won.push(REALMS[S.realms].name);conquered(true);}}
   if(away>60&&earned>0){gain(earned);showAway(away,earned,won);}
   blightNext=Date.now()+12000;
   visDue=Date.now()+45000+Math.random()*45000;
+  PX=frontPos();
   fit();window.addEventListener("resize",fit);
   paint();booted=true;requestAnimationFrame(frame);
   setInterval(tick,100);
