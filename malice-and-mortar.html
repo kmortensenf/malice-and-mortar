@@ -1,0 +1,1185 @@
+<title>Malice &amp; Mortar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@500;700&family=Alegreya:ital,wght@0,400;0,700;1,400&family=Alegreya+Sans:wght@500;700;800&display=swap">
+<style>
+/* Layout: a living night-time stage on the left (you, your lair, the realm you are ruining), the ledger of wickedness on the right. Single committed night-time look. */
+:root{
+  color-scheme: dark;
+  --night:#15101c;        /* page ground: bruise-black */
+  --stone:#221a2c;        /* raised slabs */
+  --stone-hi:#2f2540;     /* hover / inner slabs */
+  --mortar:#463a57;       /* borders, seams */
+  --bone:#efe6d2;         /* main text */
+  --ash:#a99fb5;          /* secondary text */
+  --torch:#f2a53b;        /* primary accent: torchlight */
+  --torch-deep:#b8611a;
+  --bog:#a9c45a;          /* malice colour */
+  --blood:#c0394b;        /* danger / heroes / your banners */
+  --display:"Grenze Gotisch","UnifrakturCook","Luminari",Georgia,serif;
+  --body:"Alegreya",Georgia,"Times New Roman",serif;
+  --util:"Alegreya Sans","Trebuchet MS",Verdana,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  background:var(--night);color:var(--bone);font-family:var(--body);font-size:16px;line-height:1.4;
+  padding-block:20px 40px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:1500px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2rem,6vw,3.2rem);line-height:.95;margin:0;color:var(--torch);letter-spacing:.01em;text-shadow:0 2px 0 #000,0 0 28px rgba(242,165,59,.25)}
+h1 small{display:block;font-family:var(--body);font-style:italic;font-weight:400;font-size:.95rem;color:var(--ash);letter-spacing:0;text-shadow:none;margin-top:6px}
+.purse{text-align:right;font-family:var(--util);font-variant-numeric:tabular-nums}
+.purse .big{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800;color:var(--bog);line-height:1}
+.purse .lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ash)}
+.purse .rate{color:var(--bone);font-weight:500}
+.purse .rate.hot{color:var(--torch);font-weight:800}
+
+.toggles{display:flex;gap:8px;margin-top:10px}
+.tg{font-family:var(--util);font-size:.8rem;font-weight:700;color:var(--ash);background:none;border:1px solid var(--mortar);border-radius:3px;padding:3px 10px;cursor:pointer}
+.tg[aria-pressed="true"]{color:var(--bog);border-color:var(--bog)}
+.goal{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:center;font-family:var(--util);font-size:.9rem}
+.goal .k{text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;color:var(--ash);font-weight:700}
+.goal .pct{color:var(--bog);font-weight:800;font-variant-numeric:tabular-nums}
+.bar{grid-column:1/-1;height:10px;background:#0c0812;border:1px solid var(--mortar);border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6f8a2e,var(--bog));transition:width .25s}
+.bar.ready i{background:linear-gradient(90deg,var(--torch-deep),var(--torch))}
+
+main{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px;align-items:start}
+@media (max-width:700px){.purse{text-align:left}}
+.col{display:flex;flex-direction:column;gap:14px;min-width:0}
+
+.stage{position:relative;border:2px solid var(--mortar);border-radius:4px;overflow:hidden;background:#0c0812;box-shadow:0 0 0 4px #0c0812,0 0 0 5px var(--mortar);transition:box-shadow .3s}
+.stage.laughing{box-shadow:0 0 0 4px #0c0812,0 0 0 5px var(--torch),0 0 34px rgba(242,165,59,.5)}
+.stage.shake{animation:shake .7s}
+@keyframes shake{10%{transform:translate(-4px,2px)}25%{transform:translate(4px,-3px)}40%{transform:translate(-3px,3px)}55%{transform:translate(3px,1px)}70%{transform:translate(-2px,-2px)}85%{transform:translate(1px,2px)}}
+.stage canvas{display:block;width:100%;height:clamp(240px,38.7vw,48vh);cursor:pointer;touch-action:pan-y}
+.plate.hint{left:50%;right:auto;bottom:auto;top:8px;transform:translateX(-50%);color:var(--ash);font-weight:500}
+.lhead{font-family:var(--display);font-size:1.25rem;font-weight:500;color:var(--torch);margin:0;padding:10px 12px 6px;border-bottom:1px solid var(--mortar)}
+.plate{position:absolute;left:8px;bottom:8px;font-family:var(--util);font-size:.78rem;font-weight:700;background:rgba(12,8,18,.72);padding:3px 8px;border-radius:3px;color:var(--bone);pointer-events:none}
+.plate.r{left:auto;right:8px}
+.toasts{position:absolute;top:8px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
+.toast{font-family:var(--util);font-weight:700;font-size:.85rem;background:rgba(12,8,18,.88);border:1px solid var(--torch);color:var(--bone);border-radius:4px;padding:5px 12px;max-width:90%;text-align:center;animation:toast 5s forwards}
+.toast b{color:var(--torch);font-family:var(--display);font-size:1.1rem;font-weight:500;margin-right:6px}
+@keyframes toast{0%{opacity:0;transform:translateY(-10px)}8%,85%{opacity:1;transform:none}100%{opacity:0}}
+.knight{position:absolute;bottom:6%;left:-12%;border:0;background:none;padding:4px;cursor:pointer;animation:march 14s linear forwards;filter:drop-shadow(0 0 8px rgba(255,240,200,.7))}
+.knight span{display:block;font-family:var(--util);font-weight:800;font-size:.7rem;color:#15101c;background:var(--bone);border-radius:3px;padding:1px 5px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em}
+@keyframes march{to{left:104%}}
+@media (prefers-reduced-motion:reduce){.knight{animation:none;left:45%}.stage.shake{animation:none}.toast{animation-name:none}}
+
+.acts{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px}
+.deed{font-family:var(--display);font-weight:700;font-size:1.55rem;line-height:1.1;color:#1b0f08;background:linear-gradient(#f7b955,#d9812a);border:0;border-bottom:5px solid #7b3d10;border-radius:6px;padding:10px 12px 8px;cursor:pointer;width:100%;transition:transform .05s}
+.deed:hover:not(:disabled){filter:brightness(1.08)}
+.deed:active:not(:disabled){transform:translateY(3px);border-bottom-width:2px;margin-bottom:3px}
+.deed small{display:block;font-family:var(--util);font-size:.8rem;font-weight:700;opacity:.85}
+.deed.laugh{background:linear-gradient(#c7dc7c,#7f9c34);border-bottom-color:#3f5212;font-size:1.25rem}
+.deed.laugh:disabled{background:var(--stone-hi);color:var(--ash);border-bottom-color:#17111f;cursor:not-allowed}
+.deed.laugh.on{background:linear-gradient(#ffd27a,#f2a53b);border-bottom-color:#7b3d10;color:#1b0f08}
+.last{font-style:italic;color:var(--ash);min-height:1.4em;font-size:.95rem;margin:-6px 2px 0}
+
+.blight{display:flex;gap:12px;align-items:flex-start;background:var(--stone);border-left:4px solid var(--bog);padding:10px 14px;border-radius:2px}
+.blight b{font-family:var(--util);font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--bog);white-space:nowrap;padding-top:3px}
+.blight p{margin:0;font-style:italic;min-width:0}
+
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:460px){.pair{grid-template-columns:minmax(0,1fr)}}
+.grow{background:var(--stone);border:1px solid var(--mortar);border-radius:4px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.grow h2{font-family:var(--util);font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ash);margin:0;font-weight:700}
+.grow .now{font-family:var(--display);font-size:1.45rem;line-height:1.05;color:var(--bone)}
+.grow .quip{font-style:italic;color:var(--ash);font-size:.92rem;flex:1}
+.pips{display:flex;gap:4px}
+.pips i{flex:1;height:5px;border-radius:2px;background:#0c0812;border:1px solid var(--mortar)}
+.pips i.on{background:var(--torch);border-color:var(--torch)}
+.btn{font-family:var(--util);font-weight:700;font-size:.92rem;color:var(--bone);background:var(--stone-hi);border:1px solid var(--torch-deep);border-radius:4px;padding:8px 10px;cursor:pointer;text-align:left;line-height:1.25}
+.btn:hover:not(:disabled){background:#3b2d50;border-color:var(--torch)}
+.btn:disabled{opacity:.5;cursor:not-allowed;border-color:var(--mortar)}
+.btn:not(:disabled).go{border-color:var(--torch);box-shadow:0 0 12px rgba(242,165,59,.35)}
+.btn .c{color:var(--bog);font-variant-numeric:tabular-nums;white-space:nowrap}
+.btn.warn{border-color:var(--blood)}
+:focus-visible{outline:2px solid var(--torch);outline-offset:2px}
+
+.ledger{background:var(--stone);border:1px solid var(--mortar);border-radius:4px;min-width:0}
+.tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--mortar)}
+.tabs button{flex:1 0 auto;font-family:var(--display);font-size:1.15rem;font-weight:500;color:var(--ash);background:none;border:0;border-bottom:3px solid transparent;padding:10px 8px 6px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--torch);border-bottom-color:var(--torch)}
+.tabs button .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bog);margin-left:5px;vertical-align:middle}
+.panel{padding:12px;display:flex;flex-direction:column;gap:8px}
+.panel .panel{padding:0}
+.qty{display:flex;align-items:center;gap:8px;font-family:var(--util);font-size:.8rem;color:var(--ash);text-transform:uppercase;letter-spacing:.1em}
+.qty button{font-family:var(--util);font-weight:700;color:var(--ash);background:none;border:1px solid var(--mortar);border-radius:3px;padding:3px 10px;cursor:pointer}
+.qty button[aria-pressed="true"]{color:#1b0f08;background:var(--torch);border-color:var(--torch)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;width:100%;text-align:left;background:var(--stone-hi);border:1px solid var(--mortar);border-radius:4px;padding:9px 12px;color:var(--bone);cursor:pointer;font-family:var(--body);font-size:1rem}
+button.row:hover:not(:disabled){border-color:var(--torch)}
+.row:disabled{cursor:not-allowed}
+.row:disabled .nm,.row:disabled .cost{opacity:.5}
+.row .nm{font-family:var(--util);font-weight:800;font-size:1.02rem}
+.row .ds{grid-column:1;font-style:italic;color:var(--ash);font-size:.9rem}
+.row .own{grid-row:1/3;grid-column:2;text-align:right;font-family:var(--display);font-size:1.9rem;line-height:1;color:var(--mortar);font-variant-numeric:tabular-nums}
+.row .own.has{color:var(--bone)}
+.row .own.bump{animation:bump .25s}
+@keyframes bump{40%{transform:scale(1.35);color:var(--torch)}}
+.row .meta{grid-column:1/3;font-family:var(--util);font-size:.85rem;color:var(--ash);font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;gap:2px 14px}
+.row .cost{color:var(--bog);font-weight:700}
+.row.locked{border-style:dashed;cursor:default}
+div.row{cursor:default}
+.row.done{border-color:var(--blood)}
+.row .stamp{grid-row:1/3;grid-column:2;font-family:var(--display);font-size:1.3rem;color:var(--blood);transform:rotate(-8deg);border:2px solid var(--blood);border-radius:4px;padding:0 8px}
+.row .bar{grid-column:1/3;margin-top:4px}
+.empty{font-style:italic;color:var(--ash);margin:6px 2px}
+.legacy p,.panel>p{margin:0}
+.legacy dl{display:grid;grid-template-columns:1fr auto;gap:4px 16px;margin:4px 0;font-family:var(--util);font-variant-numeric:tabular-nums}
+.legacy dt{color:var(--ash)}.legacy dd{margin:0;text-align:right;font-weight:700}
+h3{font-family:var(--display);font-size:1.3rem;font-weight:500;margin:8px 0 0;color:var(--torch)}
+.ach{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.ach div{font-family:var(--util);font-size:.82rem;border:1px dashed var(--mortar);border-radius:4px;padding:5px 8px;color:var(--mortar);line-height:1.2}
+.ach div.got{border:1px solid var(--torch-deep);color:var(--ash);background:var(--stone-hi)}
+.ach div b{display:block;color:inherit;font-weight:800}
+.ach div.got b{color:var(--bone)}
+footer{font-size:.85rem;color:var(--ash);font-style:italic;text-align:center}
+</style>
+
+<div class="wrap">
+  <header>
+    <div><h1>Malice &amp; Mortar<small>From damp hole to castle of unreasonable size.</small></h1>
+      <div class="toggles"><button class="tg" id="tgSnd" type="button" aria-pressed="true">Sound: on</button><button class="tg" id="tgMus" type="button" aria-pressed="true">Music: on</button></div></div>
+    <div class="purse">
+      <div class="lbl">Malice hoarded</div>
+      <div class="big" id="malice">0</div>
+      <div class="rate" id="rateBox"><span id="mps">0</span> per second</div>
+    </div>
+  </header>
+  <div class="goal"><span class="k">Next wickedness</span><span id="goalTxt"></span><span class="pct" id="goalPct"></span><div class="bar" id="goalBar"><i id="goalFill"></i></div></div>
+
+  <div class="stage" id="stage">
+    <canvas id="scene" width="930" height="360" aria-label="Your lair at night, and the realm around it"></canvas>
+    <div class="plate" id="plateYou">Imp</div>
+    <div class="plate r" id="plateLair">Damp Hole</div>
+    <div class="plate hint" id="panHint" hidden>Drag to look around</div>
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+  </div>
+  <main>
+    <div class="col">
+      <div class="acts">
+        <button class="deed" id="deed" type="button">Commit a Misdeed<small id="deedVal">+1 malice</small></button>
+        <button class="deed laugh" id="laugh" type="button" disabled>Evil Laugh<small id="laughVal">Imps can only giggle</small></button>
+      </div>
+      <p class="last" id="last">Go on. Nobody's watching. Probably.</p>
+
+      <div class="blight"><b>Mrs. Blight</b><p id="blight">Welcome home, sir. I've aired out the hole. It didn't help.</p></div>
+
+      <div class="pair">
+        <section class="grow">
+          <h2>Yourself</h2>
+          <div class="now" id="rankName">Imp</div>
+          <div class="pips" id="rankPips"></div>
+          <div class="quip" id="rankQuip"></div>
+          <button class="btn" id="rankBtn" type="button"></button>
+        </section>
+        <section class="grow">
+          <h2>Your home</h2>
+          <div class="now" id="lairName">Damp Hole</div>
+          <div class="pips" id="lairPips"></div>
+          <div class="quip" id="lairQuip"></div>
+          <button class="btn" id="lairBtn" type="button"></button>
+        </section>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="ledger">
+        <h2 class="lhead">Minions</h2>
+        <div class="panel" id="panel-minions">
+          <div class="qty"><span>Hire</span>
+            <button type="button" data-q="1" aria-pressed="true">1</button>
+            <button type="button" data-q="10" aria-pressed="false">10</button>
+            <button type="button" data-q="max" aria-pressed="false">Max</button>
+          </div>
+          <div id="minionList" class="panel"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="ledger">
+        <div class="tabs" role="tablist">
+          <button role="tab" id="tab-schemes" aria-selected="true" type="button">Schemes<span class="dot" id="dot-schemes" hidden></span></button>
+          <button role="tab" id="tab-decor" aria-selected="false" type="button">D&eacute;cor<span class="dot" id="dot-decor" hidden></span></button>
+          <button role="tab" id="tab-conquest" aria-selected="false" type="button">Conquest<span class="dot" id="dot-conquest" hidden></span></button>
+          <button role="tab" id="tab-legacy" aria-selected="false" type="button">Legacy</button>
+        </div>
+        <div class="panel" id="panel-schemes">
+          <div id="schemeList" class="panel"></div>
+          <p class="empty" id="schemeCount"></p>
+        </div>
+        <div class="panel" id="panel-decor" hidden>
+          <p>Home improvements. Each one adds 25% to all malice and makes the place look worse, which is to say better.</p>
+          <div id="decorList" class="panel"></div>
+          <p class="empty" id="decorCount"></p>
+        </div>
+        <div class="panel" id="panel-conquest" hidden>
+          <p>The neighbours. Each realm you conquer multiplies all malice by 1.5 for good. Sieges take time; every misdeed you commit hurries one along.</p>
+          <div id="realmList" class="panel"></div>
+        </div>
+        <div class="panel legacy" id="panel-legacy" hidden>
+          <dl>
+            <dt>Infamy</dt><dd id="stInf">0</dd>
+            <dt>Malice ever hoarded</dt><dd id="stTotal">0</dd>
+            <dt>Misdeeds personally committed</dt><dd id="stClicks">0</dd>
+            <dt>Heroes booted</dt><dd id="stHeroes">0</dd>
+          </dl>
+          <h3>Misdeeds of note <span id="achCount" style="font-family:var(--util);font-size:.85rem;color:var(--ash)"></span></h3>
+          <div class="ach" id="achList"></div>
+          <h3>Notoriety perks</h3>
+          <div class="ach" id="perkList"></div>
+          <h3>Fake your own demise</h3>
+          <p>Stage a dramatic defeat, let the bards sing about it, then start again from the hole with a reputation. Each point of Infamy adds 10% to all malice, forever. Reaching more Infamy also unlocks the perks above. You keep your Infamy and your misdeeds of note, and nothing else.</p>
+          <button class="btn" id="prestigeBtn" type="button"></button>
+          <h3>Housekeeping</h3>
+          <p>Progress saves itself in this browser every few seconds. Minions keep working while you're away, for up to eight hours.</p>
+          <button class="btn warn" id="resetBtn" type="button">Erase everything, Infamy included</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer>No villagers were harmed. Several were mildly inconvenienced.</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const KEY="malice-mortar-v1";
+
+/* ---------- content ---------- */
+const MINIONS=[
+ {name:"Gutter Imp",desc:"Steals exactly one sock from every pair.",cost:15,out:0.2,tier:0},
+ {name:"Bog Goblin",desc:"Loosens the lids on other people's jam.",cost:100,out:1,tier:0},
+ {name:"Tax Collector",desc:"The only truly evil thing on this list.",cost:1100,out:8,tier:1},
+ {name:"Cackling Witch",desc:"Turns princes into frogs, then bills the frogs.",cost:12000,out:47,tier:2},
+ {name:"Ogre Bouncer",desc:"Your name's not on the list. There is no list.",cost:130000,out:260,tier:3},
+ {name:"Vampire Accountant",desc:"Drains the villagers, financially.",cost:5e6,out:3000,tier:4},
+ {name:"Mildly Cursed Dragon",desc:"Breathes fire. Also sneezes glitter. Don't ask.",cost:1.5e8,out:40000,tier:5},
+ {name:"Thing From The Basement",desc:"It was here before you. It pays rent in dread.",cost:4e9,out:500000,tier:6}
+];
+const RANKS=[
+ {name:"Imp",quip:"Small, damp, and full of ambition.",cost:0},
+ {name:"Smug Imp",quip:"Same imp. Insufferable posture. Has learned to laugh properly.",cost:150},
+ {name:"Gremlin Foreman",quip:"Has a pitchfork and a clipboard. Fears nothing.",cost:4000},
+ {name:"Hellion",quip:"Now legally classed as a menace. Got a cape.",cost:120000},
+ {name:"Dread Knight",quip:"The armour squeaks, but nobody dares mention it.",cost:4e6},
+ {name:"Dark Lord",quip:"The cape billows indoors. No one knows how.",cost:1.5e8},
+ {name:"Overlord of Practically Everything",quip:"The 'practically' is a sore subject.",cost:8e9}
+];
+const LAIRS=[
+ {name:"Damp Hole",quip:"It's a hole. It's damp. It's yours.",cost:0},
+ {name:"Suspicious Shed",quip:"The neighbours have started a petition.",cost:500},
+ {name:"Crooked Tower",quip:"Leans menacingly. Mostly structural issues.",cost:20000},
+ {name:"Menacing Keep",quip:"Has a dungeon. Currently storing chairs.",cost:400000},
+ {name:"Dark Fortress",quip:"The moat is stocked with disappointed fish.",cost:6e6},
+ {name:"Dread Citadel",quip:"Visible from three kingdoms. All three have complained.",cost:1e8},
+ {name:"Castle of Unreasonable Size",quip:"The planning committee has been fed to the dragon.",cost:5e9}
+];
+const DECOR=[
+ {id:"sign",name:"A Second, Ruder Sign",desc:"The first sign wasn't getting through to people.",cost:60,tier:0},
+ {id:"torch",name:"Ominous Torches",desc:"They burn green on Tuesdays. Nobody lit them.",cost:1500,tier:1},
+ {id:"garg",name:"Judgemental Gargoyles",desc:"They don't do anything. They just look at you like that.",cost:90000,tier:2},
+ {id:"moat",name:"Bubbling Moat",desc:"Don't ask what's bubbling. It's shy.",cost:1.5e6,tier:3},
+ {id:"banner",name:"Enormous Banners",desc:"Your face, forty feet tall. The eyes follow the peasants.",cost:3e7,tier:4},
+ {id:"cloud",name:"Personal Thundercloud",desc:"Hovers over the lair on a monthly subscription.",cost:6e8,tier:5},
+ {id:"beacon",name:"Doom Beacon",desc:"A column of green light. Purely decorative. Ruins everyone's sleep.",cost:3e10,tier:6}
+];
+const REALMS=[
+ {name:"Lower Dribbling",what:"A village famed for its jam and its trusting nature.",done:"Now pays tribute in jam. And fear. Mostly jam.",cost:2000,time:30,tier:1},
+ {name:"The Windmill at Upper Crumb",what:"Grinds flour for wholesome bread. Disgusting.",done:"Now grinds flour for slightly sinister bread.",cost:80000,time:60,tier:2},
+ {name:"Abbey of Perpetual Tutting",what:"Forty monks who disapprove of you in shifts.",done:"The monks now tut on your behalf.",cost:2.5e6,time:120,tier:3},
+ {name:"Glimmerdell Unicorn Sanctuary",what:"Sickeningly lovely. There's a rainbow. It has to go.",done:"The rainbow is grey now. The unicorns went goth and seem happier.",cost:8e7,time:240,tier:4},
+ {name:"Castle Goodly",what:"Home of King Roland the Thoroughly Decent.",done:"The king runs your gift shop now. He's annoyingly good at it.",cost:2e10,time:480,tier:6},
+ {name:"The Cloud Kingdom of Nimbus",what:"Smug weather wizards who look down on everyone. Literally.",done:"It only rains on your enemies now. And on picnics.",cost:1e12,time:600,tier:6},
+ {name:"The Moon",what:"It has been watching you this whole time. Judging.",done:"It has your face on it now. The tides are confused and a bit frightened.",cost:6e13,time:900,tier:6}
+];
+const RPOS=[[-100,262],[-8,270],[30,186],[227,262],[-225,128],[-110,50],[150,70]];
+const UP=[];
+[["Pointier Stick","Misdeeds are worth double. Poke with confidence.",100,2],
+ ["Evil Laugh Lessons","Misdeeds worth double again. From the diaphragm, sir.",2500,2],
+ ["Monogrammed Cape","Misdeeds worth triple. Dry clean only.",60000,3],
+ ["Ominous Theme Music","Misdeeds worth triple. A small goblin follows you with a tuba.",2e6,3],
+ ["Signature Catchphrase","Misdeeds worth quadruple. It's still being workshopped.",1e8,4]
+].forEach((u,i)=>UP.push({id:"c"+i,name:u[0],desc:u[1],cost:u[2],mult:u[3],kind:"click",need:i}));
+[[["Sock Sacks","They can now carry both socks. Chaos."],["Tiny Pitchforks","Adorable. Do not say so to their faces."],["Sock Futures Market","Speculating on left socks. The right ones are worthless."],["The Forbidden Third Sock","Nobody knows whose it is. That's the horror."]],
+ [["Bog Snorkels","Lurk longer, lurk deeper."],["Performance Reviews","Motivation through fear of feedback."],["Jam Sabotage Diploma","Three years of study. Mostly lids."],["Mandatory Fun Days","The cruellest scheme yet. There are trust falls."]],
+ [["Late Fees","Wickedness with paperwork."],["Fees On The Late Fees","Even you feel a bit bad. Briefly."],["Tax On Being Taxed","It's only fair. It isn't, but it's printed on a form."],["Audit Of The Soul","Please retain your receipts for all good deeds."]],
+ [["Bulk Newt Eyes","The newts are fine. They grow back. Probably."],["Cauldron With A Lid","Fewer splashes, more curses."],["Frog Subscription Service","A fresh prince-frog on your doorstep every month."],["Broom With Racing Stripes","Goes no faster. Feels much faster."]],
+ [["Bigger Club","Self-explanatory."],["A Second Club","For the other hand. Ogre genius."],["Velvet Rope Made Of Chain","Classy and load-bearing."],["A Clipboard He Cannot Read","Deeply intimidating all the same."]],
+ [["Creative Bookkeeping","The numbers are scared of him."],["Offshore Coffins","Technically a tax haven."],["Blood From A Stone","He's done it. The stone is suing."],["Eternal Fiscal Night","The financial year never ends. Neither does he."]],
+ [["Throat Lozenges","Smoother fire, fewer glitter sneezes."],["Hoard Insurance","Against heroes, acts of good, etc."],["Glitter Monetisation","The sneezes are now a revenue stream."],["A Second Head","It's in middle management. The first head hates it."]],
+ [["More Tentacles","Nobody counted. Nobody will."],["A Nightlight","It is much less grumpy now."],["Basement Extension","It needed the legroom. Tentacleroom."],["It Learns Your Name","It's fine. It says it nicely. Mostly."]]
+].forEach((pair,m)=>pair.forEach((u,j)=>UP.push({id:"m"+m+"_"+j,name:u[0],desc:u[1]+" "+MINIONS[m].name+" output "+(j===3?"tripled.":"doubled."),cost:MINIONS[m].cost*[12,150,3000,3e6][j],mult:j===3?3:2,kind:"minion",m:m,need:[10,25,50,100][j]})));
+const sum=a=>a.reduce((x,y)=>x+y,0);
+const ACH=[
+ ["a1","First Offence","Commit a misdeed",s=>s.clicks>=1],
+ ["a2","Repeat Offender","100 misdeeds",s=>s.clicks>=100],
+ ["a3","Career Criminal","1,000 misdeeds",s=>s.clicks>=1000],
+ ["a4","Truly Dastardly","Land a dastardly misdeed",s=>s.crits>=1],
+ ["a5","From The Diaphragm","Do a proper evil laugh",s=>s.laughs>=1],
+ ["a6","Middle Management","Employ 10 minions",s=>sum(s.minions)>=10],
+ ["a7","Inhuman Resources","Employ 100 minions",s=>sum(s.minions)>=100],
+ ["a8","Payroll Is A Nightmare","Employ 300 minions",s=>sum(s.minions)>=300],
+ ["a9","On The Property Ladder","Move out of the hole",s=>s.lair>=1],
+ ["a10","Keep It Up","Build the Menacing Keep",s=>s.lair>=3],
+ ["a11","Unreasonable","Build the final castle",s=>s.lair>=6],
+ ["a12","Certified Menace","Become a Hellion",s=>s.rank>=3],
+ ["a13","Practically Everything","Reach your final form",s=>s.rank>=6],
+ ["a14","Mind The Moat","Boot a hero",s=>s.heroes>=1],
+ ["a15","Helmet Collection","Boot 10 heroes",s=>s.heroes>=10],
+ ["a16","Jam Today","Conquer a realm",s=>s.realms>=1],
+ ["a17","Long Live Me","Conquer every realm",s=>s.realms>=REALMS.length],
+ ["a18","Interior Menace","Install all the décor",s=>Object.keys(s.decor).length>=DECOR.length],
+ ["a19","Morally Bankrupt Millionaire","Hoard 1M malice in all",s=>s.total>=1e6],
+ ["a20","Billions, No Regrets","Hoard 1B malice in all",s=>s.total>=1e9],
+ ["a21","Reports Of My Death","Fake your own demise",s=>s.infamy>=1],
+ ["a22","Menace To Society","Reach full menace by misbehaving quickly",s=>s.topCombo>=50],
+ ["a23","Head In The Clouds","Conquer the Cloud Kingdom",s=>s.realms>=6]
+];
+const DEEDS=["You swapped the salt and the sugar.","You kicked a signpost so it points the wrong way.","You told a duck it was adopted.","You hid one shoe. Just the one.","You left a rude note for the milkman.","You moved a scarecrow slightly closer to a window.","You untied a guard's bootlaces.","You booed a bard mid-ballad.","You licked a pie on a windowsill and left it there.","You taught a parrot something unrepeatable.","You replaced the village bell with a slightly flatter bell.","You stood menacingly near some sheep.","You returned a library book. Late. On purpose.","You whispered 'moist' at a wedding."];
+const BLIGHT=[
+ [0,"Welcome home, sir. I've aired out the hole. It didn't help."],
+ [0,"A reminder that socks stolen by the imps must be logged, sir. We are evil, not disorganised."],
+ [0,"The goblins would like a day off. I laughed for you, sir, to save time."],
+ [1,"The shed is lovely, sir. The spiders have formed a welcoming committee."],
+ [1,"The tax collector asked where to send the villagers' tears. I said the usual jar."],
+ [2,"The tower leans a touch more each morning. I've decided to call it character."],
+ [2,"A witch has moved in upstairs. She's hexed the kettle. Tea now screams."],
+ [3,"The dungeon is ready, sir. We've no prisoners, so I've put the good chairs down there."],
+ [3,"The ogre ate the guest list again. On reflection, we've never had guests."],
+ [4,"The moat fish look disappointed, sir. I've told them to take it up with you."],
+ [4,"Your accountant doesn't show up in the mirrors, or in the audit. Convenient."],
+ [5,"The dragon sneezed on the east wing. It's very sparkly now. I'm so sorry."],
+ [5,"Three kingdoms have written to complain about the view. I've framed the letters."],
+ [6,"The castle is so large I got lost fetching your slippers. I've been gone a week, sir."],
+ [6,"Something in the basement says hello. I didn't catch its name. It has too many."],
+ [0,"Do remember to cackle today, sir. It's good for the lungs."],
+ [0,"I've polished your malice. It was looking a bit benign."],
+ [0,"The neighbours are looking rather unconquered, sir. Just an observation."]
+];
+const HEROES=["Sir Reginald the Punctual","Dame Prudence of Tidy Hill","Brave Sir Nigel (self-titled)","Chad the Chosen","Lady Winifred, Twice Blessed","Sir Gavin of the Sensible Shoes","Prince Florian the Moisturised"];
+const LAUGH_X=7;
+const PERKS=[[1,"Encore","Evil Laugh lasts 30 seconds"],[3,"Practised Wickedness","Dastardly misdeeds twice as often"],[8,"Helmet Resale","Heroes drop triple loot"],[20,"Lungs Of Iron","Evil Laugh recovers in 1:30"],[50,"Siege Veterans","Sieges go twice as fast"],[120,"Hands-On Management","Misdeeds earn 5% of your malice per second"]];
+function perk(i){return S.infamy>=PERKS[i][0];}
+function laughLen(){return perk(0)?30:20;}
+function laughCd(){return perk(3)?90:150;}
+
+/* ---------- state ---------- */
+function fresh(){return {malice:0,run:0,total:0,clicks:0,crits:0,laughs:0,topCombo:0,heroes:0,minions:MINIONS.map(()=>0),ups:{},decor:{},ach:{},lair:0,rank:0,infamy:0,realms:0,siege:0,laughEnd:0,laughReady:0,last:Date.now()};}
+let S=fresh();
+let qty=1, minMult=[], clickMult=1, floats=[], parts=[], pulse=0, rankPop=0, lairRise=1, flash=0, boltT=0;
+let combo=0, comboT=0, heroT=null, heroDue=0, blightUntil=0, blightNext=0, cache={}, armed={};
+
+function fmt(n){
+  if(!isFinite(n))return "lots";
+  if(n<1000)return (n<100&&n%1>0.04)?n.toFixed(1):String(Math.floor(n+1e-9));
+  const U=["K","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc"];
+  let i=-1;while(n>=1000&&i<U.length-1){n/=1000;i++;}
+  return (n>=100?n.toFixed(0):n>=10?n.toFixed(1):n.toFixed(2))+U[i];
+}
+function clock(s){s=Math.ceil(s);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
+function recalc(){
+  minMult=MINIONS.map(()=>1);clickMult=1;
+  UP.forEach(u=>{if(S.ups[u.id]){if(u.kind==="click")clickMult*=u.mult;else minMult[u.m]*=u.mult;}});
+}
+function laughing(){return Date.now()<S.laughEnd;}
+function baseMult(){return Math.pow(2,S.lair)*(1+0.25*S.rank)*(1+0.1*S.infamy)*Math.pow(1.25,Object.keys(S.decor).length)*Math.pow(1.5,S.realms)*(1+0.02*Object.keys(S.ach).length);}
+function globalMult(){return baseMult()*(laughing()?LAUGH_X:1);}
+function rawMps(){let t=0;for(let i=0;i<MINIONS.length;i++)t+=S.minions[i]*MINIONS[i].out*minMult[i];return t;}
+function mps(){return rawMps()*globalMult();}
+function clickVal(){return ((clickMult*Math.pow(3,S.rank)*(1+0.1*S.infamy)*(laughing()?LAUGH_X:1))+mps()*(perk(5)?0.05:0.02))*(1+combo*0.04);}
+function gain(x){S.malice+=x;S.run+=x;S.total+=x;}
+const R=1.15;
+function costN(i,n){return MINIONS[i].cost*Math.pow(R,S.minions[i])*(Math.pow(R,n)-1)/(R-1);}
+function maxN(i){const b=MINIONS[i].cost*Math.pow(R,S.minions[i]);return Math.max(0,Math.floor(Math.log(S.malice*(R-1)/b+1)/Math.log(R)+1e-9));}
+function buyCount(i){return qty==="max"?Math.max(1,maxN(i)):qty;}
+function pendingInfamy(){return Math.floor(Math.sqrt(S.run/1e8));}
+
+function say(txt,hold){$("blight").textContent=txt;blightUntil=Date.now()+(hold||9000);blightNext=blightUntil+6000;}
+function chatter(){
+  const pool=BLIGHT.filter(b=>b[0]===S.lair||(b[0]===0&&Math.random()<.4));
+  $("blight").textContent=pool[Math.floor(Math.random()*pool.length)][1];
+  blightNext=Date.now()+14000;
+}
+function toast(head,txt){
+  const d=document.createElement("div");d.className="toast";
+  const b=document.createElement("b");b.textContent=head;d.appendChild(b);d.appendChild(document.createTextNode(txt));
+  $("toasts").appendChild(d);setTimeout(()=>d.remove(),5200);
+  while($("toasts").children.length>3)$("toasts").firstChild.remove();
+}
+function shake(){const s=$("stage");s.classList.remove("shake");void s.offsetWidth;s.classList.add("shake");}
+function burst(x,y,n,cols,sp,up){
+  for(let i=0;i<n;i++){const a=Math.random()*6.28,v=(0.3+Math.random())*sp;
+    parts.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-(up||0),life:1,d:.6+Math.random()*.8,col:cols[i%cols.length],sz:1.5+Math.random()*2.5,g:60});}
+  if(parts.length>400)parts.splice(0,parts.length-400);
+}
+function youTop(){return gy(PX)+4-64*(1.3+S.rank*0.22);}
+
+/* ---------- audio: everything is synthesised, nothing is loaded ---------- */
+let AC=null,mGain=null,sGain=null,noiseBuf=null,musT=0,musStep=0;
+const prefs={snd:true,mus:true};
+try{Object.assign(prefs,JSON.parse(localStorage.getItem(KEY+"-audio")||"{}"));}catch(e){}
+function setVol(){
+  if(AC){mGain.gain.value=prefs.mus?.55:0;sGain.gain.value=prefs.snd?.8:0;}
+  const a=$("tgSnd"),b=$("tgMus");
+  a.setAttribute("aria-pressed",!!prefs.snd);a.textContent="Sound: "+(prefs.snd?"on":"off");
+  b.setAttribute("aria-pressed",!!prefs.mus);b.textContent="Music: "+(prefs.mus?"on":"off");
+}
+function audioOn(){
+  if(AC){if(AC.state==="suspended"&&!document.hidden)AC.resume();return;}
+  const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+  try{AC=new C();}catch(e){AC=null;return;}
+  const master=AC.createGain(),comp=AC.createDynamicsCompressor();master.gain.value=.6;master.connect(comp);comp.connect(AC.destination);
+  mGain=AC.createGain();sGain=AC.createGain();mGain.connect(master);sGain.connect(master);
+  noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  setVol();musT=AC.currentTime+.1;
+}
+function tone(f,when,dur,type,vol,dest,cut,slide){
+  const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,when);
+  if(slide)o.frequency.exponentialRampToValueAtTime(slide,when+dur);
+  g.gain.setValueAtTime(0.0001,when);g.gain.exponentialRampToValueAtTime(vol,when+.012);g.gain.exponentialRampToValueAtTime(0.0001,when+dur);
+  let n=o;if(cut){const fl=AC.createBiquadFilter();fl.type="lowpass";fl.frequency.value=cut;o.connect(fl);n=fl;}
+  n.connect(g);g.connect(dest);o.start(when);o.stop(when+dur+.05);
+}
+function noise(when,dur,vol,cut,dest,type){
+  const b=AC.createBufferSource(),g=AC.createGain(),fl=AC.createBiquadFilter();b.buffer=noiseBuf;b.loop=true;fl.type=type||"lowpass";fl.frequency.value=cut;
+  g.gain.setValueAtTime(vol,when);g.gain.exponentialRampToValueAtTime(0.0001,when+dur);
+  b.connect(fl);fl.connect(g);g.connect(dest);b.start(when);b.stop(when+dur+.05);
+}
+function N(semi){return 293.66*Math.pow(2,semi/12);}
+function snd(k,a){
+  if(!AC||!prefs.snd||AC.state!=="running")return;
+  const t=AC.currentTime,d=sGain;
+  switch(k){
+    case "click":tone(N(-12+Math.min(50,a||0)*.24),t,.09,"triangle",.25,d);noise(t,.03,.06,3000,d,"highpass");break;
+    case "crit":tone(N(7),t,.12,"square",.14,d,2400);tone(N(14),t+.07,.25,"square",.14,d,2400);break;
+    case "hire":tone(N(-17),t,.12,"square",.16,d,700);tone(N(5),t+.05,.1,"triangle",.14,d);break;
+    case "buy":[0,3,7,12].forEach((x,i)=>tone(N(x),t+i*.07,.16,"triangle",.18,d));break;
+    case "rank":[-12,-5,0,7].forEach((x,i)=>tone(N(x),t+i*.14,.5,"sawtooth",.13,d,1200));noise(t,.9,.1,400,d);break;
+    case "build":noise(t,1.5,.5,180,d);tone(N(-24),t,1.4,"sawtooth",.2,d,300);[0,3,7].forEach(x=>tone(N(x-12),t+1.1,1.2,"sawtooth",.09,d,900));break;
+    case "thunder":noise(t,1.1,.22,240,d);break;
+    case "laugh":for(let i=0;i<6;i++)tone(N(5-i*2),t+i*.15,.13,"sawtooth",.16,d,1100,N(2-i*2));noise(t+.1,1.4,.3,220,d);break;
+    case "hero":[0,4,7,12].forEach((x,i)=>tone(N(x+5),t+i*.09,.14,"square",.1,d,2600));break;
+    case "boot":tone(N(12),t,.35,"sine",.3,d,0,N(-12));noise(t+.3,.35,.2,1800,d,"highpass");break;
+    case "away":tone(N(3),t,.3,"triangle",.15,d,0,N(-2));break;
+    case "siege":[0,.12,.24,.42].forEach(o=>noise(t+o,.12,.3,300,d));break;
+    case "conquer":[-12,-5,0,3,7,12].forEach((x,i)=>tone(N(x),t+i*.11,.6,"sawtooth",.11,d,1500));noise(t,.5,.25,200,d);break;
+    case "ach":tone(N(12),t,.15,"sine",.2,d);tone(N(19),t+.1,.35,"sine",.2,d);break;
+  }
+}
+/* A villainous oom-pah in D minor. It gains a layer with every lair you build. */
+const CH=[[0,3,7],[0,3,7],[5,8,12],[7,11,14],[0,3,7],[8,12,15],[7,11,14],[0,3,7]];
+const MEL=[[0,null,3,null,7,null,3,null],[12,null,7,8,7,null,3,null],[5,null,8,null,12,null,8,null],[11,null,7,4,1,null,4,null],[0,3,7,12,null,7,3,null],[8,null,3,null,0,null,3,8],[5,8,12,8,11,7,4,1],[0,null,null,-5,0,null,null,null]];
+function music(){
+  if(!AC||AC.state!=="running")return;
+  if(musT<AC.currentTime)musT=AC.currentTime+.05;
+  const e=laughing()?.21:.29;
+  while(musT<AC.currentTime+.35){
+    if(prefs.mus){
+      const bar=Math.floor(musStep/8),st=musStep%8,c=CH[bar],L=S.lair,d=mGain,t=musT,m=MEL[bar][st];
+      if(st===0)tone(N(c[0]-24),t,e*1.8,"square",.2,d,380);
+      if(st===4)tone(N(c[0]-17),t,e*1.8,"square",.16,d,380);
+      if(L>=1&&(st===2||st===6))c.forEach(x=>tone(N(x-12),t,.1,"square",.045,d,1400));
+      if(L>=2&&m!==null)tone(N(m),t,e*1.6,"sawtooth",.07,d,1800);
+      if(L>=3&&m!==null&&bar>=4)tone(N(m+12),t,e,"triangle",.05,d);
+      if(L>=4&&st===0)c.forEach(x=>tone(N(x-12),t,e*8,"sawtooth",.025,d,600));
+      if(L>=5&&(st===0||st===3||st===6))noise(t,.12,.12,160,d);
+      if(L>=6&&st%2===1)noise(t,.03,.03,6000,d,"highpass");
+    }
+    musT+=e;musStep=(musStep+1)%64;
+  }
+}
+
+/* ---------- actions ---------- */
+function misdeed(){
+  combo=Math.min(50,combo+1);comboT=Date.now();if(combo>S.topCombo)S.topCombo=combo;
+  let v=clickVal();const crit=Math.random()<(perk(1)?0.12:0.06);snd(crit?"crit":"click",combo);
+  if(crit){v*=10;S.crits++;}
+  gain(v);S.clicks++;pulse=1;
+  if(S.siege>0)S.siege=Math.max(0.01,S.siege-0.25);
+  floats.push({x:PX+(Math.random()*60-30),y:youTop()-6,txt:(crit?"Dastardly! +":"+")+fmt(v),life:1,big:crit});
+  if(crit)burst(PX,youTop()+20,14,["#f2a53b","#ffd27a"],70,30);
+  if(floats.length>24)floats.shift();
+  if(S.clicks%4===1)$("last").textContent=DEEDS[Math.floor(Math.random()*DEEDS.length)];
+  paint();
+}
+function laugh(){
+  const now=Date.now();
+  if(S.rank<1||now<S.laughReady)return;
+  S.laughEnd=now+laughLen()*1000;S.laughReady=now+laughCd()*1000;S.laughs++;snd("laugh");
+  flash=1;boltT=performance.now();shake();
+  floats.push({x:PX+25,y:youTop()-14,txt:"MWA HA HA HA!",life:1.6,big:true});
+  say("Splendid laugh, sir. A window cracked in the next county.");paint();
+}
+function hire(i){
+  if(MINIONS[i].tier>S.lair)return;
+  const n=buyCount(i),c=costN(i,n);
+  if(S.malice<c)return;
+  S.malice-=c;S.minions[i]+=n;snd("hire");
+  const o=rows[i].own;o.classList.remove("bump");void o.offsetWidth;o.classList.add("bump");
+  burst(-200+Math.random()*760,304,6,["#a9c45a","#efe6d2"],40,30);
+  paint();
+}
+function buyUp(id){
+  const u=UP.find(x=>x.id===id);
+  if(!u||S.ups[id]||S.malice<u.cost)return;
+  S.malice-=u.cost;S.ups[id]=1;recalc();snd("buy");toast("Scheme hatched",u.name);paint();
+}
+function buyDecor(id){
+  const d=DECOR.find(x=>x.id===id);
+  if(!d||S.decor[id]||d.tier>S.lair||S.malice<d.cost)return;
+  S.malice-=d.cost;S.decor[id]=1;flash=.5;snd("buy");
+  burst(440,250,30,["#f2a53b","#a9c45a","#efe6d2"],110,40);
+  toast("Installed",d.name);say("The "+d.name.toLowerCase().replace(/^an? /,"")+" went in nicely, sir. The property value has plummeted.");paint();
+}
+function rankUp(){
+  const n=RANKS[S.rank+1];if(!n||S.malice<n.cost)return;
+  S.malice-=n.cost;S.rank++;rankPop=1;flash=.6;snd("rank");
+  burst(PX,gy(PX)-40,50,["#f2a53b","#c0394b","#ffd27a"],140,50);
+  toast("You have become",n.name);
+  say(S.rank===1?"A Smug Imp, sir. You may now laugh evilly. Do warm up first.":"You're a "+n.name+" now, sir. I've let out your trousers.");paint();
+}
+function lairUp(){
+  const n=LAIRS[S.lair+1];if(!n||S.malice<n.cost)return;
+  S.malice-=n.cost;S.lair++;lairRise=0;flash=.8;shake();snd("build");
+  for(let x=300;x<580;x+=10)burst(x,gy(x),4,["#463a57","#a99fb5","#221a2c"],60,50);
+  toast("Built",n.name);
+  say(S.lair===6?"It's finished, sir. The Castle of Unreasonable Size. You can see it from the moon. The moon has complained.":"The "+n.name+" is ready, sir. Mind the wet mortar. And the wet minions.",12000);
+  paint();
+}
+function siege(){
+  const r=REALMS[S.realms];
+  if(!r||S.siege>0||r.tier>S.lair||S.malice<r.cost)return;
+  S.malice-=r.cost;S.siege=r.time;snd("siege");
+  say("The minions have marched on "+r.name+", sir. I packed them sandwiches. Misdeeds will hurry things along.",12000);paint();
+}
+function conquered(quiet){
+  const r=REALMS[S.realms],p=RPOS[S.realms];S.siege=0;S.realms++;
+  if(quiet)return;
+  snd("conquer");flash=1;shake();burst(p[0],p[1],60,["#c0394b","#f2a53b","#a9c45a"],130,40);
+  toast("Conquered",r.name);say(r.name+" is yours, sir. "+r.done,14000);
+}
+function twoStep(btn,key,label,fn){
+  if(armed[key]){armed[key]=0;fn();return;}
+  armed[key]=1;btn.dataset.armed="1";btn.textContent=label;
+  setTimeout(()=>{armed[key]=0;delete btn.dataset.armed;if(key==="r")btn.textContent="Erase everything, Infamy included";paint();},4000);
+}
+function prestige(){
+  const p=pendingInfamy();if(p<1)return;
+  twoStep($("prestigeBtn"),"p","Truly? Back to the hole? Click again to confirm.",()=>{
+    const keep={infamy:S.infamy+p,total:S.total,clicks:S.clicks,crits:S.crits,laughs:S.laughs,heroes:S.heroes,ach:S.ach};
+    S=Object.assign(fresh(),keep);recalc();delete $("prestigeBtn").dataset.armed;flash=1;
+    say("A magnificent death scene, sir. The bards wept. Back in the hole we go, with "+fmt(S.infamy)+" Infamy.",12000);
+    save();paint();
+  });
+}
+function reset(){
+  twoStep($("resetBtn"),"r","This erases everything. Click again to confirm.",()=>{
+    S=fresh();recalc();delete $("resetBtn").dataset.armed;$("resetBtn").textContent="Erase everything, Infamy included";
+    say("All gone, sir. I shall pretend we've never met.");save();paint();
+  });
+}
+function checkAch(){
+  ACH.forEach(a=>{if(!S.ach[a[0]]&&a[3](S)){S.ach[a[0]]=1;snd("ach");toast("Misdeed of note",a[1]+" (+2% malice)");cache.ach="";}});
+}
+
+/* ---------- heroes ---------- */
+function spawnHero(){
+  if(heroT)return;
+  const name=HEROES[Math.floor(Math.random()*HEROES.length)];
+  const b=document.createElement("button");
+  b.className="knight";b.type="button";b.setAttribute("aria-label","Boot the hero "+name);
+  b.innerHTML='<span>Hero!</span><svg width="34" height="44" viewBox="0 0 34 44" aria-hidden="true"><path d="M17 2c5 0 8 4 8 9v4H9v-4c0-5 3-9 8-9z" fill="#d9dde6"/><path d="M17 1c3-2 8-1 9 3-3-1-6 0-9 1z" fill="#c0394b"/><rect x="11" y="9" width="12" height="2.5" fill="#15101c"/><path d="M8 16h18l2 16H6z" fill="#b9c0cf"/><path d="M12 19h10v7c0 3-5 5-5 5s-5-2-5-5z" fill="#f2a53b"/><rect x="9" y="32" width="6" height="10" fill="#8f97a8"/><rect x="19" y="32" width="6" height="10" fill="#8f97a8"/><rect x="29" y="6" width="2" height="24" fill="#efe6d2"/></svg>';
+  b.addEventListener("click",()=>{
+    const loot=Math.max(mps()*45,clickVal()*20)*(perk(2)?3:1);gain(loot);S.heroes++;snd("boot");
+    const sr=$("stage").getBoundingClientRect(),br=b.getBoundingClientRect();
+    burst(camX+(br.left+br.width/2-sr.left)/sr.width*viewW,(br.top+br.height/2-sr.top)/sr.height*360,40,["#efe6d2","#f2a53b","#d9dde6"],160,60);
+    toast("Booted","+"+fmt(loot)+" malice");
+    say("You booted "+name+" into the moat. They dropped "+fmt(loot)+" malice and a helmet. I've put the helmet with the others.");
+    endHero();paint();
+  });
+  $("stage").appendChild(b);snd("hero");
+  say("A hero approaches, sir: "+name+". Do boot them off the lawn.",14000);
+  heroT={el:b,timer:setTimeout(()=>{snd("away");say(name+" got away, sir. They're writing a rude ballad about you as we speak.");endHero();},14000)};
+}
+function endHero(){if(!heroT)return;clearTimeout(heroT.timer);heroT.el.remove();heroT=null;heroDue=Date.now()+70000+Math.random()*80000;}
+
+/* ---------- UI ---------- */
+const rows=[],TABS=["schemes","decor","conquest","legacy"];
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function build(){
+  const list=$("minionList");
+  MINIONS.forEach((m,i)=>{
+    const b=document.createElement("button");b.type="button";b.className="row";
+    b.innerHTML='<span class="nm"></span><span class="own">0</span><span class="ds"></span><span class="meta"><span class="cost"></span><span class="each"></span></span>';
+    b.addEventListener("click",()=>hire(i));list.appendChild(b);
+    rows.push({b,nm:b.querySelector(".nm"),own:b.querySelector(".own"),ds:b.querySelector(".ds"),cost:b.querySelector(".cost"),each:b.querySelector(".each")});
+  });
+  TABS.forEach(t=>$("tab-"+t).addEventListener("click",()=>{
+    TABS.forEach(o=>{$("tab-"+o).setAttribute("aria-selected",o===t);$("panel-"+o).hidden=o!==t;});
+  }));
+  document.querySelectorAll(".qty button").forEach(b=>b.addEventListener("click",()=>{
+    qty=b.dataset.q==="max"?"max":+b.dataset.q;
+    document.querySelectorAll(".qty button").forEach(o=>o.setAttribute("aria-pressed",o===b));paint();
+  }));
+  $("rankPips").innerHTML=RANKS.slice(1).map(()=>"<i></i>").join("");
+  $("lairPips").innerHTML=LAIRS.slice(1).map(()=>"<i></i>").join("");
+  $("tgSnd").addEventListener("click",()=>{prefs.snd=!prefs.snd;setVol();try{localStorage.setItem(KEY+"-audio",JSON.stringify(prefs));}catch(e){}});
+  $("tgMus").addEventListener("click",()=>{prefs.mus=!prefs.mus;setVol();try{localStorage.setItem(KEY+"-audio",JSON.stringify(prefs));}catch(e){}});
+  setVol();
+  document.addEventListener("pointerdown",audioOn,true);document.addEventListener("keydown",audioOn,true);
+  document.addEventListener("visibilitychange",()=>{if(!AC)return;if(document.hidden)AC.suspend();else AC.resume();});
+  $("deed").addEventListener("click",misdeed);
+  panning();
+  $("laugh").addEventListener("click",laugh);
+  $("rankBtn").addEventListener("click",rankUp);
+  $("lairBtn").addEventListener("click",lairUp);
+  $("prestigeBtn").addEventListener("click",prestige);
+  $("resetBtn").addEventListener("click",reset);
+  $("schemeList").addEventListener("click",e=>{const b=e.target.closest("button[data-id]");if(b)buyUp(b.dataset.id);});
+  $("decorList").addEventListener("click",e=>{const b=e.target.closest("button[data-id]");if(b)buyDecor(b.dataset.id);});
+  $("realmList").addEventListener("click",e=>{if(e.target.closest("button[data-siege]"))siege();});
+}
+function setTxt(el,t){if(el.textContent!==t)el.textContent=t;}
+function upAvail(u){return !S.ups[u.id]&&(u.kind==="click"?S.rank>=u.need||S.total>=u.cost/2:S.minions[u.m]>=u.need);}
+function shop(elId,items){
+  const el=$(elId),key=items.map(u=>u.id).join();
+  if(cache[elId]!==key){cache[elId]=key;
+    el.innerHTML=items.map(u=>'<button type="button" class="row" data-id="'+u.id+'"><span class="nm">'+esc(u.name)+'</span><span class="ds">'+esc(u.desc)+'</span><span class="meta"><span class="cost">'+fmt(u.cost)+' malice</span></span></button>').join("");}
+  let can=false;
+  el.querySelectorAll("button").forEach((b,i)=>{const ok=S.malice>=items[i].cost;b.disabled=!ok;if(ok)can=true;});
+  return can;
+}
+function pips(id,n){const k=$(id).children;for(let i=0;i<k.length;i++)k[i].classList.toggle("on",i<n);}
+function paint(){
+  const rate=mps(),lol=laughing(),now=Date.now();
+  setTxt($("malice"),fmt(S.malice));setTxt($("mps"),fmt(rate));
+  $("rateBox").classList.toggle("hot",lol);$("stage").classList.toggle("laughing",lol);
+  setTxt($("deedVal"),"+"+fmt(clickVal())+" malice"+(combo>4?" · menace ×"+(1+combo*0.04).toFixed(1):""));
+  const lb2=$("laugh");
+  lb2.classList.toggle("on",lol);
+  if(S.rank<1){lb2.disabled=true;setTxt($("laughVal"),"Imps can only giggle");}
+  else if(lol){lb2.disabled=true;setTxt($("laughVal"),"×"+LAUGH_X+" everything! "+Math.ceil((S.laughEnd-now)/1000)+"s");}
+  else if(now<S.laughReady){lb2.disabled=true;setTxt($("laughVal"),"Catching breath "+clock((S.laughReady-now)/1000));}
+  else{lb2.disabled=false;setTxt($("laughVal"),"×"+LAUGH_X+" everything for "+laughLen()+"s");}
+  setTxt($("plateYou"),RANKS[S.rank].name);setTxt($("plateLair"),LAIRS[S.lair].name);
+  setTxt($("rankName"),RANKS[S.rank].name);setTxt($("rankQuip"),RANKS[S.rank].quip);
+  setTxt($("lairName"),LAIRS[S.lair].name);setTxt($("lairQuip"),LAIRS[S.lair].quip);
+  pips("rankPips",S.rank);pips("lairPips",S.lair);
+  const nr=RANKS[S.rank+1],rb=$("rankBtn");
+  if(nr){const h='Become '+(/^[AEIOU]/.test(nr.name)?'an ':'a ')+nr.name+' <span class="c">'+fmt(nr.cost)+'</span>';if(cache.rb!==h){cache.rb=h;rb.innerHTML=h;}rb.disabled=S.malice<nr.cost;}
+  else{setTxt(rb,"There is nothing left to become.");rb.disabled=true;}
+  rb.classList.toggle("go",!rb.disabled);
+  const nl=LAIRS[S.lair+1],lb=$("lairBtn");
+  if(nl){const h='Build the '+nl.name+' <span class="c">'+fmt(nl.cost)+'</span>';if(cache.lb!==h){cache.lb=h;lb.innerHTML=h;}lb.disabled=S.malice<nl.cost;}
+  else{setTxt(lb,"Any bigger and it would be a country.");lb.disabled=true;}
+  lb.classList.toggle("go",!lb.disabled);
+
+  /* goal bar */
+  let goals=[];
+  if(nr)goals.push(["Become "+(/^[AEIOU]/.test(nr.name)?"an ":"a ")+nr.name,nr.cost]);
+  if(nl)goals.push(["Build the "+nl.name,nl.cost]);
+  const rl=REALMS[S.realms];
+  if(rl&&rl.tier<=S.lair&&!S.siege)goals.push(["Lay siege to "+rl.name,rl.cost]);
+  goals.sort((a,b)=>a[1]-b[1]);
+  if(S.siege>0){const f=1-S.siege/rl.time;setTxt($("goalTxt"),"Besieging "+rl.name+" ("+clock(S.siege)+" left)");setTxt($("goalPct"),Math.floor(f*100)+"%");$("goalFill").style.width=(f*100)+"%";$("goalBar").classList.remove("ready");}
+  else if(goals.length){const g=goals[0],f=Math.min(1,S.malice/g[1]);setTxt($("goalTxt"),g[0]);setTxt($("goalPct"),f>=1?"Ready!":Math.floor(f*100)+"%");$("goalFill").style.width=(f*100)+"%";$("goalBar").classList.toggle("ready",f>=1);}
+  else{setTxt($("goalTxt"),"None left. You rule practically everything.");setTxt($("goalPct"),"");$("goalFill").style.width="100%";$("goalBar").classList.add("ready");}
+
+  /* minions */
+  const g=globalMult();
+  MINIONS.forEach((m,i)=>{
+    const r=rows[i],locked=m.tier>S.lair;
+    r.b.hidden=m.tier>S.lair+1;
+    r.b.classList.toggle("locked",locked);
+    if(locked){setTxt(r.nm,"Something worse");setTxt(r.ds,"Won't move in until you build the "+LAIRS[m.tier].name+".");setTxt(r.cost,"");setTxt(r.each,"");setTxt(r.own,"?");r.own.classList.remove("has");r.b.disabled=true;return;}
+    const n=buyCount(i),c=costN(i,n);
+    setTxt(r.nm,m.name);setTxt(r.ds,m.desc);
+    setTxt(r.cost,(n>1?"Hire "+n+": ":"Hire: ")+fmt(c)+" malice");
+    setTxt(r.each,"each makes "+fmt(m.out*minMult[i]*g)+"/s");
+    setTxt(r.own,String(S.minions[i]));r.own.classList.toggle("has",S.minions[i]>0);
+    r.b.disabled=S.malice<c;
+  });
+
+  /* schemes */
+  const avail=UP.filter(upAvail).sort((a,b)=>a.cost-b.cost);
+  $("dot-schemes").hidden=!shop("schemeList",avail);
+  const done=Object.keys(S.ups).length;
+  setTxt($("schemeCount"),avail.length?done+" of "+UP.length+" schemes hatched.":(done===UP.length?"Every scheme hatched. You monster.":"No schemes ready. Hire more minions and one will occur to you. "+done+" of "+UP.length+" hatched."));
+
+  /* decor */
+  const dAvail=DECOR.filter(d=>!S.decor[d.id]&&d.tier<=S.lair);
+  $("dot-decor").hidden=!shop("decorList",dAvail);
+  const dDone=DECOR.filter(d=>S.decor[d.id]),dNext=DECOR.find(d=>!S.decor[d.id]&&d.tier>S.lair);
+  setTxt($("decorCount"),(dDone.length?"Installed: "+dDone.map(d=>d.name).join(", ")+". ":"")+(dAvail.length?"":dNext?"More ideas will come when you build the "+LAIRS[dNext.tier].name+".":"Nothing left to install. It's perfect. It's horrible."));
+
+  /* conquest */
+  const ck=[S.realms,S.siege>0?1:0,S.lair].join();
+  if(cache.realm!==ck){cache.realm=ck;
+    $("realmList").innerHTML=REALMS.map((r,i)=>{
+      if(i<S.realms)return '<div class="row done"><span class="nm">'+esc(r.name)+'</span><span class="stamp">Yours</span><span class="ds">'+esc(r.done)+'</span></div>';
+      if(i>S.realms)return i===S.realms+1?'<div class="row locked"><span class="nm">Somewhere further off</span><span class="ds">One conquest at a time, sir.</span></div>':'';
+      if(S.siege>0)return '<div class="row"><span class="nm">Besieging '+esc(r.name)+'</span><span class="ds">The minions are on it. Every misdeed shaves time off.</span><span class="meta"><span class="cost" id="siegeLeft"></span></span><div class="bar"><i id="siegeFill"></i></div></div>';
+      if(r.tier>S.lair)return '<div class="row locked"><span class="nm">'+esc(r.name)+'</span><span class="ds">'+esc(r.what)+' They won\'t take you seriously until you build the '+LAIRS[r.tier].name+'.</span></div>';
+      return '<button type="button" class="row" data-siege="1"><span class="nm">Lay siege to '+esc(r.name)+'</span><span class="ds">'+esc(r.what)+'</span><span class="meta"><span class="cost">'+fmt(r.cost)+' malice</span><span>takes '+clock(r.time)+'</span></span></button>';
+    }).join("");}
+  const sb=$("realmList").querySelector("button[data-siege]");
+  if(sb)sb.disabled=S.malice<rl.cost;
+  $("dot-conquest").hidden=!(sb&&!sb.disabled);
+  if(S.siege>0&&$("siegeFill")){$("siegeFill").style.width=((1-S.siege/rl.time)*100)+"%";setTxt($("siegeLeft"),clock(S.siege)+" left");}
+
+  /* legacy */
+  setTxt($("stInf"),fmt(S.infamy)+" (+"+fmt(S.infamy*10)+"%)");setTxt($("stTotal"),fmt(S.total));
+  setTxt($("stClicks"),fmt(S.clicks));setTxt($("stHeroes"),fmt(S.heroes));
+  const ak=Object.keys(S.ach).length;
+  if(cache.ach!==String(ak)){cache.ach=String(ak);
+    $("achList").innerHTML=ACH.map(a=>S.ach[a[0]]?'<div class="got"><b>'+esc(a[1])+'</b>'+esc(a[2])+'</div>':'<div><b>???</b>'+esc(a[2])+'</div>').join("");
+    setTxt($("achCount"),ak+" of "+ACH.length+", +"+(ak*2)+"% malice");}
+  const pk=PERKS.filter((p,i)=>perk(i)).length;
+  if(cache.perk!==pk){cache.perk=pk;$("perkList").innerHTML=PERKS.map((p,i)=>'<div'+(perk(i)?' class="got"':'')+'><b>'+esc(p[1])+'</b>'+esc(p[2])+(perk(i)?'':' (at '+p[0]+' Infamy)')+'</div>').join("");}
+  const p=pendingInfamy(),pb=$("prestigeBtn");
+  if(!pb.dataset.armed){
+    pb.disabled=p<1;
+    setTxt(pb,p<1?"Not notorious enough yet. Hoard "+fmt(1e8)+" malice in one life ("+fmt(S.run)+" so far).":"Fake your demise for +"+fmt(p)+" Infamy");
+  }
+}
+
+/* ---------- the scene ---------- */
+const cv=$("scene"),ctx=cv.getContext("2d");
+const still=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+function gy(x){return 300-42*Math.exp(-Math.pow((x-440)/170,2));}
+function rnd(i){const x=Math.sin(i*127.1)*43758.5453;return x-Math.floor(x);}
+function mix(a,b,f){const o=[];for(let i=0;i<3;i++)o.push(Math.round(a[i]+(b[i]-a[i])*f));return "rgb("+o.join()+")";}
+const SIL="#0b0810",CX=440,PX=105;
+const TOWERS=[
+ [],
+ [{x:-22,w:46,h:30,roof:"shed"}],
+ [{x:-14,w:30,h:96,roof:"cone"}],
+ [{x:-13,w:28,h:112,roof:"cone"},{x:-46,w:92,h:58,roof:"cren"}],
+ [{x:-104,w:30,h:96,roof:"cone"},{x:74,w:30,h:96,roof:"cone"},{x:-24,w:48,h:122,roof:"cren"},{x:-92,w:184,h:48,roof:"cren",wall:1}],
+ [{x:-134,w:30,h:112,roof:"cone"},{x:104,w:30,h:112,roof:"cone"},{x:-76,w:30,h:146,roof:"cone"},{x:46,w:30,h:146,roof:"cone"},{x:-22,w:44,h:180,roof:"cone"},{x:-122,w:244,h:56,roof:"cren",wall:1}],
+ [{x:-176,w:32,h:128,roof:"cone"},{x:144,w:32,h:128,roof:"cone"},{x:-124,w:32,h:166,roof:"cone"},{x:92,w:32,h:166,roof:"cone"},{x:-72,w:34,h:196,roof:"cren"},{x:38,w:34,h:196,roof:"cren"},{x:-27,w:54,h:204,roof:"cone",flag:1},{x:-162,w:324,h:66,roof:"cren",wall:1}]
+];
+function lairTop(){let top=250;TOWERS[S.lair].forEach(o=>{if(!o.wall)top=Math.min(top,260-o.h-(o.roof==="cone"?o.w*1.05:8));});return top;}
+function E(x,y,rx,ry,col){ctx.fillStyle=col;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,7);ctx.fill();}
+function T(col){ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(arguments[1],arguments[2]);for(let i=3;i<arguments.length;i+=2)ctx.lineTo(arguments[i],arguments[i+1]);ctx.fill();}
+function eyes(x,y,d,col){ctx.fillStyle=col;ctx.fillRect(x-d-.8,y,1.7,1.7);ctx.fillRect(x+d-.8,y,1.7,1.7);}
+function flame(x,y,s,t,i){const f=Math.sin(t/70+i*3)*s*.25;
+  T("rgba(255,120,40,.9)",x-s*.5,y,x+f*.4,y-s*1.6-f,x+s*.5,y);T("rgba(255,220,120,.9)",x-s*.25,y,x-f*.3,y-s*.9,x+s*.25,y);}
+function glow(x,y,r,rgb,a){const g=ctx.createRadialGradient(x,y,1,x,y,r);g.addColorStop(0,"rgba("+rgb+","+a+")");g.addColorStop(1,"rgba("+rgb+",0)");ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2);}
+
+function tower(o,t,i){
+  const x=CX+o.x,top=260-o.h;
+  ctx.fillStyle=SIL;ctx.fillRect(x,top,o.w,o.h+60);ctx.fillStyle="#1e1629";ctx.fillRect(x,top,2.5,o.h+60);
+  if(o.roof==="cone"){T(SIL,x-4,top,x+o.w/2,top-o.w*1.05,x+o.w+4,top);}
+  else if(o.roof==="cren"){for(let c=x;c<x+o.w-3;c+=10)ctx.fillRect(c,top-6,6,6);}
+  else{T(SIL,x-6,top+2,x+o.w*.4,top-16,x+o.w+6,top+4);ctx.fillRect(x+o.w-12,top-18,6,14);}
+  if(o.flag){const fx=x+o.w/2,fy=top-o.w*1.05;ctx.fillStyle=SIL;ctx.fillRect(fx-1,fy-22,2,24);T("#c0394b",fx+1,fy-22,fx+20,fy-17+Math.sin(t/300)*2,fx+1,fy-11);}
+  if(o.wall){
+    if(S.decor.banner)[-58,58].forEach(d=>{const bx=CX+d-7,by=top+6,w=Math.sin(t/500+d)*1.2;
+      T("#a32a3c",bx,by,bx+14,by,bx+14+w,by+30,bx+7+w,by+24,bx+w,by+30);eyes(bx+7,by+9,2.5,"#f2a53b");
+      ctx.strokeStyle="#f2a53b";ctx.lineWidth=1;ctx.beginPath();ctx.arc(bx+7,by+13,3,.3,2.84);ctx.stroke();});
+    return;}
+  const cols=o.w>=44?[o.w*.28,o.w*.72]:[o.w/2];
+  for(let wy=top+14,j=0;wy<244;wy+=28,j++)cols.forEach((cx,k)=>{
+    if(rnd(i*31+j*17+k*5)<.25)return;
+    const a=.65+.35*Math.sin(t/260+i*7+j*3+k);
+    ctx.fillStyle="rgba(255,190,90,"+a.toFixed(2)+")";
+    ctx.fillRect(x+cx-3,wy,6,10);
+  });
+}
+
+function at(x,y,s,fn){ctx.save();ctx.translate(x,y);ctx.scale(s,s);fn();ctx.restore();}
+function tri(x){x=((x%2)+2)%2;return x<1?x:2-x;}
+function mh(x){return 254-58*tri(x/118+.35)-22*tri(x/41+.1);}
+function vy(x){const u=(x+200)/200;return 300-128*u*(1-u);}
+function sy(x){const u=(x-165)/125;return 300-80*u*(1-u);}
+function corruptX(){return 330-(S.lair*70+S.realms*45);}
+const DARK="#1a1020",GRN="#a9c45a",RED="#c0394b";
+function realmsFar(t,mcol){
+  const n=S.realms;
+  T(mcol,-330,300,-225,140,-120,300);T(mcol,-55,300,30,196,120,300);
+  /* Castle Goodly on the far peak */
+  let c=n>4;
+  at(-225,144,1.5,()=>{
+    const st=c?DARK:"#c9bfd0",rf=c?"#0f0915":"#7f8fc0";
+    ctx.fillStyle=st;ctx.fillRect(-16,-16,32,16);ctx.fillRect(-22,-26,9,26);ctx.fillRect(13,-26,9,26);ctx.fillRect(-5,-34,10,34);
+    for(let x=-16;x<14;x+=6)ctx.fillRect(x,-19,3,3);
+    T(rf,-24,-26,-17.5,-38,-11,-26);T(rf,11,-26,17.5,-38,24,-26);T(rf,-7,-34,0,-48,7,-34);
+    ctx.fillStyle=c?GRN:"#ffd98a";ctx.fillRect(-19,-20,3,5);ctx.fillRect(16,-20,3,5);ctx.fillRect(-1.5,-28,3,6);ctx.fillRect(-10,-11,3,4);ctx.fillRect(7,-11,3,4);
+    ctx.fillStyle=c?"#07040a":"#5a4a40";ctx.fillRect(-3,-8,6,8);
+    ctx.fillStyle=st;ctx.fillRect(-.5,-58,1,11);T(c?RED:"#6fa8dc",.5,-58,10,-55+Math.sin(t/300),.5,-52);
+  });
+  /* Abbey of Perpetual Tutting */
+  c=n>2;
+  at(30,200,1.5,()=>{
+    const st=c?DARK:"#9a8c93",rf=c?"#0f0915":"#6a4a52";
+    ctx.fillStyle=st;ctx.fillRect(-6,-11,20,11);ctx.fillRect(-14,-24,9,24);
+    T(rf,-8,-11,4,-19,16,-11);T(rf,-16,-24,-9.5,-37,-3,-24);
+    if(c){T(st,-13,-27,-17,-37,-10,-30);T(st,-6,-27,-2,-37,-9,-30);}
+    else{ctx.fillStyle="#efe6d2";ctx.fillRect(-10.1,-44,1.2,8);ctx.fillRect(-12,-42,5,1.2);}
+    ctx.fillStyle=c?GRN:"#ffd98a";ctx.fillRect(-11,-19,3,6);ctx.fillRect(-1,-7,3,5);ctx.fillRect(6,-7,3,5);
+  });
+}
+function realmsMid(t){
+  const n=S.realms;
+  /* Glimmerdell: meadow and unicorns */
+  let c=n>3;
+  ctx.fillStyle=c?"#1c1227":"#22382a";ctx.beginPath();ctx.moveTo(165,300);ctx.quadraticCurveTo(227,260,290,300);ctx.fill();
+  [[200,1],[236,-1],[262,1]].forEach((u,i)=>{ctx.save();ctx.translate(u[0],sy(u[0])+1);ctx.scale(1.25*u[1],1.25);
+    const b=c?"#17101f":"#f1ebf5",m=c?"#6a2a8a":"#f29ac8",bob=Math.sin(t/700+i*2);
+    ctx.fillStyle=b;ctx.fillRect(-5,-5,1.6,5);ctx.fillRect(-2,-5,1.6,5);ctx.fillRect(2,-5,1.6,5);ctx.fillRect(4.5,-5,1.6,5);
+    E(0,-7,7,3.6,b);T(b,4,-9,8,-15+bob,10,-9);E(9.5,-15+bob,3.2,2.2,b);
+    T(c?GRN:"#ffd98a",10,-17+bob,13,-23+bob,11.5,-16.5+bob);
+    T(m,4,-10,6,-16+bob,2,-12);T(m,-7,-8,-11,-4,-7,-5);
+    ctx.fillStyle=c?GRN:"#3a2a3a";ctx.fillRect(10,-15.5+bob,1,1);ctx.restore();});
+  /* Lower Dribbling */
+  c=n>0;
+  ctx.fillStyle=c?"#1c1227":"#213526";ctx.beginPath();ctx.moveTo(-200,300);ctx.quadraticCurveTo(-100,236,0,300);ctx.fill();
+  [-168,-146,-124,-100,-78,-56,-34].forEach((x,i)=>at(x,vy(x)+1,1.45,()=>{const h=8+rnd(i+3)*5;
+    ctx.fillStyle=c?"#1f1528":"#7a6660";ctx.fillRect(-6,-h,12,h);
+    T(c?"#0f0915":"#9a5240",-8,-h,0,-h-7,8,-h);
+    ctx.fillStyle=c?"#0f0915":"#5a4038";ctx.fillRect(3,-h-7,2.2,5);
+    ctx.fillStyle=c?GRN:"rgba(255,200,110,"+(.7+.3*Math.sin(t/400+i)).toFixed(2)+")";ctx.fillRect(-4,-h+2.5,3,3);
+    ctx.fillStyle=c?"#07040a":"#3a2a22";ctx.fillRect(1,-5,3,5);
+    if(i%2===0){const p=(t/60+i*40)%30;ctx.fillStyle="rgba(200,190,210,"+(.3*(1-p/30)).toFixed(2)+")";ctx.beginPath();ctx.arc(4+Math.sin(p/5)*2,-h-9-p*.7,1.6+p/12,0,7);ctx.fill();}
+    if(c&&i%2===1){ctx.fillStyle=DARK;ctx.fillRect(-.5,-h-17,1,11);T(RED,.5,-h-17,8,-h-14+Math.sin(t/280+i),.5,-h-11);}
+  }));
+  /* the windmill at Upper Crumb */
+  c=n>1;
+  at(-8,294,1.7,()=>{T(c?DARK:"#8a7a74",-5,0,-3,-20,3,-20,5,0);T(c?"#0f0915":"#6a4a42",-4,-20,0,-25,4,-20);
+    ctx.fillStyle=c?GRN:"#ffd98a";ctx.fillRect(-1,-13,2,3);ctx.fillStyle=c?"#07040a":"#3a2a22";ctx.fillRect(-1.5,-4,3,4);
+    ctx.strokeStyle=c?"#4a1a28":"#e3d8c4";ctx.lineWidth=c?1.2:2.4;const ro=(c?-1.8:1)*t/900;
+    for(let k=0;k<4;k++){const a=ro+k*Math.PI/2;ctx.beginPath();ctx.moveTo(0,-20);ctx.lineTo(Math.cos(a)*15,-20+Math.sin(a)*15);ctx.stroke();}});
+  /* siege fires and marching minions */
+  if(S.siege>0&&RPOS[n]){const p=RPOS[n];glow(p[0],p[1],50,"255,120,40",.35+.15*Math.sin(t/90));
+    for(let k=0;k<7;k++)flame(p[0]-30+k*10+rnd(k)*4,p[1]+8+rnd(k+9)*6,5,t,k);
+    for(let k=0;k<10;k++){const f=((t/5000)+k/10)%1,x=CX-60+(p[0]-CX+60)*f,y0=gy(380)+4,y=y0+(p[1]+10-y0)*f-Math.abs(Math.sin(t/200+k))*3;E(x,y,2.8,3.3,"#0b0810");eyes(x,y-1,1.3,"#f2a53b");}}
+}
+function nimbus(t){
+  const c=S.realms>5,x=-110+Math.sin(t/4000)*6,cl=c?"#1d1426":"#ece7f4";
+  if(!c)glow(x,58,70,"236,231,244",.18);
+  at(x,58,1,()=>{
+    const st=c?"#120c18":"#f6eef8",rf=c?"#0b0810":"#f2a8c8";
+    ctx.fillStyle=st;ctx.fillRect(-14,-22,8,18);ctx.fillRect(6,-20,8,16);ctx.fillRect(-4,-30,8,26);
+    T(rf,-16,-22,-10,-32,-4,-22);T(rf,4,-20,10,-30,16,-20);T(rf,-6,-30,0,-42,6,-30);
+    ctx.fillStyle=c?GRN:"#ffd98a";ctx.fillRect(-11.5,-17,3,4);ctx.fillRect(8.5,-15,3,4);ctx.fillRect(-1.5,-24,3,5);
+    if(c){ctx.fillStyle="#120c18";ctx.fillRect(-.5,-50,1,9);T(RED,.5,-50,9,-47+Math.sin(t/300),.5,-44);}
+    [[-30,2,18,9],[-10,-2,20,11],[12,0,20,10],[32,3,15,8],[0,6,34,8]].forEach(e=>E(e[0],e[1],e[2],e[3],cl));
+    if(c)for(let k=0;k<8;k++){const p=((t/500)+rnd(k+400))%1;ctx.fillStyle="rgba(150,170,220,"+(.6*(1-p)).toFixed(2)+")";ctx.fillRect(-34+k*9.5,12+p*40,1,6);}
+  });
+}
+function rainbow(){
+  const c=S.realms>3,cols=c?["#6a6276","#5c5568","#4f495b","#433d4e","#383242"]:["#e86a6a","#f0b05a","#e9e27a","#7fcf8a","#7aa8e8"];
+  ctx.lineWidth=3;ctx.globalAlpha=c?.6:.6;
+  cols.forEach((k,i)=>{ctx.strokeStyle=k;ctx.beginPath();ctx.arc(227,272,58-i*3,Math.PI,0);ctx.stroke();});
+  ctx.globalAlpha=1;
+}
+function trees(t){
+  const cx=corruptX();
+  for(let i=0;i<24;i++){const x=-288+i*26+rnd(i+200)*14;if(x>325)continue;const h=20+rnd(i+230)*16,sw=Math.sin(t/1300+i)*.8;
+    if(x>cx){ctx.strokeStyle="#0e0913";ctx.lineWidth=2;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x,304);ctx.lineTo(x,304-h);ctx.moveTo(x,304-h*.55);ctx.lineTo(x-7,304-h*.9);ctx.moveTo(x,304-h*.7);ctx.lineTo(x+6,304-h*1.05);ctx.moveTo(x,304-h);ctx.lineTo(x-3,304-h*1.2);ctx.stroke();}
+    else{ctx.fillStyle="#241a1c";ctx.fillRect(x-1.2,304-h*.6,2.4,h*.6);E(x+sw,304-h*.75,h*.33,h*.38,"#1d3a2a");E(x-3+sw,304-h*.6,h*.24,h*.26,"#254a34");}
+  }
+}
+function scaffold(t){
+  const nl=LAIRS[S.lair+1];if(!nl||lairRise<1)return;
+  const f=Math.min(1,S.malice/nl.cost);if(f<.04)return;
+  let half=30;TOWERS[S.lair].forEach(o=>{half=Math.max(half,-o.x,o.x+o.w);});
+  let nh=40;TOWERS[S.lair+1].forEach(o=>{if(!o.wall)nh=Math.max(nh,o.h);});
+  const bx=CX+half+8,w=20,by=gy(bx+w/2)+6,h=f*(nh*.75+16);
+  ctx.strokeStyle="#5a4028";ctx.lineWidth=1.6;ctx.lineCap="butt";ctx.beginPath();
+  ctx.moveTo(bx,by);ctx.lineTo(bx,by-h);ctx.moveTo(bx+w,by);ctx.lineTo(bx+w,by-h);
+  for(let y=14;y<h;y+=14){ctx.moveTo(bx-2,by-y);ctx.lineTo(bx+w+2,by-y);ctx.moveTo(bx,by-y+14);ctx.lineTo(bx+w,by-y);}
+  ctx.moveTo(bx-3,by-h);ctx.lineTo(bx+w+3,by-h);ctx.stroke();
+  const ix=bx+w/2,iy=by-h,sw=Math.sin(t/120);
+  E(ix,iy-4,3.5,4,"#1d1426");eyes(ix,iy-6,1.4,"#f2a53b");
+  ctx.strokeStyle="#a99fb5";ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(ix+3,iy-4);ctx.lineTo(ix+8,iy-8-sw*3);ctx.stroke();
+}
+function hoard(t){
+  if(S.malice<10)return;
+  const r=4+Math.log10(S.malice+1)*4,x=14,y=gy(x)+28;
+  glow(x,y-r*.5,r*2.4,"169,196,90",.22);
+  const g=ctx.createLinearGradient(0,y-r*1.2,0,y);g.addColorStop(0,"#c4dc74");g.addColorStop(1,"#5c7426");
+  ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(x-r*1.6,y);ctx.quadraticCurveTo(x-r*.5,y-r*1.5,x,y-r*1.15);ctx.quadraticCurveTo(x+r*.6,y-r*1.4,x+r*1.6,y);ctx.fill();
+  const n=Math.min(14,Math.floor(r/3));
+  for(let i=0;i<n;i++){const a=.5+.5*Math.sin(t/300+i*2.4),u=rnd(i+300)*2-1,px=x+u*r*1.1,py=y-rnd(i+320)*r*(1-Math.abs(u))*.9-2;
+    ctx.fillStyle="rgba(244,255,200,"+a.toFixed(2)+")";ctx.fillRect(px-1,py-1,2,2);}
+}
+
+function decorBack(t){
+  if(S.decor.beacon){const top=lairTop(),p=.5+.2*Math.sin(t/400);
+    const g=ctx.createLinearGradient(0,0,0,top);g.addColorStop(0,"rgba(169,220,90,0)");g.addColorStop(1,"rgba(169,220,90,"+p.toFixed(2)+")");
+    T(g,CX-3,top,CX-16,0,CX+16,0,CX+3,top);glow(CX,top,34,"169,220,90",.6);}
+}
+function decorFront(t){
+  const D=S.decor;
+  if(D.moat&&S.lair>=3){
+    ctx.fillStyle="#3f6a1e";ctx.beginPath();ctx.moveTo(318,gy(318)+8);ctx.quadraticCurveTo(440,gy(440)+50,566,gy(566)+8);ctx.quadraticCurveTo(440,gy(440)+24,318,gy(318)+8);ctx.fill();
+    ctx.fillStyle="rgba(190,230,110,.8)";for(let k=0;k<7;k++){const p=((t/1400)+rnd(k+20))%1,x=345+k*30;ctx.beginPath();ctx.arc(x,gy(x)+26-Math.abs(x-440)/9-p*8,1+p*2.2,0,7);ctx.globalAlpha=1-p;ctx.fill();}
+    ctx.globalAlpha=1;ctx.fillStyle="#2a1d14";ctx.fillRect(CX-9,262,18,34);
+    ctx.strokeStyle="#150d08";ctx.lineWidth=1;for(let y=268;y<296;y+=6){ctx.beginPath();ctx.moveTo(CX-9,y);ctx.lineTo(CX+9,y);ctx.stroke();}
+  }
+  if(D.sign){const x=388,y=gy(388)+2;ctx.fillStyle="#3a2a1c";ctx.fillRect(x+10,y-18,3,20);ctx.save();ctx.translate(x+11,y-22);ctx.rotate(-.12);ctx.fillRect(-15,-6,30,12);
+    ctx.fillStyle="#efe6d2";ctx.font="bold 5.5px sans-serif";ctx.textAlign="center";ctx.fillText("NO HEROES",0,-.5);ctx.fillText("(SERIOUSLY)",0,4.6);ctx.restore();ctx.textAlign="left";}
+  if(D.torch)[352,402,478,528].forEach((x,i)=>{const y=gy(x)+6;glow(x,y-18,26,"255,150,50",.3+.1*Math.sin(t/110+i));
+    ctx.fillStyle="#2a1d14";ctx.fillRect(x-1.5,y-16,3,18);flame(x,y-16,5,t,i);});
+  if(D.garg&&S.lair>=2)[-30,30].forEach((d,i)=>{const x=CX+d,y=gy(x)+2;
+    ctx.fillStyle="#2a2233";ctx.fillRect(x-5,y-16,10,18);ctx.fillRect(x-7,y-18,14,3);
+    E(x,y-23,5,5.5,"#3a3146");T("#3a3146",x-4,y-26,x-8,y-33,x-1,y-28);T("#3a3146",x+4,y-26,x+8,y-33,x+1,y-28);
+    T("#3a3146",x-5,y-22,x-12,y-27,x-6,y-18);T("#3a3146",x+5,y-22,x+12,y-27,x+6,y-18);
+    eyes(x,y-25,2,(t+i*900)%5000<300?"#3a3146":"#a9c45a");});
+}
+function storm(t){
+  const n=S.lair;
+  for(let i=0;i<n*2;i++){const x=((t/90*(.5+rnd(i+60))+rnd(i+70)*1400)%1500)-560,y=22+rnd(i+80)*56,a=.35+.08*n;
+    for(let k=0;k<4;k++)E(x+k*17,y+Math.sin(k*2.1+i)*5,20,9,"rgba(14,8,20,"+a.toFixed(2)+")");}
+  const lol=laughing();
+  if(S.decor.cloud||lol){
+    const top=Math.max(34,lairTop()-34);
+    if(S.decor.cloud){for(let k=0;k<6;k++)E(CX-45+k*18,top+Math.sin(k*1.7)*5+Math.sin(t/900+k)*1.5,24,11,"#0d0814");
+      E(CX,top+6,50,8,"#191022");}
+    const period=lol?2600:6000;
+    if(!still&&t-boltT>period&&Math.random()<.2){boltT=t;flash=Math.max(flash,.3);snd("thunder");}
+    if(t-boltT<160){let x=CX+(rnd(Math.floor(boltT))-.5)*80,y=top+8;const end=lol?gy(x):lairTop()+6;
+      ctx.strokeStyle="#f6f2c0";ctx.lineWidth=2.2;ctx.shadowColor="#fff7b0";ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(x,y);
+      let j=0;while(y<end){y+=14;x+=(rnd(boltT+j++)-.5)*22;ctx.lineTo(x,Math.min(y,end));}
+      ctx.stroke();ctx.shadowBlur=0;}
+  }
+}
+
+/* minions, each kind with its own silhouette */
+function walkers(t){
+  const M=S.minions;let i,n;
+  /* thing in the basement: tentacles out of the hillside */
+  n=Math.min(5,M[7]);
+  if(n){ctx.strokeStyle="#3b1a52";ctx.lineCap="round";
+    for(i=0;i<n;i++){const bx=388+i*26,h=30+rnd(i+11)*18,w=Math.sin(t/600+i*1.9);
+      ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(bx,366);ctx.bezierCurveTo(bx+w*14,366-h*.4,bx-w*16,366-h*.8,bx+w*10,366-h);ctx.stroke();
+      ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(bx+w*10,366-h);ctx.quadraticCurveTo(bx+w*18,366-h-6,bx+w*14,366-h+4);ctx.stroke();}
+    const bl=(t%6100)<200?.15:1;E(452,346,9,5,"#07040a");E(452,346,5,4*bl,"#a9c45a");E(452,346,1.6,3.6*bl,"#07040a");}
+  /* ogres by the gate */
+  n=Math.min(3,M[4]);
+  for(i=0;i<n;i++){const x=[374,506,550][i],y=gy(x)+12,sw=Math.sin(t/800+i)*1.2;
+    ctx.strokeStyle="#3a2a1c";ctx.lineWidth=4;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x+12,y-10);ctx.lineTo(x+20+sw,y-30);ctx.stroke();E(x+20+sw,y-31,4,5,"#3a2a1c");
+    E(x,y-13,12,14,"#1c1a12");E(x+sw*.5,y-29,6,5.5,"#1c1a12");eyes(x+sw*.5,y-30,2.2,"#f2a53b");
+    ctx.fillStyle="#efe6d2";ctx.fillRect(x-3+sw*.5,y-26.5,1.5,2.5);ctx.fillRect(x+1.5+sw*.5,y-26.5,1.5,2.5);}
+  /* tax collectors */
+  n=Math.min(6,M[2]);
+  for(i=0;i<n;i++){const x=-240+rnd(i+31)*840+Math.sin(t/2600+i*2)*30,y=gy(x)+8+rnd(i+33)*10;
+    ctx.fillStyle="#17121f";ctx.fillRect(x-2.5,y-14,5,14);E(x,y-17,3,3,"#17121f");ctx.fillRect(x-3,y-26,6,7);ctx.fillRect(x-5,y-20,10,1.6);
+    ctx.fillStyle="#efe6d2";ctx.fillRect(x+3,y-12,3,6);ctx.fillStyle="#f2a53b";ctx.fillRect(x+.5,y-18,1.6,1.6);}
+  /* vampire accountants */
+  n=Math.min(5,M[5]);
+  for(i=0;i<n;i++){const x=-200+rnd(i+51)*780+Math.sin(t/3200+i*3)*36,y=gy(x)+10+rnd(i+53)*8;
+    T("#12090f",x,y-24,x-9,y,x+9,y);T("#5a1424",x,y-20,x-3,y,x+3,y);
+    T("#12090f",x-6,y-26,x-2,y-19,x-7,y-18);T("#12090f",x+6,y-26,x+2,y-19,x+7,y-18);
+    E(x,y-24,3.2,3.6,"#cfc6d6");eyes(x,y-25,1.5,"#c0394b");}
+  /* goblins */
+  n=Math.min(10,M[1]);
+  for(i=0;i<n;i++){const x=-250+rnd(i+71)*860+Math.sin(t/1700+i*2.4)*24,y=gy(x)+6+rnd(i+73)*14-Math.abs(Math.sin(t/340+i))*2;
+    E(x,y-6,5.5,6,"#202c16");T("#202c16",x-4,y-9,x-13,y-11,x-4,y-6);T("#202c16",x+4,y-9,x+13,y-11,x+4,y-6);eyes(x,y-8.5,2,"#a9c45a");}
+  /* imps */
+  n=Math.min(14,M[0]);
+  for(i=0;i<n;i++){const x=-260+rnd(i+7)*880+Math.sin(t/1500+i)*18,y=gy(x)+4+rnd(i+9)*16-Math.abs(Math.sin(t/260+i*1.7))*5,sz=3.5+rnd(i+40)*1.5;
+    E(x,y-sz,sz,sz*1.15,"#1d1426");T("#1d1426",x-sz,y-sz*1.6,x-sz*1.7,y-sz*2.5,x-sz*.3,y-sz*2);T("#1d1426",x+sz,y-sz*1.6,x+sz*1.7,y-sz*2.5,x+sz*.3,y-sz*2);
+    eyes(x,y-sz*1.4,sz*.4,"#f2a53b");}
+}
+function fliers(t){
+  const M=S.minions;let i,n=Math.min(3,M[3]);
+  for(i=0;i<n;i++){const a=t/2600+i*2.1,x=180+Math.cos(a)*(400-i*70),y=96+i*22+Math.sin(a*2)*16,d=-Math.sin(a)<0?-1:1;
+    ctx.save();ctx.translate(x,y);ctx.scale(d,1);
+    ctx.strokeStyle="#3a2a1c";ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(-14,2);ctx.lineTo(12,0);ctx.stroke();T("#5a4424",-14,2,-22,-2,-22,6);
+    T(SIL,-3,1,2,-11,6,1);E(2,-11,3,3,SIL);T(SIL,-3,-12,2,-22,7,-12);ctx.fillStyle=SIL;ctx.fillRect(-5,-13,14,1.6);
+    ctx.fillStyle="#a9c45a";ctx.fillRect(3,-11.5,1.5,1.5);ctx.restore();
+    if(!still&&Math.random()<.3)parts.push({x:x-d*20,y:y+2,vx:-d*10,vy:6,life:1,d:1.4,col:"#a9c45a",sz:1.4,g:10});}
+  n=M[6]>=25?2:M[6]>0?1:0;
+  for(i=0;i<n;i++){const sc=i?.7:1,x=((t/16+i*600)%1500)-480,y=(i?64:118)+Math.sin(t/700+i)*16,fl=Math.sin(t/150+i);
+    ctx.save();ctx.translate(x,y);ctx.scale(sc,sc);
+    T("#0d0a12",-22,0,-52,-6+fl*3,-24,5);
+    T("#1a0f1c",-10,-3,4,-34*fl-4,16,-3);T("#120a14",-4,-2,-22,-26*fl-4,6,-2);
+    E(0,0,26,9,"#0d0a12");T("#0d0a12",18,-4,38,-16,42,-8,24,4);E(42,-13,8,5,"#0d0a12");T("#0d0a12",38,-17,36,-25,42,-17);
+    ctx.strokeStyle="#7d1530";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-16,6);ctx.quadraticCurveTo(0,11,18,5);ctx.stroke();
+    ctx.fillStyle="#f2a53b";ctx.fillRect(43,-15,2.4,2);
+    const ph=(t+i*4000)%11000;
+    if(ph<1100){for(let k=0;k<3;k++)flame(54+k*9,-10+k*1.5,(7-k)*1,t,k);ctx.save();ctx.translate(50,-11);ctx.rotate(Math.PI/2);flame(0,0,10,t,5);ctx.restore();glow(64,-10,30,"255,140,40",.4);}
+    ctx.restore();
+    if(!still&&ph>6000&&ph<6250)for(let k=0;k<3;k++)parts.push({x:x+50*sc,y:y-12*sc,vx:60+Math.random()*60,vy:(Math.random()-.5)*60,life:1,d:1.2,col:["#ff9ad5","#ffe27a","#9ad5ff"][k],sz:2,g:40});
+  }
+}
+
+function you(t){
+  const r=S.rank,s=(1.3+r*0.22)*(1+.35*rankPop*Math.sin(rankPop*Math.PI)),bob=Math.sin(t/420)*1.2,lol=laughing();
+  ctx.save();ctx.translate(PX,gy(PX)+4);ctx.scale(s*(1+.1*pulse),s*(1-.15*pulse));ctx.translate(0,bob*(1-pulse)+(lol?Math.sin(t/60)*1.5:0));
+  if(r>=6||lol)glow(0,-30,60,"242,165,59",lol?.5:.35);
+  if(r>=3){const w=Math.sin(t/500)*2;T(r>=5?"#7d1530":"#3d1a5c",-10,-34,-23-w,0,23+w,0,10,-34);}
+  const body=r>=4?"#4a4458":"#8c2f39",belly=r>=4?"#6a6380":"#b5523f",skin="#8c2f39";
+  ctx.strokeStyle=skin;ctx.lineWidth=2.5;ctx.lineCap="round";
+  ctx.beginPath();ctx.moveTo(-10,-8);ctx.quadraticCurveTo(-30,-8,-27,-26+Math.sin(t/300)*2);ctx.stroke();
+  T(skin,-27,-33+Math.sin(t/300)*2,-31,-25,-23,-25);
+  ctx.fillStyle=body;ctx.fillRect(-9,-7,7,7);ctx.fillRect(2,-7,7,7);
+  E(0,-20,13,15,body);E(0,-17,8,10,belly);
+  if(r>=4){ctx.fillStyle="#2c2836";ctx.fillRect(-13,-23,26,2);E(-12,-30,5,4,"#6a6380");E(12,-30,5,4,"#6a6380");}
+  if(r>=2){ctx.strokeStyle="#2a1d14";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(19,-1);ctx.lineTo(19,-56);ctx.moveTo(14,-60);ctx.lineTo(14,-52);ctx.lineTo(24,-52);ctx.lineTo(24,-60);ctx.moveTo(19,-62);ctx.lineTo(19,-52);ctx.stroke();
+    ctx.strokeStyle=skin;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(10,-24);ctx.lineTo(19,-27);ctx.stroke();}
+  [-1,1].forEach(d=>T(skin,d*10,-46,d*23,-51,d*9,-37));
+  E(0,-42,12,12,skin);
+  if(r>=1){const h=3+r*2.2;[-1,1].forEach(d=>T("#e8dcc0",d*8,-50,d*(8+h*.35),-52-h,d*3,-53));}
+  if(r>=5)T("#f2c53b",-7,-52,-7,-60,-3.5,-56,0,-63,3.5,-56,7,-60,7,-52);
+  ctx.shadowColor="#ffcf5a";ctx.shadowBlur=8;
+  const blink=(t%4200)<120?0.3:1;
+  [-1,1].forEach(d=>E(d*5,-44,3,3.6*blink,"#ffcf5a"));
+  ctx.shadowBlur=0;ctx.fillStyle="#1a0d10";
+  [-1,1].forEach(d=>ctx.fillRect(d*5-.6,-46.5,1.2,5*blink));
+  if(lol||pulse>.3){E(0,-36,5,3.5,"#1a0d10");ctx.fillStyle="#f3ead6";ctx.fillRect(-4,-38.5,2,2);ctx.fillRect(2,-38.5,2,2);}
+  else{ctx.strokeStyle="#f3ead6";ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(-6,-38);ctx.quadraticCurveTo(0,-32,6,-38);ctx.stroke();}
+  ctx.restore();
+}
+
+const WX0=-290,WX1=640;
+let K=1,camX=WX0,viewW=WX1-WX0,camSet=false,drag=null;
+function clampCam(x){return Math.max(WX0,Math.min(WX1-viewW,x));}
+function draw(t){
+  const vx0=camX,vx1=camX+viewW;
+  ctx.setTransform(K,0,0,K,-camX*K,0);
+  const ev=Math.min(1,(S.lair+S.realms*.6)/9),lol=laughing();
+  const sky=ctx.createLinearGradient(0,0,0,300);
+  sky.addColorStop(0,mix([22,26,60],[18,6,12],ev));sky.addColorStop(.6,mix([62,44,96],[78,14,36],ev));sky.addColorStop(1,mix([214,140,112],[200,60,24],ev));
+  ctx.fillStyle=sky;ctx.fillRect(vx0,0,viewW,360);
+  for(let i=0;i<120;i++){ctx.fillStyle="rgba(239,230,210,"+(.3+.5*Math.abs(Math.sin(t/900+i*2.3))).toFixed(2)+")";ctx.fillRect(-640+rnd(i)*1640,rnd(i+99)*200,1.5,1.5);}
+  const MX=150,MY=70,mr=32+ev*10,mc=S.realms>=7?"#b6e06a":mix([244,238,208],[196,232,120],ev);
+  glow(MX,MY,mr*3,ev>.5?"196,232,120":"244,238,208",.32);
+  E(MX,MY,mr,mr,mc);
+  ctx.fillStyle="rgba(90,110,70,.3)";[[-12,-10,7],[12,12,5],[8,-14,3.5]].forEach(c=>{ctx.beginPath();ctx.arc(MX+c[0],MY+c[1],c[2],0,7);ctx.fill();});
+  if(S.realms>=7){E(MX-9,MY-5,4,5,"#2a3a1a");E(MX+9,MY-5,4,5,"#2a3a1a");ctx.strokeStyle="#2a3a1a";ctx.lineWidth=2;ctx.beginPath();ctx.arc(MX,MY+5,11,2.6,.55,true);ctx.stroke();}
+  rainbow();
+  const mcol=mix([44,30,62],[30,14,30],ev);
+  ctx.fillStyle=mcol;ctx.beginPath();ctx.moveTo(vx0-6,300);
+  for(let x=Math.floor(vx0/6)*6-6;x<=vx1+6;x+=6)ctx.lineTo(x,mh(x));
+  ctx.lineTo(vx1+6,300);ctx.fill();
+  realmsFar(t,mcol);nimbus(t);
+  if(S.lair>=4)glow(CX,250,110+S.lair*22,"255,120,40",.42);
+  if(S.lair>=2)for(let i=0;i<S.lair+2;i++){
+    const bx=(t/22*(1+i*.17)+i*190)%1400-520,by=44+i*15+Math.sin(t/330+i)*9,f=Math.sin(t/90+i)*4;
+    ctx.strokeStyle="#0b0810";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx-7,by-f);ctx.lineTo(bx,by+1);ctx.lineTo(bx+7,by-f);ctx.stroke();
+  }
+  decorBack(t);
+  trees(t);
+  realmsMid(t);
+  const rise=1-Math.pow(1-lairRise,3);
+  ctx.save();ctx.translate((lairRise<1?Math.sin(t/25)*2:0),(1-rise)*250);
+  TOWERS[S.lair].forEach((o,i)=>tower(o,t,i));
+  ctx.restore();
+  scaffold(t);
+  storm(t);
+  fliers(t);
+  const cxr=corruptX(),gg=ctx.createLinearGradient(cxr-170,0,cxr+40,0);
+  gg.addColorStop(0,"#18281c");gg.addColorStop(1,"#120c18");
+  ctx.fillStyle=gg;ctx.beginPath();ctx.moveTo(vx0-8,360);
+  for(let x=Math.floor(vx0/8)*8-8;x<=vx1+8;x+=8)ctx.lineTo(x,gy(x));
+  ctx.lineTo(vx1+8,360);ctx.fill();
+  const gl=ctx.createLinearGradient(cxr-170,0,cxr+40,0);gl.addColorStop(0,"rgba(120,190,110,.4)");gl.addColorStop(1,"rgba(169,196,90,.22)");
+  ctx.strokeStyle=gl;ctx.lineWidth=1.5;ctx.beginPath();
+  for(let x=Math.floor(vx0/8)*8-8,f=1;x<=vx1+8;x+=8,f=0)f?ctx.moveTo(x,gy(x)):ctx.lineTo(x,gy(x));
+  ctx.stroke();
+  if(S.lair===0){
+    E(CX,268,26,8,"#050308");
+    ctx.fillStyle="#3a2a1c";ctx.fillRect(CX+38,246,3,22);ctx.fillRect(CX+28,242,24,12);
+    ctx.fillStyle="#efe6d2";ctx.font="bold 6px sans-serif";ctx.fillText("GO AWAY",CX+29.5,250.5);
+  }else if(S.lair===1){ctx.fillStyle="rgba(255,190,90,.9)";ctx.fillRect(CX-16,242,8,8);ctx.fillStyle="#050308";ctx.fillRect(CX+2,244,10,18);}
+  else if(lairRise>=1){const gw=S.lair>=4?13:7;ctx.fillStyle="rgba(255,150,60,.85)";ctx.beginPath();ctx.moveTo(CX-gw,264);ctx.lineTo(CX-gw,250);ctx.arc(CX,250,gw,Math.PI,0);ctx.lineTo(CX+gw,264);ctx.fill();
+    if(S.lair>=4){ctx.strokeStyle=SIL;ctx.lineWidth=1.5;for(let x=-9;x<=9;x+=6){ctx.beginPath();ctx.moveTo(CX+x,238);ctx.lineTo(CX+x,264);ctx.stroke();}}}
+  decorFront(t);
+  hoard(t);
+  walkers(t);
+  you(t);
+  parts.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.col;ctx.fillRect(p.x-p.sz/2,p.y-p.sz/2,p.sz,p.sz);});
+  ctx.globalAlpha=1;ctx.textAlign="center";
+  floats.forEach(f=>{ctx.font="800 "+(f.big?19:13)+"px 'Alegreya Sans',sans-serif";ctx.fillStyle=(f.big?"rgba(242,165,59,":"rgba(190,220,110,")+Math.min(1,f.life).toFixed(2)+")";
+    ctx.strokeStyle="rgba(11,8,16,"+Math.min(1,f.life).toFixed(2)+")";ctx.lineWidth=3;ctx.strokeText(f.txt,f.x,f.y);ctx.fillText(f.txt,f.x,f.y);});
+  ctx.textAlign="left";
+  if(lol){ctx.fillStyle="rgba(242,165,59,"+(.05+.03*Math.sin(t/120)).toFixed(3)+")";ctx.fillRect(vx0,0,viewW,360);}
+  if(flash>0.01){ctx.fillStyle="rgba(255,246,214,"+(flash*.4).toFixed(2)+")";ctx.fillRect(vx0,0,viewW,360);}
+}
+function fit(){
+  const w=cv.clientWidth||640,h=cv.clientHeight||240,d=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.round(w*d);cv.height=Math.round(h*d);K=cv.height/360;viewW=cv.width/K;
+  const pan=viewW<WX1-WX0-1;
+  if(!pan)camX=WX0-(viewW-(WX1-WX0))/2;else camX=clampCam(camSet?camX:270-viewW/2);
+  $("panHint").hidden=!pan||camSet;cv.style.cursor=pan?"grab":"pointer";
+}
+function panning(){
+  cv.addEventListener("pointerdown",e=>{drag={x:e.clientX,cam:camX,moved:false};});
+  cv.addEventListener("pointermove",e=>{
+    if(!drag)return;const dx=e.clientX-drag.x;
+    if(Math.abs(dx)>6)drag.moved=true;
+    if(drag.moved&&viewW<WX1-WX0-1){camX=clampCam(drag.cam-dx*viewW/(cv.clientWidth||1));camSet=true;$("panHint").hidden=true;}
+  });
+  cv.addEventListener("pointerup",()=>{if(drag&&!drag.moved)misdeed();drag=null;});
+  cv.addEventListener("pointercancel",()=>{drag=null;});
+  cv.addEventListener("pointerleave",()=>{drag=null;});
+}
+let lastF=0;
+function frame(t){
+  const dt=Math.min(.1,Math.max(0,(t-lastF)/1000));lastF=t;
+  pulse=Math.max(0,pulse-dt*5);rankPop=Math.max(0,rankPop-dt*1.6);flash=Math.max(0,flash-dt*2.5);
+  if(lairRise<1){lairRise=Math.min(1,lairRise+dt/1.3);if(!still&&Math.random()<.6)burst(CX-120+Math.random()*240,gy(CX)+6,2,["#463a57","#a99fb5"],40,40);}
+  floats.forEach(f=>{f.y-=dt*40;f.life-=dt*1.1;});floats=floats.filter(f=>f.life>0);
+  parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=p.g*dt;p.life-=dt/p.d;});parts=parts.filter(p=>p.life>0);
+  draw(still?0:t);
+  if(!still)requestAnimationFrame(frame);
+}
+
+/* ---------- saving ---------- */
+function save(){S.last=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function load(data){
+  let d=data&&data.save;
+  if(!d){try{d=JSON.parse(localStorage.getItem(KEY)||"null");}catch(e){d=null;}}
+  if(!d||typeof d!=="object")return;
+  const f=fresh();
+  Object.keys(f).forEach(k=>{
+    if(k==="minions"){if(Array.isArray(d.minions))f.minions=f.minions.map((_,i)=>Math.max(0,Math.floor(+d.minions[i]||0)));}
+    else if(typeof f[k]==="object"){if(d[k]&&typeof d[k]==="object"&&!Array.isArray(d[k]))f[k]=d[k];}
+    else if(typeof d[k]==="number"&&isFinite(d[k]))f[k]=d[k];});
+  f.lair=Math.min(LAIRS.length-1,Math.max(0,Math.floor(f.lair)));f.rank=Math.min(RANKS.length-1,Math.max(0,Math.floor(f.rank)));
+  f.realms=Math.min(REALMS.length,Math.max(0,Math.floor(f.realms)));if(f.realms>=REALMS.length)f.siege=0;
+  S=f;
+}
+
+/* ---------- boot ---------- */
+let lastTick=Date.now(),lastSave=Date.now(),lastAch=0;
+function tick(){
+  const now=Date.now(),dt=Math.min(3600,(now-lastTick)/1000);lastTick=now;
+  if(dt>0){gain(mps()*dt);if(S.siege>0){S.siege-=dt*(perk(4)?2:1);if(S.siege<=0)conquered();}}
+  if(combo>0&&now-comboT>1500)combo=Math.max(0,combo-2);
+  music();
+  if(!heroT&&S.lair>=1&&now>heroDue)spawnHero();
+  if(now>blightNext&&now>blightUntil)chatter();
+  if(now-lastAch>1000){lastAch=now;checkAch();}
+  if(now-lastSave>8000){lastSave=now;save();}
+  paint();
+  if(still)frame(now);
+}
+function start(data){
+  load(data);recalc();build();
+  const away=Math.min(8*3600,Math.max(0,(Date.now()-S.last)/1000)),earned=rawMps()*baseMult()*away;
+  if(S.siege>0){S.siege-=away*(perk(4)?2:1);if(S.siege<=0)conquered(true);}
+  if(away>60&&earned>0){gain(earned);say("While you were out, the minions made "+fmt(earned)+" malice unsupervised. I find that suspicious, sir.",14000);}
+  else blightNext=Date.now()+12000;
+  heroDue=Date.now()+45000+Math.random()*45000;
+  fit();window.addEventListener("resize",fit);
+  paint();requestAnimationFrame(frame);
+  setInterval(tick,100);
+  window.addEventListener("pagehide",save);
+  document.addEventListener("visibilitychange",()=>{if(document.hidden)save();});
+  try{const h=window.claude&&window.claude.hot;if(h&&h.snapshot)h.snapshot(()=>({save:S}));}catch(e){}
+}
+const hot=window.claude&&window.claude.hot;
+if(hot&&hot.ready)hot.ready(start);else start((hot&&hot.data)||{});
+})();
+</script>
