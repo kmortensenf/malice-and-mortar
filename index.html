@@ -198,6 +198,12 @@ footer{font-size:.85rem;color:var(--ash);font-style:italic;text-align:center}
 #homeCv{display:block;width:100%;height:auto;border:2px solid var(--mortar);border-radius:4px;background:#0b0810}
 .btn.relic.on{opacity:1;background:#3b2d50;box-shadow:0 0 14px rgba(242,165,59,.4)}
 .btn.relic:disabled:not(.on){opacity:.6}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips .tg[aria-pressed="true"]{color:#1b0f08;background:var(--torch);border-color:var(--torch)}
+.chips .tg:disabled{opacity:.45;cursor:not-allowed}
+.btn.relic .st{display:block;margin-top:6px;font-weight:700;color:var(--bog)}
+.btn.relic.on .st{color:var(--torch)}
+#homeCv{cursor:pointer}
 </style>
 </head>
 <body>
@@ -338,6 +344,13 @@ footer{font-size:.85rem;color:var(--ash);font-style:italic;text-align:center}
 <div class="modal" id="mHome" hidden><div class="box wide" role="dialog" aria-modal="true" aria-labelledby="homeH">
   <h2 id="homeH">Inside your home</h2>
   <canvas id="homeCv" width="1440" height="840" aria-label="A cutaway of the rooms in your home"></canvas>
+  <p class="empty">Click a room to furnish it.</p>
+  <div class="chips" id="roomChips"></div>
+  <h3 id="roomH">Bedchamber</h3>
+  <p id="roomInfo"></p>
+  <div class="rowbtns" id="furnPick"></div>
+  <h3>Walls</h3>
+  <div class="chips" id="wallPick"></div>
   <h3>House rules</h3>
   <p id="docInfo"></p>
   <div class="rowbtns" id="docPick"></div>
@@ -476,7 +489,8 @@ const ACH=[
  ["a26","Captive Audience","Keep 3 heroes in the dungeon",s=>s.cells.length>=3],
  ["a27","Curator Of Stolen Goods","Claim a relic from every realm",s=>Object.keys(s.relics).length>=7],
  ["a28","A Name To Fear","Name yourself and your home",s=>!!s.me&&!!s.home],
- ["a29","My House, My Rules","Set some house rules",s=>s.doc>=0]
+ ["a29","My House, My Rules","Set some house rules",s=>s.doc>=0],
+ ["a30","Grand Designs","Put something better than the default in every room",s=>[0,1,2,3,4,5].every(i=>(s.furn[i]||0)>0)]
 ];
 const DEEDS=["You swapped the salt and the sugar.","You kicked a signpost so it points the wrong way.","You told a duck it was adopted.","You hid one shoe. Just the one.","You left a rude note for the milkman.","You moved a scarecrow slightly closer to a window.","You untied a guard's bootlaces.","You booed a bard mid-ballad.","You licked a pie on a windowsill and left it there.","You taught a parrot something unrepeatable.","You replaced the village bell with a slightly flatter bell.","You stood menacingly near some sheep.","You returned a library book. Late. On purpose.","You whispered 'moist' at a wedding."];
 const BLIGHT=[
@@ -503,7 +517,7 @@ const HEROES=["Sir Reginald the Punctual","Dame Prudence of Tidy Hill","Brave Si
 const PERKS=[[1,"Encore","Evil Laugh lasts 30 seconds"],[3,"Practised Wickedness","Dastardly misdeeds twice as often"],[8,"Helmet Resale","Heroes drop triple loot"],[20,"Lungs Of Iron","Evil Laugh recovers in 1:30"],[50,"Siege Veterans","Sieges go twice as fast"],[120,"Hands-On Management","Misdeeds earn 5% of your malice per second"]];
 function perk(i){return S.infamy>=PERKS[i][0];}
 function laughLen(){return (perk(0)?30:20)*(S.doc===2?1.5:1);}
-function laughCd(){return (perk(3)?90:150)*(rel(5,1)?0.6:1);}
+function laughCd(){return (perk(3)?90:150)*(rel(5,1)?0.6:1)*(fu(5,1)?0.75:1);}
 
 /* relics: one of two from every realm you conquer */
 const RELICS=[
@@ -520,14 +534,14 @@ function relicMult(){return (rel(1,1)?1.25:1)*(rel(4,1)?1.5:1)*(rel(6,1)?2:1);}
 function pendingRelic(){for(let i=0;i<S.realms&&i<RELICS.length;i++)if(!S.relics[i])return i;return -1;}
 /* the dungeon: booted heroes, put to work */
 const JOBS=[["Turning the mill","+6% all malice"],["Polishing helmets","+25% from misdeeds"],["Beating the siege drums","sieges 10% faster"]];
-function job(j){let n=0;S.cells.forEach(c=>{if(c.j===j)n++;});return n;}
-function cellCap(){return S.lair<3?0:[2,3,4,6][S.lair-3];}
+function job(j){let n=0;S.cells.forEach(c=>{if(c.j===j)n++;});return n*(fu(4,1)?1.5:1);}
+function cellCap(){return S.lair<3?0:[2,3,4,6][S.lair-3]+(fu(4,2)?2:0);}
 function ransom(){return Math.max(1000,rawMps()*baseMult()*300);}
 function laughX(){return rel(0,2)?9:7;}
 function sgs(){return (perk(4)?2:1)*(rel(2,1)?1.3:1)*(1+0.1*job(2));}
 
 /* ---------- state ---------- */
-function fresh(){return {malice:0,run:0,total:0,clicks:0,crits:0,laughs:0,topCombo:0,heroes:0,minions:MINIONS.map(()=>0),ups:{},decor:{},ach:{},lair:0,rank:0,infamy:0,realms:0,siege:0,laughEnd:0,laughReady:0,buffEnd:0,wins:0,endSeen:0,tut:0,hintLegacy:0,others:0,played:0,doc:-1,docAt:0,relics:{},cells:[],me:"",home:"",seen:{},last:Date.now()};}
+function fresh(){return {malice:0,run:0,total:0,clicks:0,crits:0,laughs:0,topCombo:0,heroes:0,minions:MINIONS.map(()=>0),ups:{},decor:{},ach:{},lair:0,rank:0,infamy:0,realms:0,siege:0,laughEnd:0,laughReady:0,buffEnd:0,wins:0,endSeen:0,tut:0,hintLegacy:0,others:0,played:0,doc:-1,docAt:0,furn:{},owned:{},wall:0,relics:{},cells:[],me:"",home:"",seen:{},last:Date.now()};}
 let S=fresh();
 let qty=1, minMult=[], clickMult=1, floats=[], parts=[], pulse=0, rankPop=0, lairRise=1, flash=0, boltT=0;
 let combo=0, comboT=0, heroT=null, heroDue=0, blightUntil=0, blightNext=0, cache={}, armed={};
@@ -549,17 +563,20 @@ function recalc(){
   if(rel(1,2))clickMult*=3;
   clickMult*=1+0.25*job(1);
   if(S.doc===0)clickMult*=3;else if(S.doc===1)clickMult*=0.5;
+  if(fu(0,2))clickMult*=1.5;
+  if(fu(2,2)){minMult[0]*=2;minMult[1]*=2;minMult[2]*=2;}
+  if(fu(5,2)){minMult[3]*=2;minMult[6]*=2;minMult[7]*=2;}
 }
 function laughing(){return Date.now()<S.laughEnd;}
-function baseMult(){return Math.pow(2,S.lair)*(1+0.25*S.rank)*(1+0.1*S.infamy)*Math.pow(rel(3,2)?1.35:1.25,Object.keys(S.decor).length)*Math.pow(1.5,S.realms)*relicMult()*docMult()*(1+0.06*job(0))*(1+0.02*Object.keys(S.ach).length)*Math.pow(2,S.wins);}
+function baseMult(){return Math.pow(2,S.lair)*(1+0.25*S.rank)*(1+0.1*S.infamy)*Math.pow(rel(3,2)?1.35:1.25,Object.keys(S.decor).length)*Math.pow(1.5,S.realms)*relicMult()*docMult()*furnMult()*(1+0.06*job(0))*(1+0.02*Object.keys(S.ach).length)*Math.pow(2,S.wins);}
 function globalMult(){return baseMult()*(laughing()?laughX():1)*(Date.now()<S.buffEnd?3:1);}
 function rawMps(){let t=0;for(let i=0;i<MINIONS.length;i++)t+=S.minions[i]*MINIONS[i].out*minMult[i];return t;}
 function mps(){return rawMps()*globalMult();}
 function clickVal(){return ((clickMult*Math.pow(3,S.rank)*(1+0.1*S.infamy)*(laughing()?laughX():1))+mps()*(perk(5)?0.05:0.02))*(1+combo*0.04);}
 function gain(x){S.malice+=x;S.run+=x;S.total+=x;}
 const R=1.15;
-function costN(i,n){return MINIONS[i].cost*(rel(4,2)?0.8:1)*Math.pow(R,S.minions[i])*(Math.pow(R,n)-1)/(R-1);}
-function maxN(i){const b=MINIONS[i].cost*(rel(4,2)?0.8:1)*Math.pow(R,S.minions[i]);return Math.max(0,Math.floor(Math.log(S.malice*(R-1)/b+1)/Math.log(R)+1e-9));}
+function costN(i,n){return MINIONS[i].cost*(rel(4,2)?0.8:1)*(fu(2,1)?0.9:1)*Math.pow(R,S.minions[i])*(Math.pow(R,n)-1)/(R-1);}
+function maxN(i){const b=MINIONS[i].cost*(rel(4,2)?0.8:1)*(fu(2,1)?0.9:1)*Math.pow(R,S.minions[i]);return Math.max(0,Math.floor(Math.log(S.malice*(R-1)/b+1)/Math.log(R)+1e-9));}
 function buyCount(i){return qty==="max"?Math.max(1,maxN(i)):qty;}
 function pendingInfamy(){return Math.floor(Math.cbrt(S.run/1e12)+1e-9);}
 
@@ -658,7 +675,7 @@ function music(){
 /* ---------- actions ---------- */
 function misdeed(){
   combo=Math.min(50,combo+1);comboT=Date.now();if(combo>S.topCombo)S.topCombo=combo;
-  let v=clickVal();const crit=Math.random()<(perk(1)?0.12:0.06)*(rel(3,1)?2:1);snd(crit?"crit":"click",combo);
+  let v=clickVal();const crit=Math.random()<(perk(1)?0.12:0.06)*(rel(3,1)?2:1)*(fu(3,2)?1.5:1);snd(crit?"crit":"click",combo);
   if(crit){v*=rel(3,1)?20:10;S.crits++;}
   gain(v);S.clicks++;pulse=1;
   if(S.siege>0)S.siege=Math.max(0.01,S.siege-0.25);
@@ -732,7 +749,7 @@ function twoStep(btn,key,label,fn){
 function doPrestige(){
   const p=pendingInfamy();if(p<1)return;
   const crown=complete()?1:0;
-  const keep={infamy:S.infamy+p,wins:S.wins+crown,total:S.total,clicks:S.clicks,crits:S.crits,laughs:S.laughs,topCombo:S.topCombo,heroes:S.heroes,others:S.others,played:S.played,ach:S.ach,seen:S.seen,me:S.me,home:S.home,doc:S.doc,docAt:S.docAt,tut:1,hintLegacy:1};
+  const keep={infamy:S.infamy+p,wins:S.wins+crown,total:S.total,clicks:S.clicks,crits:S.crits,laughs:S.laughs,topCombo:S.topCombo,heroes:S.heroes,others:S.others,played:S.played,ach:S.ach,seen:S.seen,me:S.me,home:S.home,doc:S.doc,docAt:S.docAt,wall:S.wall,tut:1,hintLegacy:1};
   S=Object.assign(fresh(),keep);recalc();cache={};combo=0;delete $("prestigeBtn").dataset.armed;flash=1;
   if(vis)endVisitor();
   say(("A magnificent death scene, sir. The bards wept. Back in the hole we go, with "+fmt(S.infamy)+" Infamy."),12000);
@@ -794,7 +811,7 @@ function meetVisitor(){
     say("The cat crossed everyone's path but yours, sir. Triple malice while their luck stays bad.");
   }else{
     const sec=k==="wagon"?90:k==="tourist"?25:45;
-    let loot=Math.max(rawMps()*baseMult()*sec,clickVal()*sec*.45)*(rel(5,2)?2:1);
+    let loot=Math.max(rawMps()*baseMult()*sec,clickVal()*sec*.45)*(rel(5,2)?2:1)*(fu(1,2)?2:1);
     if(k==="hero"){loot*=(perk(2)?3:1);S.heroes++;}else S.others++;
     gain(loot);snd("boot");toast(k==="hero"?"Booted":k==="wagon"?"Robbed":"Misdirected","+"+fmt(loot)+" "+"malice");
     if(k==="hero"&&S.cells.length<cellCap()){S.cells.push({n:name,j:0});recalc();
@@ -922,6 +939,12 @@ function build(){
   $("nameSave").addEventListener("click",saveNames);
   $("inMe").addEventListener("keydown",e=>{if(e.key==="Enter")saveNames();});$("inHome").addEventListener("keydown",e=>{if(e.key==="Enter")saveNames();});
   $("insideBtn").addEventListener("click",openHome);
+  $("roomChips").innerHTML=ROOMS.map((rm,i)=>'<button type="button" class="tg" data-r="'+i+'" aria-pressed="'+(i===0)+'">'+rm[0]+'</button>').join("");
+  $("roomChips").addEventListener("click",e=>{const b=e.target.closest("button[data-r]");if(b)selectRoom(+b.dataset.r);});
+  $("homeCv").addEventListener("click",e=>{const rc=e.currentTarget.getBoundingClientRect(),px=(e.clientX-rc.left)/rc.width*720,py=(e.clientY-rc.top)/rc.height*420;
+    ROOMS.forEach((rm,i)=>{const rx=12+(i%2)*354,ry=12+Math.floor(i/2)*134;if(px>=rx&&px<=rx+342&&py>=ry&&py<=ry+124)selectRoom(i);});});
+  $("furnPick").addEventListener("click",e=>{const b=e.target.closest("button[data-o]");if(b)pickFurn(+b.dataset.o);});
+  $("wallPick").addEventListener("click",e=>{const b=e.target.closest("button[data-w]");if(b)pickWall(+b.dataset.w);});
   $("docPick").addEventListener("click",e=>{const b=e.target.closest("button[data-k]");if(b)pickDoc(+b.dataset.k);});
   $("relicPick").addEventListener("click",e=>{const b=e.target.closest("button[data-k]");if(b)pickRelic(+b.dataset.k);});
   $("cellList").addEventListener("click",e=>{const b=e.target.closest("button[data-cell]");if(b)cellAct(+b.dataset.cell,b.dataset.act);});
@@ -1026,7 +1049,7 @@ function paint(){
     r.b.disabled=S.malice<c;
   });
   if($("break").open){
-    const B=[["Home",Math.pow(2,S.lair)],["Yourself",1+0.25*S.rank],["Décor",Math.pow(rel(3,2)?1.35:1.25,Object.keys(S.decor).length)],["Conquered realms",Math.pow(1.5,S.realms)],["Infamy",1+0.1*S.infamy],["Misdeeds of note",1+0.02*Object.keys(S.ach).length],["Crowns",Math.pow(2,S.wins)],["Relics",relicMult()],["House rules",docMult()],["Prisoners at the mill",1+0.06*job(0)]];
+    const B=[["Home",Math.pow(2,S.lair)],["Yourself",1+0.25*S.rank],["Décor",Math.pow(rel(3,2)?1.35:1.25,Object.keys(S.decor).length)],["Conquered realms",Math.pow(1.5,S.realms)],["Infamy",1+0.1*S.infamy],["Misdeeds of note",1+0.02*Object.keys(S.ach).length],["Crowns",Math.pow(2,S.wins)],["Relics",relicMult()],["House rules",docMult()],["Furnishings",furnMult()],["Prisoners at the mill",1+0.06*job(0)]];
     if(lol)B.push(["Evil Laugh",laughX()]);if(buff)B.push(["Black cat luck",3]);
     const h='<dt>'+esc("Minions, before bonuses")+'</dt><dd>'+fmt(raw)+'/s</dd>'+B.filter(b=>Math.abs(b[1]-1)>0.0001).map(b=>'<dt>'+esc(b[0])+'</dt><dd>×'+(b[1]>=100?fmt(b[1]):b[1].toFixed(2))+'</dd>').join("")+'<dt>'+esc("Total")+'</dt><dd class="tot">'+fmt(rate)+'/s</dd>';
     if(cache.brk!==h){cache.brk=h;$("breakList").innerHTML=h;}
@@ -1294,70 +1317,172 @@ const DOC_WAIT=180000;
 function light(){return S.doc>=0?DOCS[S.doc].rgb:"255,190,90";}
 function docMult(){return S.doc===0?0.85:S.doc===1?1.3:1;}
 const ROOMS=[["Bedchamber",0],["Trophy Room",2],["Barracks",1],["Counting House",0],["Dungeon",3],["Basement",3]];
+/* furnishings: [name, description, cost]; the first in each room is free and what the house came with */
+const FURN=[
+ [["Whatever Came With The House","Straw, then planks, then something gloomy. It grows with the house.",0],["Coffin","You sleep like the dead. Minions keep earning for 12 hours while you're away, not 8.",2000],["Four-Poster Of Spikes","You wake up furious every morning. Misdeeds are worth 50% more.",2e8]],
+ [["Plank Shelf","A plank. On two nails. Majestic.",0],["Glass Cabinets","Locked, lit and smug. Every relic you own adds a further 5% to all malice.",1e9],["Hall Of Helmets","Every helmet you've taken, mounted on the wall. Visitors carry twice as much, out of nerves.",1e11]],
+ [["Bunk Beds","Three to a bunk. Nobody wants the bottom.",0],["Hammocks","Cheaper to house them. Minions cost 10% less.",2e7],["Training Dummy","Stuffed, in a paper crown. Imps, Goblins and Tax Collectors make twice as much.",3e10]],
+ [["Heap On The Floor","You count it by rolling in it.",0],["Iron Vault","A door three feet thick. All malice +10%.",5e6],["Abacus Of Knucklebones","It clacks ominously. Dastardly misdeeds 50% more often.",5e9]],
+ [["Plain Cells","Bars, straw and a drip. The classics.",0],["Uncomfortable Chairs","Prisoners work 50% harder to avoid sitting down.",5e10],["Extra Cell Block","Two more cells. The heroes are thrilled.",5e12]],
+ [["Stacked Chairs","Nobody knows where they came from.",0],["Bog-Water Wine Cellar","Vintage 1347. Your Evil Laugh recovers 25% sooner.",1e11],["Summoning Circle","Chalk, candles and a very long contract. Witches, Dragons and Things make twice as much.",1e14]]
+];
+const WALLS=[["Rough Stone",()=>true,"Always available"],["Blood-Red Damask",()=>S.lair>=2,"Build the Crooked Tower"],["Bone Tiles",()=>S.lair>=4,"Build the Dark Fortress"],["Gilded Gloom",()=>S.lair>=6||S.wins>0,"Build the final castle"]];
+function fu(r,o){return ((S.furn&&S.furn[r])||0)===o;}
+function furnMult(){return (fu(3,1)?1.1:1)*(fu(1,1)?1+0.05*Object.keys(S.relics).length:1);}
+function awayCap(){return (fu(0,1)?12:8)*3600;}
+let selRoom=0;
+function wallpaper(x,y,w,h,fy){
+  const st=S.wall||0,base=[["#2c2236","#1a1422"],["#4a1a24","#250b12"],["#6a6052","#3e382f"],["#231a2c","#130d19"]][st]||["#2c2236","#1a1422"];
+  const g=ctx.createLinearGradient(0,y,0,y+h);g.addColorStop(0,base[0]);g.addColorStop(1,base[1]);ctx.fillStyle=g;ctx.fillRect(x,y,w,h);
+  ctx.lineWidth=1;
+  if(st===1){for(let yy=y+12,r=0;yy<fy;yy+=18,r++)for(let xx=x+(r%2?9:0);xx<x+w+9;xx+=18)T("rgba(214,70,96,.2)",xx,yy-5,xx+5,yy,xx,yy+5,xx-5,yy);
+    ctx.fillStyle="rgba(242,197,59,.35)";ctx.fillRect(x,fy-22,w,2);}
+  else if(st===2){ctx.strokeStyle="rgba(30,24,18,.55)";
+    for(let yy=y;yy<fy;yy+=20){ctx.beginPath();ctx.moveTo(x,yy);ctx.lineTo(x+w,yy);ctx.stroke();}
+    for(let xx=x;xx<x+w;xx+=20){ctx.beginPath();ctx.moveTo(xx,y);ctx.lineTo(xx,fy);ctx.stroke();}
+    for(let yy=y+30,r=0;yy<fy;yy+=40,r++)for(let xx=x+10+(r%2?20:0);xx<x+w;xx+=40){E(xx,yy,3.6,3.2,"rgba(240,230,210,.25)");ctx.fillStyle="rgba(30,24,18,.6)";ctx.fillRect(xx-2,yy-1,1.4,1.4);ctx.fillRect(xx+.8,yy-1,1.4,1.4);}}
+  else if(st===3){ctx.fillStyle="rgba(242,197,59,.18)";for(let xx=x+8;xx<x+w;xx+=22)ctx.fillRect(xx,y,3,fy-y);
+    ctx.fillStyle="rgba(242,197,59,.55)";ctx.fillRect(x,y,w,3);ctx.fillRect(x,fy-3,w,3);}
+  else{ctx.strokeStyle="rgba(0,0,0,.28)";
+    for(let yy=y+16,r=0;yy<fy;yy+=16,r++){ctx.beginPath();ctx.moveTo(x,yy);ctx.lineTo(x+w,yy);ctx.stroke();for(let xx=x+(r%2?18:0);xx<x+w;xx+=36){ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx,yy+16);ctx.stroke();}}}
+}
+function helmet(hx,hy,s){E(hx,hy,7*s,7*s,"#b9c0cf");ctx.fillStyle="#15101c";ctx.fillRect(hx-4*s,hy-s,8*s,1.6*s);T("#c0394b",hx-s,hy-7*s,hx+6*s,hy-10*s,hx+s,hy-5*s);}
+function crown(cx,cy,s){T("#f2c53b",cx-7*s,cy+6*s,cx-7*s,cy-3*s,cx-3.5*s,cy+s,cx,cy-6*s,cx+3.5*s,cy+s,cx+7*s,cy-3*s,cx+7*s,cy+6*s);}
 function drawHome(t){
   const g=$("homeCv").getContext("2d");ctx=g;
   try{
     g.setTransform(2,0,0,2,0,0);
-    const lit=light(),Lr=S.lair,M=S.minions;
+    const lit=light(),Lr=S.lair,M=S.minions,ital="italic 12px Alegreya,Georgia,serif";
     ctx.fillStyle="#0b0810";ctx.fillRect(0,0,720,420);
     ROOMS.forEach((rm,i)=>{
-      const x=12+(i%2)*354,y=12+Math.floor(i/2)*134,w=342,h=124,fy=y+h-14;
+      const x=12+(i%2)*354,y=12+Math.floor(i/2)*134,w=342,h=124,fy=y+h-14,o=(S.furn&&S.furn[i])||0;
+      const note=s=>{ctx.fillStyle="#a99fb5";ctx.font=ital;ctx.textAlign="left";ctx.fillText(s,x+16,y+40);};
       ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
       if(Lr<rm[1]){
         ctx.fillStyle="#1a1410";ctx.fillRect(x,y,w,h);
         for(let k=0;k<30;k++){ctx.fillStyle="rgba(84,68,54,.5)";ctx.fillRect(x+rnd(i*40+k)*w,y+rnd(i*50+k)*h,3+rnd(k)*6,2);}
-        ctx.fillStyle="#8a7662";ctx.font="italic 13px Alegreya,Georgia,serif";ctx.textAlign="center";ctx.fillText("Solid earth. Needs: "+LAIRS[rm[1]].name,x+w/2,y+h/2+4);ctx.textAlign="left";ctx.restore();return;}
-      const wall=ctx.createLinearGradient(0,y,0,y+h);wall.addColorStop(0,"#2c2236");wall.addColorStop(1,"#1a1422");
-      ctx.fillStyle=wall;ctx.fillRect(x,y,w,h);
-      ctx.strokeStyle="rgba(0,0,0,.28)";ctx.lineWidth=1;
-      for(let yy=y+16,r=0;yy<fy;yy+=16,r++){ctx.beginPath();ctx.moveTo(x,yy);ctx.lineTo(x+w,yy);ctx.stroke();for(let xx=x+(r%2?18:0);xx<x+w;xx+=36){ctx.beginPath();ctx.moveTo(xx,yy);ctx.lineTo(xx,yy+16);ctx.stroke();}}
+        ctx.fillStyle="#8a7662";ctx.font="italic 13px Alegreya,Georgia,serif";ctx.textAlign="center";ctx.fillText("Solid earth. Needs: "+LAIRS[rm[1]].name,x+w/2,y+h/2+4);ctx.textAlign="left";
+      }else{
+      wallpaper(x,y,w,h,fy);
       ctx.fillStyle="#120c18";ctx.fillRect(x,fy,w,14);
       glow(x+w-26,y+36,80,lit,.26+.06*Math.sin(t/120+i));ctx.fillStyle="#2a1d14";ctx.fillRect(x+w-27.5,y+36,3,14);
       T("rgba("+lit+",.95)",x+w-31,y+36,x+w-26+Math.sin(t/70+i)*1.5,y+23,x+w-21,y+36);
       if(i===0){
-        if(Lr===0){E(x+80,fy,40,9,"#8a7a3a");E(x+70,fy-4,24,7,"#a39248");}
-        else if(Lr<3){ctx.fillStyle="#4a3524";ctx.fillRect(x+62,fy-44,6,44);ctx.fillRect(x+62,fy-22,30,6);ctx.fillRect(x+86,fy-22,6,22);}
-        else{ctx.fillStyle="#17111f";ctx.fillRect(x+52,fy-78,56,78);T("#17111f",x+52,fy-78,x+80,fy-100,x+108,fy-78);ctx.fillStyle="rgba("+lit+",.8)";ctx.fillRect(x+76,fy-88,8,8);ctx.fillStyle="#2a2134";ctx.fillRect(x+44,fy-26,72,26);}
-        ctx.save();ctx.translate(x+(Lr===0?150:80),fy-(Lr>=3?24:Lr>0?20:0));ctx.scale(.6,.6);ctx.translate(-PX,-(gy(PX)+4));you(t);ctx.restore();
-        ctx.fillStyle="#a99fb5";ctx.font="italic 12px Alegreya,Georgia,serif";ctx.fillText(S.doc>=0?"House rules: "+DOCS[S.doc].n:Lr?"No house rules yet":"It's a hole. There are no rules.",x+150,y+34);
+        let fx,fyy;
+        if(o===1){const cx=x+66;
+          T("#2a1a14",cx-14,fy,cx-20,fy-60,cx-12,fy-84,cx+12,fy-84,cx+20,fy-60,cx+14,fy);
+          T("#6a1a2c",cx-10,fy-4,cx-15,fy-58,cx-9,fy-78,cx+9,fy-78,cx+15,fy-58,cx+10,fy-4);
+          E(cx,fy-66,7,5,"#4a1220");
+          T("#2a1a14",cx+30,fy,cx+26,fy-62,cx+34,fy-84,cx+50,fy-84,cx+56,fy-62,cx+52,fy);
+          E(cx+41,fy-52,5.5,5,"#e8dcc0");ctx.fillStyle="#2a1a14";ctx.fillRect(cx+38,fy-53,2,2);ctx.fillRect(cx+42,fy-53,2,2);
+          fx=x+150;fyy=fy;}
+        else if(o===2){
+          ctx.fillStyle="#3a2430";[x+30,x+140].forEach(px=>{ctx.fillRect(px,fy-90,5,90);T("#b9c0cf",px-2,fy-90,px+2.5,fy-104,px+7,fy-90);});
+          T("#8a1420",x+26,fy-92,x+150,fy-92,x+150,fy-82,x+26,fy-82);
+          for(let k=0;k<6;k++)T("#8a1420",x+30+k*20,fy-82,x+40+k*20,fy-74+Math.sin(t/500+k)*1.5,x+50+k*20,fy-82);
+          ctx.fillStyle="#2a1d14";ctx.fillRect(x+30,fy-24,115,10);ctx.fillStyle="#5a1424";ctx.fillRect(x+34,fy-32,107,9);E(x+48,fy-33,10,5,"#e8dcc0");
+          for(let k=0;k<8;k++)T("#b9c0cf",x+36+k*14,fy-14,x+39+k*14,fy-22,x+42+k*14,fy-14);
+          fx=x+100;fyy=fy-32;}
+        else{
+          if(Lr===0){E(x+80,fy,40,9,"#8a7a3a");E(x+70,fy-4,24,7,"#a39248");}
+          else if(Lr<3){ctx.fillStyle="#4a3524";ctx.fillRect(x+62,fy-44,6,44);ctx.fillRect(x+62,fy-22,30,6);ctx.fillRect(x+86,fy-22,6,22);}
+          else{ctx.fillStyle="#17111f";ctx.fillRect(x+52,fy-78,56,78);T("#17111f",x+52,fy-78,x+80,fy-100,x+108,fy-78);ctx.fillStyle="rgba("+lit+",.8)";ctx.fillRect(x+76,fy-88,8,8);ctx.fillStyle="#2a2134";ctx.fillRect(x+44,fy-26,72,26);}
+          fx=x+(Lr===0?150:80);fyy=fy-(Lr>=3?24:Lr>0?20:0);}
+        ctx.save();ctx.translate(fx,fyy);ctx.scale(.6,.6);ctx.translate(-PX,-(gy(PX)+4));you(t);ctx.restore();
+        ctx.fillStyle="#a99fb5";ctx.font=ital;ctx.textAlign="right";ctx.fillText(S.doc>=0?"House rules: "+DOCS[S.doc].n:Lr?"No house rules yet":"It's a hole. There are no rules.",x+w-44,y+34);ctx.textAlign="left";
       }else if(i===1){
-        ctx.fillStyle="#4a3524";ctx.fillRect(x+14,fy-46,250,5);
-        const ks=Object.keys(S.relics);
-        ks.forEach((k,j)=>{const rx=x+30+j*34,cols=["#c0394b","#e3d8c4","#7aa8e8","#b9b2c6","#f2c53b","#9ad5ff","#b6e06a"],cl=cols[+k%7];
+        const ks=Object.keys(S.relics),cols=["#c0394b","#e3d8c4","#7aa8e8","#b9b2c6","#f2c53b","#9ad5ff","#b6e06a"];
+        if(o===2)for(let k=0;k<Math.min(18,S.heroes);k++)helmet(x+112+(k%9)*24,y+24+Math.floor(k/9)*15,.7);
+        if(o===1){const n=Math.max(3,ks.length),cw=n*34+10;
+          ctx.fillStyle="rgba(170,210,255,.12)";ctx.fillRect(x+12,fy-90,cw,44);ctx.strokeStyle="#8a7aa0";ctx.lineWidth=1.5;ctx.strokeRect(x+12,fy-90,cw,44);
+          for(let k=1;k<n;k++){ctx.beginPath();ctx.moveTo(x+12+k*34,fy-90);ctx.lineTo(x+12+k*34,fy-46);ctx.stroke();}
+          ctx.strokeStyle="rgba(255,255,255,.3)";ctx.beginPath();ctx.moveTo(x+18,fy-84);ctx.lineTo(x+28,fy-72);ctx.stroke();
+          ctx.fillStyle="#2a1d14";ctx.fillRect(x+12,fy-46,cw,6);ctx.fillRect(x+16,fy-40,4,40);ctx.fillRect(x+8+cw,fy-40,4,40);}
+        else{ctx.fillStyle="#4a3524";ctx.fillRect(x+14,fy-46,250,5);}
+        ks.forEach((k,j)=>{const rx=x+30+j*34,cl=cols[+k%7];
+          if(o===1)glow(rx,fy-56,22,"170,210,255",.3);
           ctx.fillStyle=cl;ctx.fillRect(rx-7,fy-64,14,18);ctx.fillStyle="rgba(255,255,255,.5)";ctx.fillRect(rx-5,fy-62,3,9);ctx.fillStyle="#2a1d14";ctx.fillRect(rx-8,fy-67,16,4);});
-        for(let k=0;k<Math.min(14,S.heroes);k++){const hx=x+24+k*19;E(hx,fy-5,7,7,"#b9c0cf");ctx.fillStyle="#15101c";ctx.fillRect(hx-4,fy-6,8,1.6);T("#c0394b",hx-1,fy-12,hx+6,fy-15,hx+1,fy-10);}
-        for(let k=0;k<Math.min(6,S.wins);k++){const cx2=x+26+k*24,cy=y+34;T("#f2c53b",cx2-7,cy+6,cx2-7,cy-3,cx2-3.5,cy+1,cx2,cy-6,cx2+3.5,cy+1,cx2+7,cy-3,cx2+7,cy+6);}
-        if(!ks.length&&!S.heroes){ctx.fillStyle="#a99fb5";ctx.font="italic 12px Alegreya,Georgia,serif";ctx.fillText("Bare shelves. Conquer something, or boot someone.",x+16,fy-56);}
+        if(o!==2)for(let k=0;k<Math.min(8,S.heroes);k++)helmet(x+24+k*19,fy-5,1);
+        for(let k=0;k<Math.min(6,S.wins);k++)crown(x+196+k*20,fy-6,.8);
+        if(!ks.length&&!S.heroes)note("Bare shelves. Conquer something, or boot someone.");
       }else if(i===2){
-        for(let k=0;k<4;k++){const bx=x+16+k*62;ctx.fillStyle="#4a3524";ctx.fillRect(bx,fy-52,3,52);ctx.fillRect(bx+44,fy-52,3,52);ctx.fillRect(bx,fy-50,47,4);ctx.fillRect(bx,fy-24,47,4);ctx.fillStyle="#6a6380";ctx.fillRect(bx+4,fy-55,38,5);ctx.fillRect(bx+4,fy-29,38,5);}
-        let slot=0;const eyeC=["#f2a53b","#a9c45a","#f2a53b","#a9c45a","#f2a53b","#c0394b","#f2a53b","#a9c45a"];
-        M.forEach((cnt,k)=>{for(let j=0;j<Math.min(4,cnt)&&slot<30;j++,slot++){const mx=x+14+slot*10.6,sz=3+k*.55,hop=Math.abs(Math.sin(t/300+slot))*3;E(mx,fy-sz-hop,sz,sz*1.15,"#0d0912");eyes(mx,fy-sz*1.4-hop,sz*.4,eyeC[k]);}});
-        if(!slot){ctx.fillStyle="#a99fb5";ctx.font="italic 12px Alegreya,Georgia,serif";ctx.fillText("Empty bunks. Nobody works here yet.",x+16,y+40);}
+        if(o===1){for(let k=0;k<4;k++){const bx=x+16+k*62;ctx.fillStyle="#4a3524";ctx.fillRect(bx,fy-60,3,60);ctx.fillRect(bx+50,fy-60,3,60);
+          ctx.strokeStyle="#9a7a4a";ctx.lineWidth=3;[0,1].forEach(r=>{const yy=fy-54+r*26;ctx.beginPath();ctx.moveTo(bx+3,yy);ctx.quadraticCurveTo(bx+26,yy+14+Math.sin(t/700+k+r)*2,bx+50,yy);ctx.stroke();});}}
+        else for(let k=0;k<(o===2?3:4);k++){const bx=x+16+k*62;ctx.fillStyle="#4a3524";ctx.fillRect(bx,fy-52,3,52);ctx.fillRect(bx+44,fy-52,3,52);ctx.fillRect(bx,fy-50,47,4);ctx.fillRect(bx,fy-24,47,4);ctx.fillStyle="#6a6380";ctx.fillRect(bx+4,fy-55,38,5);ctx.fillRect(bx+4,fy-29,38,5);}
+        if(o===2){const dx=x+w-84+Math.sin(t/160)*1.2;ctx.fillStyle="#4a3524";ctx.fillRect(dx-2,fy-60,4,60);ctx.fillRect(dx-16,fy-44,32,4);
+          E(dx,fy-34,11,16,"#c9a35a");E(dx,fy-60,8,8,"#d8b86a");crown(dx,fy-70,.9);ctx.fillStyle="#3a2a1c";ctx.fillRect(dx-4,fy-62,2,2);ctx.fillRect(dx+2,fy-62,2,2);
+          ctx.strokeStyle="#8a6a3a";ctx.lineWidth=1;for(let k=0;k<4;k++){ctx.beginPath();ctx.moveTo(dx-8+k*5,fy-24);ctx.lineTo(dx-10+k*5,fy-18);ctx.stroke();}}
+        let slot=0;const eyeC=["#f2a53b","#a9c45a","#f2a53b","#a9c45a","#f2a53b","#c0394b","#f2a53b","#a9c45a"],cap=o===2?22:30;
+        M.forEach((cnt,k)=>{for(let j=0;j<Math.min(4,cnt)&&slot<cap;j++,slot++){const mx=x+14+slot*10.6,sz=3+k*.55,hop=Math.abs(Math.sin(t/300+slot))*3;E(mx,fy-sz-hop,sz,sz*1.15,"#0d0912");eyes(mx,fy-sz*1.4-hop,sz*.4,eyeC[k]);}});
+        if(!slot)note("Empty bunks. Nobody works here yet.");
       }else if(i===3){
         if(S.malice>=10)pile(x+110,fy,Math.min(40,4+Math.log10(S.malice+1)*2.4),t);
-        ctx.fillStyle="#4a3524";ctx.fillRect(x+214,fy-30,70,5);ctx.fillRect(x+220,fy-26,4,26);ctx.fillRect(x+274,fy-26,4,26);
-        ctx.fillStyle="#efe6d2";ctx.fillRect(x+232,fy-36,22,6);ctx.fillStyle="#f2c53b";for(let k=0;k<4;k++)ctx.fillRect(x+260,fy-34-k*3,10,2.4);
-        ctx.fillStyle="#a9c45a";ctx.font="800 13px 'Alegreya Sans',sans-serif";ctx.fillText(fmt(S.malice)+" malice",x+150,y+36);
+        if(o===1){const vx=x+250,vy=fy-46;E(vx,vy,40,40,"#3a3446");E(vx,vy,34,34,"#5a5470");E(vx,vy,8,8,"#2a2436");
+          ctx.strokeStyle="#2a2436";ctx.lineWidth=4;for(let k=0;k<3;k++){const a=t/3000+k*Math.PI/3;ctx.beginPath();ctx.moveTo(vx+Math.cos(a)*24,vy+Math.sin(a)*24);ctx.lineTo(vx-Math.cos(a)*24,vy-Math.sin(a)*24);ctx.stroke();}
+          for(let k=0;k<12;k++){const a=k*Math.PI/6;E(vx+Math.cos(a)*37,vy+Math.sin(a)*37,1.8,1.8,"#8a84a0");}}
+        else{ctx.fillStyle="#4a3524";ctx.fillRect(x+214,fy-30,70,5);ctx.fillRect(x+220,fy-26,4,26);ctx.fillRect(x+274,fy-26,4,26);
+          ctx.fillStyle="#efe6d2";ctx.fillRect(x+232,fy-36,22,6);ctx.fillStyle="#f2c53b";for(let k=0;k<4;k++)ctx.fillRect(x+260,fy-34-k*3,10,2.4);}
+        if(o===2){const ax=x+196,ay=y+30;ctx.strokeStyle="#4a3524";ctx.lineWidth=4;ctx.strokeRect(ax,ay,104,42);ctx.lineWidth=1;ctx.strokeStyle="#8a7a5a";
+          for(let r=0;r<4;r++){const ry=ay+7+r*9.5;ctx.beginPath();ctx.moveTo(ax,ry);ctx.lineTo(ax+104,ry);ctx.stroke();
+            const sp=Math.floor((rnd(r+40)*8+t/1100*(1+r*.3))%9);
+            for(let j=0;j<8;j++){const bx=j<sp?ax+7+j*8:ax+97-(7-j)*8;E(bx,ry,3.4,3.4,"#e8dcc0");}}}
+        ctx.fillStyle="#a9c45a";ctx.font="800 13px 'Alegreya Sans',sans-serif";ctx.textAlign="left";ctx.fillText(fmt(S.malice)+" malice",x+16,y+38);
       }else if(i===4){
-        const cap=cellCap();
-        for(let k=0;k<cap;k++){const cxl=x+14+k*52,cw=44;ctx.fillStyle="#07040a";ctx.fillRect(cxl,fy-76,cw,76);
+        const cap=cellCap(),step=Math.min(52,(w-20)/Math.max(1,cap)),cw=step-8;
+        for(let k=0;k<cap;k++){const cxl=x+14+k*step,mid=cxl+cw/2;ctx.fillStyle="#07040a";ctx.fillRect(cxl,fy-76,cw,76);
           const c=S.cells[k];
-          if(c){E(cxl+cw/2,fy-16,9,14,"#3a3146");E(cxl+cw/2,fy-36,7,7,"#e8b89a");eyes(cxl+cw/2+Math.sin(t/800+k)*1.5,fy-38,2.4,"#15101c");
-            ctx.fillStyle="#a99fb5";ctx.font="9px 'Alegreya Sans',sans-serif";ctx.textAlign="center";ctx.fillText(JOBS[c.j][0].split(" ")[0],cxl+cw/2,fy-82);ctx.textAlign="left";}
+          if(o===1){ctx.fillStyle="#5a4028";ctx.fillRect(mid-8,fy-18,16,3);ctx.fillRect(mid-8,fy-18,2,18);ctx.fillRect(mid+6,fy-18,2,18);ctx.fillRect(mid+6,fy-38,2,20);}
+          if(c){const lift=o===1?6:0;E(mid,fy-16-lift,9,o===1?10:14,"#3a3146");E(mid,fy-36-lift,7,7,"#e8b89a");eyes(mid+Math.sin(t/800+k)*1.5,fy-38-lift,2.4,"#15101c");
+            ctx.fillStyle="#a99fb5";ctx.font="9px 'Alegreya Sans',sans-serif";ctx.textAlign="center";ctx.fillText(JOBS[c.j][0].split(" ")[0],mid,fy-82);ctx.textAlign="left";}
           ctx.strokeStyle="#6a5c80";ctx.lineWidth=2;for(let b=6;b<cw;b+=8){ctx.beginPath();ctx.moveTo(cxl+b,fy-76);ctx.lineTo(cxl+b,fy);ctx.stroke();}ctx.strokeRect(cxl,fy-76,cw,76);}
       }else{
+        if(o===1){for(let r=0;r<2;r++){const rx=x+18+r*126;ctx.fillStyle="#3a2a1c";ctx.fillRect(rx,fy-80,110,80);
+            for(let a=0;a<4;a++)for(let b=0;b<7;b++){E(rx+10+b*15,fy-68+a*18,5.5,5.5,"#140d0a");E(rx+10+b*15,fy-68+a*18,3,3,(a+b)%3?"#3a5a2a":"#6a2a3a");}}
+          E(x+292,fy-14,14,14,"#6a4a2a");ctx.strokeStyle="#2a1d14";ctx.lineWidth=2;[14,9].forEach(rr=>{ctx.beginPath();ctx.ellipse(x+292,fy-14,rr,rr,0,0,7);ctx.stroke();});}
+        else if(o===2){const cx=x+170,cy=fy-4;glow(cx,cy-10,90,"190,120,255",.28+.08*Math.sin(t/300));
+          ctx.strokeStyle="rgba(200,140,255,.85)";ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(cx,cy,80,13,0,0,7);ctx.stroke();ctx.beginPath();ctx.ellipse(cx,cy,64,10,0,0,7);ctx.stroke();
+          const P=[0,1,2,3,4].map(k=>{const a=-Math.PI/2+k*2*Math.PI/5+t/4000;return [cx+Math.cos(a)*64,cy+Math.sin(a)*10];});
+          ctx.beginPath();[0,2,4,1,3,0].forEach((k,j)=>j?ctx.lineTo(P[k][0],P[k][1]):ctx.moveTo(P[k][0],P[k][1]));ctx.stroke();
+          P.forEach((p,k)=>{ctx.fillStyle="#efe6d2";ctx.fillRect(p[0]-2,p[1]-10,4,10);flame(p[0],p[1]-10,3,t,k);});}
+        else if(!M[7]){for(let k=0;k<6;k++){const cx3=x+30+k*34,cy=fy-(k%2)*18;ctx.fillStyle="#5a4028";ctx.fillRect(cx3,cy-20,3,20);ctx.fillRect(cx3,cy-10,14,3);ctx.fillRect(cx3+11,cy-10,3,10);}
+          note("Currently storing chairs.");}
         if(M[7]>0){ctx.strokeStyle="#4a2266";ctx.lineCap="round";
           for(let k=0;k<Math.min(6,M[7]);k++){const bx=x+40+k*46,hh2=40+rnd(k+11)*30,wv=Math.sin(t/600+k*1.9);
             ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(bx,fy+6);ctx.bezierCurveTo(bx+wv*14,fy-hh2*.4,bx-wv*16,fy-hh2*.8,bx+wv*10,fy-hh2);ctx.stroke();}
           const bl=(t%6100)<200?.15:1;E(x+170,fy-30,16,9,"#07040a");E(x+170,fy-30,9,7*bl,"#a9c45a");E(x+170,fy-30,3,6.5*bl,"#07040a");}
-        else{for(let k=0;k<6;k++){const cx3=x+30+k*34,cy=fy-(k%2)*18;ctx.fillStyle="#5a4028";ctx.fillRect(cx3,cy-20,3,20);ctx.fillRect(cx3,cy-10,14,3);ctx.fillRect(cx3+11,cy-10,3,10);}
-          ctx.fillStyle="#a99fb5";ctx.font="italic 12px Alegreya,Georgia,serif";ctx.fillText("Currently storing chairs.",x+16,y+40);}
+      }
       }
       ctx.restore();
-      ctx.fillStyle="#efe6d2";ctx.font="500 16px 'Grenze Gotisch',Georgia,serif";ctx.fillText(rm[0],x+8,y+17);
+      ctx.fillStyle="#efe6d2";ctx.font="500 16px 'Grenze Gotisch',Georgia,serif";ctx.textAlign="left";ctx.fillText(rm[0],x+8,y+17);
+      if(i===selRoom){ctx.strokeStyle="#f2a53b";ctx.lineWidth=2.5;ctx.strokeRect(x+1.25,y+1.25,w-2.5,h-2.5);}
     });
   }finally{ctx=sceneCtx;}
 }
+function selectRoom(i){if(!ROOMS[i])return;selRoom=i;cache.room="";renderRoom();}
+function renderRoom(){
+  const rm=ROOMS[selRoom],locked=S.lair<rm[1],cur=S.furn[selRoom]||0;
+  const key=[selRoom,cur,locked,FURN[selRoom].map((f,o)=>(S.owned[selRoom+"_"+o]?1:0)+(S.malice>=f[2]?2:0)).join(""),S.wall,S.lair,S.wins>0].join("|");
+  if(cache.room===key)return;cache.room=key;
+  $("roomChips").querySelectorAll("button").forEach((b,i)=>b.setAttribute("aria-pressed",String(i===selRoom)));
+  $("roomH").textContent=rm[0];
+  $("roomInfo").textContent=locked?"This room hasn't been dug yet. Build the "+LAIRS[rm[1]].name+" first.":"Choose what goes in here. Anything you've bought can be swapped back in for free.";
+  $("furnPick").innerHTML=FURN[selRoom].map((f,o)=>{const own=o===0||S.owned[selRoom+"_"+o],act=o===cur;
+    const state=act?"In use":own?"Owned: click to put it back":"Buy for "+fmt(f[2])+" malice";
+    return '<button type="button" class="btn relic'+(act?' on':'')+'" data-o="'+o+'"'+(locked||act||(!own&&S.malice<f[2])?' disabled':'')+'><b>'+esc(f[0])+'</b>'+esc(f[1])+'<span class="st">'+esc(state)+'</span></button>';}).join("");
+  $("wallPick").innerHTML=WALLS.map((wl,k)=>{const ok=wl[1]()||S.wall===k;
+    return '<button type="button" class="tg" data-w="'+k+'" aria-pressed="'+(S.wall===k)+'"'+(ok?'':' disabled')+'>'+esc(wl[0])+(ok?'':' ('+esc(wl[2])+')')+'</button>';}).join("");
+}
+function pickFurn(o){
+  const r=selRoom,f=FURN[r][o];if(!f||S.lair<ROOMS[r][1]||(S.furn[r]||0)===o)return;
+  const k=r+"_"+o;
+  if(o>0&&!S.owned[k]){if(S.malice<f[2])return;S.malice-=f[2];S.owned[k]=1;
+    toast("Installed",f[0]);say("The "+f[0]+" is in, sir. I had to move the old one to the moat. The fish are using it now.");}
+  S.furn[r]=o;recalc();
+  if(cellCap()>0)while(S.cells.length>cellCap()){S.cells.pop();gain(ransom());}
+  cache.room="";snd("buy");save();paint();renderRoom();
+}
+function pickWall(k){if(!WALLS[k]||!WALLS[k][1]()||S.wall===k)return;S.wall=k;cache.room="";snd("hire");save();renderRoom();}
+
 function renderDocs(){
   const now=Date.now(),wait=S.doc>=0?S.docAt+DOC_WAIT-now:0;
   setTxt($("docInfo"),S.lair<1?"House rules need a house. Build the Suspicious Shed first.":wait>0?"The household is still getting used to the current rules. You can change them again in "+clock(wait/1000)+".":"Decide how the place is run. It changes how you earn malice, and what colour everything glows.");
@@ -1372,7 +1497,7 @@ function pickDoc(k){
   toast("House rules",DOCS[k].n);say("I've pinned the new rules to the door, sir: "+DOCS[k].n+". The minions have read them, in the sense that they've eaten the notice.");
   save();paint();
 }
-function openHome(){$("homeH").textContent="Inside "+(S.home||LAIRS[S.lair].name);cache.docs="";renderDocs();openModal("mHome");drawHome(performance.now());}
+function openHome(){$("homeH").textContent="Inside "+(S.home||LAIRS[S.lair].name);cache.docs="";cache.room="";renderDocs();renderRoom();openModal("mHome");drawHome(performance.now());}
 
 function decorBack(t){
   if(S.decor.beacon){const top=lairTop(),p=.5+.2*Math.sin(t/400);
@@ -1600,7 +1725,7 @@ function frame(t){
   const rdt=Math.min(1,Math.max(0,(t-lastF)/1000)),dt=Math.min(.1,rdt);lastF=t;
   pulse=Math.max(0,pulse-dt*5);rankPop=Math.max(0,rankPop-dt*1.6);flash=Math.max(0,flash-dt*2.5);
   if(S.doc===2&&!still&&!prefs.calm&&Math.random()<dt*.5)burst(CX-150+Math.random()*300,30+Math.random()*80,26,[["#c996ff","#ffe27a"],["#ff9ad5","#efe6d2"],["#9ad5ff","#c996ff"]][Math.floor(Math.random()*3)],95,0);
-  if(!$("mHome").hidden){drawHome(t);renderDocs();}
+  if(!$("mHome").hidden){drawHome(t);renderDocs();renderRoom();}
   if(lairRise<1){lairRise=Math.min(1,lairRise+dt/1.3);if(!still&&Math.random()<.6)burst(CX-120+Math.random()*240,gy(CX)+6,2,["#463a57","#a99fb5"],40,40);}
   const tx=frontPos();walking=Math.abs(PX-tx)>1;
   if(walking)PX+=Math.sign(tx-PX)*Math.min(Math.abs(tx-PX),(still?4000:130)*rdt);
@@ -1621,11 +1746,12 @@ function load(data){
   const f=fresh();
   Object.keys(f).forEach(k=>{
     if(k==="minions"){if(Array.isArray(d.minions))f.minions=f.minions.map((_,i)=>Math.max(0,Math.floor(+d.minions[i]||0)));}
-    else if(k==="cells"){if(Array.isArray(d.cells))f.cells=d.cells.filter(c=>c&&typeof c.n==="string").slice(0,6).map(c=>({n:c.n.slice(0,40),j:c.j===1||c.j===2?c.j:0}));}
+    else if(k==="cells"){if(Array.isArray(d.cells))f.cells=d.cells.filter(c=>c&&typeof c.n==="string").slice(0,8).map(c=>({n:c.n.slice(0,40),j:c.j===1||c.j===2?c.j:0}));}
     else if(typeof f[k]==="string"){if(typeof d[k]==="string")f[k]=d[k].slice(0,24);}
     else if(typeof f[k]==="object"){if(d[k]&&typeof d[k]==="object"&&!Array.isArray(d[k]))f[k]=d[k];}
     else if(typeof d[k]==="number"&&isFinite(d[k]))f[k]=d[k];});
   f.lair=Math.min(LAIRS.length-1,Math.max(0,Math.floor(f.lair)));f.rank=Math.min(RANKS.length-1,Math.max(0,Math.floor(f.rank)));
+  f.wall=Math.min(3,Math.max(0,Math.floor(f.wall)));
   f.realms=Math.min(REALMS.length,Math.max(0,Math.floor(f.realms)));if(f.realms>=REALMS.length)f.siege=0;
   S=f;
 }
@@ -1652,7 +1778,7 @@ function tick(){
 }
 function start(data){
   load(data);recalc();build();applyLang();
-  const away=Math.min(8*3600,Math.max(0,(Date.now()-S.last)/1000)),earned=rawMps()*baseMult()*away,won=[];
+  const away=Math.min(awayCap(),Math.max(0,(Date.now()-S.last)/1000)),earned=rawMps()*baseMult()*away,won=[];
   if(S.siege>0){S.siege-=away*sgs();if(S.siege<=0){won.push(REALMS[S.realms].name);conquered(true);}}
   if(away>60&&earned>0){gain(earned);showAway(away,earned,won);}
   blightNext=Date.now()+12000;
